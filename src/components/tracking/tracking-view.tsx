@@ -1,7 +1,7 @@
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent } from '@/components/ui/card';
 import { formatCurrency, formatDate } from '@/lib/utils';
-import { MapPin, Phone, Package, Clock, CheckCircle } from 'lucide-react';
+import { Phone, Package, Clock, CheckCircle } from 'lucide-react';
 
 interface TrackingViewProps {
   order: {
