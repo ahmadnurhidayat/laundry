@@ -5,6 +5,8 @@ import { createDb } from '@/db';
 import { users } from '@/db/schema';
 import { verifyPassword, createSession, SESSION_COOKIE } from '@/lib/auth';
 
+const DUMMY_HASH = '00:0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000';
+
 export async function POST(request: NextRequest) {
   try {
     const { email, password } = await request.json() as { email: string; password: string };
@@ -18,12 +20,11 @@ export async function POST(request: NextRequest) {
 
     const [user] = await db.select().from(users).where(eq(users.email, email)).limit(1);
 
-    if (!user) {
-      return NextResponse.json({ error: 'Invalid credentials' }, { status: 401 });
-    }
+    // Always run password check to prevent timing side-channel
+    const hashToCheck = user?.passwordHash || DUMMY_HASH;
+    const valid = await verifyPassword(password, hashToCheck);
 
-    const valid = await verifyPassword(password, user.passwordHash);
-    if (!valid) {
+    if (!user || !valid) {
       return NextResponse.json({ error: 'Invalid credentials' }, { status: 401 });
     }
 
