@@ -12,4 +12,4 @@ enabled = true
 [[d1_databases]]
 binding = "DB"
 database_name = "laundry"
-database_id = "108c5690-2a03-4c68-957e-5fdfdb597ea3"
+database_id = "YOUR_DATABASE_ID"
