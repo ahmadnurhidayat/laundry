@@ -3,7 +3,6 @@
 import { useState } from 'react';
 import { OrderCard } from '@/components/dashboard/order-card';
 import { Button } from '@/components/ui/button';
-import { cn } from '@/lib/utils';
 import type { Order } from '@/types';
 
 interface OrderListProps {
