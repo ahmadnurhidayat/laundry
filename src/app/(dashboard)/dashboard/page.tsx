@@ -6,7 +6,7 @@ import { getCloudflareContext } from '@opennextjs/cloudflare';
 import { orders, customers } from '@/db/schema';
 import { createDb } from '@/lib/db';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader } from '@/components/ui/card';
+import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { formatCurrency } from '@/lib/utils';
 import { StatsOverview } from '@/features/orders/components/StatsOverview';
