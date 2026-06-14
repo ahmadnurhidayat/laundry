@@ -1,35 +1,102 @@
-import { sqliteTable, text, real } from 'drizzle-orm/sqlite-core';
+import { sqliteTable, text, real, uniqueIndex } from 'drizzle-orm/sqlite-core';
+import { relations } from 'drizzle-orm';
 
-export const customers = sqliteTable('customers', {
+// ── Tenants ──────────────────────────────────────────────
+export const tenants = sqliteTable('tenants', {
   id: text('id').primaryKey(),
-  name: text('name').notNull(),
-  phoneNumber: text('phone_number').notNull().unique(),
+  businessName: text('business_name').notNull(),
+  slug: text('slug').notNull().unique(),
+  address: text('address'),
+  phone: text('phone'),
+  status: text('status', { enum: ['ACTIVE', 'SUSPENDED'] }).notNull().default('ACTIVE'),
+  createdAt: text('created_at').notNull(),
 });
 
+// ── Users ────────────────────────────────────────────────
+export const users = sqliteTable('users', {
+  id: text('id').primaryKey(),
+  tenantId: text('tenant_id').notNull().references(() => tenants.id),
+  email: text('email').notNull(),
+  passwordHash: text('password_hash').notNull(),
+  name: text('name').notNull(),
+  role: text('role', { enum: ['OWNER', 'CASHIER'] }).notNull().default('CASHIER'),
+}, (t) => ({
+  emailIdx: uniqueIndex('users_email_idx').on(t.email),
+}));
+
+// ── Customers ────────────────────────────────────────────
+export const customers = sqliteTable('customers', {
+  id: text('id').primaryKey(),
+  tenantId: text('tenant_id').notNull().references(() => tenants.id),
+  name: text('name').notNull(),
+  phoneNumber: text('phone_number').notNull(),
+}, (t) => ({
+  tenantPhoneIdx: uniqueIndex('customers_tenant_phone_idx').on(t.tenantId, t.phoneNumber),
+}));
+
+// ── Services ─────────────────────────────────────────────
 export const services = sqliteTable('services', {
   id: text('id').primaryKey(),
+  tenantId: text('tenant_id').notNull().references(() => tenants.id),
   serviceName: text('service_name').notNull(),
-  type: text('type').notNull(),
+  type: text('type', { enum: ['KILOAN', 'SATUAN'] }).notNull(),
   pricePerUnit: real('price_per_unit').notNull(),
 });
 
+// ── Orders ───────────────────────────────────────────────
 export const orders = sqliteTable('orders', {
   id: text('id').primaryKey(),
-  invoiceNumber: text('invoice_number').notNull().unique(),
-  customerId: text('customer_id').notNull(),
+  tenantId: text('tenant_id').notNull().references(() => tenants.id),
+  invoiceNumber: text('invoice_number').notNull(),
+  customerId: text('customer_id').notNull().references(() => customers.id),
   dateIn: text('date_in').notNull(),
   dateEstimated: text('date_estimated').notNull(),
-  orderStatus: text('order_status').notNull().default('PENDING'),
-  paymentStatus: text('payment_status').notNull().default('UNPAID'),
+  orderStatus: text('order_status', { enum: ['PENDING', 'PROCESSING', 'FINISHED', 'PICKED_UP'] }).notNull().default('PENDING'),
+  paymentStatus: text('payment_status', { enum: ['UNPAID', 'PAID'] }).notNull().default('UNPAID'),
   totalAmount: real('total_amount').notNull().default(0),
   notes: text('notes'),
   trackingToken: text('tracking_token').notNull().unique(),
-});
+}, (t) => ({
+  tenantInvoiceIdx: uniqueIndex('orders_tenant_invoice_idx').on(t.tenantId, t.invoiceNumber),
+}));
 
+// ── Order Items ──────────────────────────────────────────
 export const orderItems = sqliteTable('order_items', {
   id: text('id').primaryKey(),
-  orderId: text('order_id').notNull(),
-  serviceId: text('service_id').notNull(),
+  orderId: text('order_id').notNull().references(() => orders.id),
+  serviceId: text('service_id').notNull().references(() => services.id),
   qty: real('qty').notNull(),
   subtotal: real('subtotal').notNull(),
 });
+
+// ── Relations ────────────────────────────────────────────
+export const tenantsRelations = relations(tenants, ({ many }) => ({
+  users: many(users),
+  customers: many(customers),
+  services: many(services),
+  orders: many(orders),
+}));
+
+export const usersRelations = relations(users, ({ one }) => ({
+  tenant: one(tenants, { fields: [users.tenantId], references: [tenants.id] }),
+}));
+
+export const customersRelations = relations(customers, ({ one, many }) => ({
+  tenant: one(tenants, { fields: [customers.tenantId], references: [tenants.id] }),
+  orders: many(orders),
+}));
+
+export const servicesRelations = relations(services, ({ one }) => ({
+  tenant: one(tenants, { fields: [services.tenantId], references: [tenants.id] }),
+}));
+
+export const ordersRelations = relations(orders, ({ one, many }) => ({
+  tenant: one(tenants, { fields: [orders.tenantId], references: [tenants.id] }),
+  customer: one(customers, { fields: [orders.customerId], references: [customers.id] }),
+  items: many(orderItems),
+}));
+
+export const orderItemsRelations = relations(orderItems, ({ one }) => ({
+  order: one(orders, { fields: [orderItems.orderId], references: [orders.id] }),
+  service: one(services, { fields: [orderItems.serviceId], references: [services.id] }),
+}));

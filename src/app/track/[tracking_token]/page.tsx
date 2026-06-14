@@ -1,7 +1,7 @@
 import { eq } from 'drizzle-orm';
 import { notFound } from 'next/navigation';
 import { getCloudflareContext } from '@opennextjs/cloudflare';
-import { orders, customers, orderItems, services } from '@/db/schema';
+import { orders, customers, orderItems, services, tenants } from '@/db/schema';
 import { createDb } from '@/db/index';
 import { TrackingView } from '@/components/tracking/tracking-view';
 
@@ -10,10 +10,11 @@ export default async function TrackingPage({ params }: { params: Promise<{ track
   let order: any = null;
   let customer: any = null;
   let items: any[] = [];
+  let tenantData: any = null;
 
   try {
     const { env } = getCloudflareContext();
-    const db = createDb(env as any);
+    const db = createDb(env);
 
     const orderResult = await db
       .select()
@@ -30,6 +31,13 @@ export default async function TrackingPage({ params }: { params: Promise<{ track
       .where(eq(customers.id, order.customerId))
       .limit(1);
     customer = customerResult[0];
+
+    const tenantResult = await db
+      .select()
+      .from(tenants)
+      .where(eq(tenants.id, order.tenantId))
+      .limit(1);
+    tenantData = tenantResult[0];
 
     const itemsResult = await db
       .select()
@@ -50,5 +58,12 @@ export default async function TrackingPage({ params }: { params: Promise<{ track
 
   if (!order || !customer) return notFound();
 
-  return <TrackingView order={order} customer={customer} items={items} />;
+  return (
+    <TrackingView
+      order={order}
+      customer={customer}
+      items={items}
+      tenant={tenantData ? { name: tenantData.businessName, phone: tenantData.phone } : undefined}
+    />
+  );
 }

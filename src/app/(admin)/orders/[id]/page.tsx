@@ -1,28 +1,36 @@
 import { ArrowLeft, Printer } from 'lucide-react';
 import Link from 'next/link';
-import { eq } from 'drizzle-orm';
+import { headers } from 'next/headers';
+import { eq, and } from 'drizzle-orm';
 import { notFound } from 'next/navigation';
 import { getCloudflareContext } from '@opennextjs/cloudflare';
 import { orders, customers, orderItems, services } from '@/db/schema';
 import { createDb } from '@/db/index';
 import { StatusToggle } from '@/components/orders/status-toggle';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { formatCurrency, formatDate } from '@/lib/utils';
 import { BASE_URL } from '@/lib/constants';
 
 export default async function OrderDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
+  const h = await headers();
+  const tenantId = h.get('x-tenant-id') || '';
+
   let order: any = null;
   let customer: any = null;
   let items: any[] = [];
 
   try {
     const { env } = getCloudflareContext();
-    const db = createDb(env as any);
+    const db = createDb(env);
 
-    const orderResult = await db.select().from(orders).where(eq(orders.id, id)).limit(1);
+    const orderResult = await db
+      .select()
+      .from(orders)
+      .where(and(eq(orders.id, id), eq(orders.tenantId, tenantId)))
+      .limit(1);
+
     if (!orderResult.length) return notFound();
     order = orderResult[0];
 
@@ -54,25 +62,25 @@ export default async function OrderDetailPage({ params }: { params: Promise<{ id
     <div className="p-4 md:p-8 max-w-2xl mx-auto">
       <Link href="/dashboard" className="inline-flex items-center text-sm text-gray-600 hover:text-gray-900 mb-6">
         <ArrowLeft className="h-4 w-4 mr-1" />
-        Back to Dashboard
+        Kembali ke Dashboard
       </Link>
 
       <div className="flex justify-between items-start mb-6">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Order #{order.invoiceNumber}</h1>
+          <h1 className="text-2xl font-bold text-gray-900">Pesanan #{order.invoiceNumber}</h1>
           <p className="text-gray-600">{customer?.name} - {customer?.phoneNumber}</p>
         </div>
         <Link href={`/orders/${order.id}/invoice`}>
           <Button variant="secondary">
             <Printer className="h-4 w-4 mr-2" />
-            Print Invoice
+            Cetak Struk
           </Button>
         </Link>
       </div>
 
       <Card className="mb-6">
         <CardHeader>
-          <h2 className="font-semibold">Order Status</h2>
+          <h2 className="font-semibold">Status Pesanan</h2>
         </CardHeader>
         <CardContent>
           <StatusToggle orderId={order.id} currentStatus={order.orderStatus} type="order" />
@@ -81,7 +89,7 @@ export default async function OrderDetailPage({ params }: { params: Promise<{ id
 
       <Card className="mb-6">
         <CardHeader>
-          <h2 className="font-semibold">Payment Status</h2>
+          <h2 className="font-semibold">Status Pembayaran</h2>
         </CardHeader>
         <CardContent>
           <StatusToggle orderId={order.id} currentStatus={order.paymentStatus} type="payment" />
@@ -90,21 +98,21 @@ export default async function OrderDetailPage({ params }: { params: Promise<{ id
 
       <Card className="mb-6">
         <CardHeader>
-          <h2 className="font-semibold">Order Details</h2>
+          <h2 className="font-semibold">Detail Pesanan</h2>
         </CardHeader>
         <CardContent>
           <div className="space-y-2 text-sm">
             <div className="flex justify-between">
-              <span className="text-gray-600">Date In</span>
+              <span className="text-gray-600">Tanggal Masuk</span>
               <span>{formatDate(order.dateIn)}</span>
             </div>
             <div className="flex justify-between">
-              <span className="text-gray-600">Estimated</span>
+              <span className="text-gray-600">Estimasi Selesai</span>
               <span>{formatDate(order.dateEstimated)}</span>
             </div>
             {order.notes && (
               <div className="flex justify-between">
-                <span className="text-gray-600">Notes</span>
+                <span className="text-gray-600">Catatan</span>
                 <span>{order.notes}</span>
               </div>
             )}
@@ -114,7 +122,7 @@ export default async function OrderDetailPage({ params }: { params: Promise<{ id
 
       <Card className="mb-6">
         <CardHeader>
-          <h2 className="font-semibold">Items</h2>
+          <h2 className="font-semibold">Item</h2>
         </CardHeader>
         <CardContent>
           <div className="space-y-2">
@@ -136,7 +144,7 @@ export default async function OrderDetailPage({ params }: { params: Promise<{ id
 
       <Card>
         <CardHeader>
-          <h2 className="font-semibold">Tracking Link</h2>
+          <h2 className="font-semibold">Link Tracking</h2>
         </CardHeader>
         <CardContent>
           <p className="text-sm text-gray-600 break-all">{trackingUrl}</p>

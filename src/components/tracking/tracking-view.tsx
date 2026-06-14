@@ -1,6 +1,6 @@
 'use client';
 
-import { Clock, CheckCircle, Package, Loader2, CreditCard } from 'lucide-react';
+import { Clock, CheckCircle, Package, Loader2 } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { formatCurrency, formatDate } from '@/lib/utils';
@@ -9,6 +9,10 @@ interface TrackingViewProps {
   order: any;
   customer: any;
   items: any[];
+  tenant?: {
+    name: string;
+    phone?: string | null;
+  };
 }
 
 const statusSteps = [
@@ -18,15 +22,16 @@ const statusSteps = [
   { key: 'PICKED_UP', label: 'Diambil', icon: Package },
 ];
 
-export function TrackingView({ order, customer, items }: TrackingViewProps) {
+export function TrackingView({ order, customer, items, tenant }: TrackingViewProps) {
   const currentStepIndex = statusSteps.findIndex((s) => s.key === order.orderStatus);
 
   return (
     <div className="min-h-screen bg-gray-50 p-4 md:p-8">
       <div className="max-w-lg mx-auto">
         <div className="text-center mb-8">
-          <h1 className="text-2xl font-bold text-gray-900">Daya Laundry</h1>
+          <h1 className="text-2xl font-bold text-gray-900">{tenant?.name || 'Daya Laundry'}</h1>
           <p className="text-gray-600">Lacak Pesanan Anda</p>
+          {tenant?.phone && <p className="text-sm text-gray-500">Telp: {tenant.phone}</p>}
         </div>
 
         <Card className="mb-6">
