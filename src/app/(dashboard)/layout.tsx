@@ -10,8 +10,6 @@ import {
   Users,
   Settings,
   LogOut,
-  Menu,
-  X,
   ChevronLeft,
   ChevronRight,
   Package,
