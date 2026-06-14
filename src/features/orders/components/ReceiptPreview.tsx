@@ -1,7 +1,6 @@
 'use client';
 
 import { formatCurrency, formatDateShort } from '@/lib/utils';
-import { TERMS_AND_CONDITIONS } from '@/lib/constants';
 
 interface ReceiptItem {
   serviceName: string;
