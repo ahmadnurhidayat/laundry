@@ -8,7 +8,6 @@ import { createDb } from '@/lib/db';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { formatCurrency } from '@/lib/utils';
 import { StatsOverview } from '@/features/orders/components/StatsOverview';
 import { OrderCard } from '@/features/orders/components/OrderCard';
 
