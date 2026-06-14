@@ -2,7 +2,6 @@
 
 import { useState } from 'react';
 import { OrderCard } from './OrderCard';
-import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { Search } from 'lucide-react';
 
