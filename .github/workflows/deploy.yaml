@@ -1,0 +1,97 @@
+name: Deploy to Cloudflare Workers
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  build:
+    name: Build & Test
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    env:
+      NEXT_PUBLIC_BASE_URL: ${{ secrets.NEXT_PUBLIC_BASE_URL }}
+      NEXT_PUBLIC_SHOP_NAME: ${{ secrets.NEXT_PUBLIC_SHOP_NAME }}
+      NEXT_PUBLIC_SHOP_PHONE: ${{ secrets.NEXT_PUBLIC_SHOP_PHONE }}
+      NEXT_PUBLIC_SHOP_TAGLINE: ${{ secrets.NEXT_PUBLIC_SHOP_TAGLINE }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v6
+        with:
+          run_install: false
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: 22
+          cache: 'pnpm'
+
+      - name: Cache Next.js
+        uses: actions/cache@v5
+        with:
+          path: |
+            .next/cache
+          key: ${{ runner.os }}-nextjs-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-nextjs-
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Lint
+        run: pnpm lint
+
+      - name: Build
+        run: pnpm build
+
+  deploy:
+    name: Deploy to Cloudflare
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    needs: build
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    env:
+      NEXT_PUBLIC_BASE_URL: ${{ secrets.NEXT_PUBLIC_BASE_URL }}
+      NEXT_PUBLIC_SHOP_NAME: ${{ secrets.NEXT_PUBLIC_SHOP_NAME }}
+      NEXT_PUBLIC_SHOP_PHONE: ${{ secrets.NEXT_PUBLIC_SHOP_PHONE }}
+      NEXT_PUBLIC_SHOP_TAGLINE: ${{ secrets.NEXT_PUBLIC_SHOP_TAGLINE }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v6
+        with:
+          run_install: false
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: 22
+          cache: 'pnpm'
+
+      - name: Cache Next.js
+        uses: actions/cache@v5
+        with:
+          path: |
+            .next/cache
+          key: ${{ runner.os }}-nextjs-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-nextjs-
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Build & Deploy (OpenNext)
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+        run: pnpm run deploy
