@@ -6,26 +6,24 @@ import { users } from '@/db/schema';
 import { verifyPassword, createSession, SESSION_COOKIE } from '@/lib/auth';
 
 const DUMMY_HASH = '00:0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000';
+const GENERIC_ERROR = 'Invalid credentials';
 
 export async function POST(request: NextRequest) {
   try {
-    const { email, password } = await request.json() as { email: string; password: string };
-
-    if (!email || !password) {
-      return NextResponse.json({ error: 'Email and password required' }, { status: 400 });
-    }
+    const body = await request.json() as { email?: string; password?: string };
+    const email = body.email ?? '';
+    const password = body.password ?? '';
 
     const env = getCloudflareContext().env;
     const db = createDb(env);
 
     const [user] = await db.select().from(users).where(eq(users.email, email)).limit(1);
 
-    // Always run password check to prevent timing side-channel
     const hashToCheck = user?.passwordHash || DUMMY_HASH;
     const valid = await verifyPassword(password, hashToCheck);
 
     if (!user || !valid) {
-      return NextResponse.json({ error: 'Invalid credentials' }, { status: 401 });
+      return NextResponse.json({ error: GENERIC_ERROR }, { status: 401 });
     }
 
     const token = await createSession({
