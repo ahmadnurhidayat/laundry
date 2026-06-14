@@ -8,7 +8,7 @@ function generateId(): string {
 async function seed() {
   console.log('Seeding database...');
 
-  const db = drizzle(process.env.DB!);
+  const db = drizzle(process.env.DB as any);
 
   const defaultServices = [
     { id: generateId(), serviceName: 'Cuci Kiloan', type: 'KILOAN', pricePerUnit: 8000 },
