@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { like, or, eq } from 'drizzle-orm';
 import { getCloudflareContext } from '@opennextjs/cloudflare';
 import { customers } from '@/db/schema';
-import { createDb } from '@/db/index';
+import { createDb } from '@/lib/db';
 import { getTenantContext } from '@/lib/tenant-context';
 
 export async function GET(request: NextRequest) {

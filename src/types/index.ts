@@ -1,11 +1,31 @@
+export interface Tenant {
+  id: string;
+  businessName: string;
+  slug: string;
+  address: string | null;
+  phone: string | null;
+  status: 'ACTIVE' | 'SUSPENDED';
+  createdAt: string;
+}
+
+export interface User {
+  id: string;
+  tenantId: string;
+  email: string;
+  name: string;
+  role: 'OWNER' | 'CASHIER';
+}
+
 export interface Customer {
   id: string;
+  tenantId: string;
   name: string;
   phoneNumber: string;
 }
 
 export interface Service {
   id: string;
+  tenantId: string;
   serviceName: string;
   type: 'KILOAN' | 'SATUAN';
   pricePerUnit: number;
@@ -13,6 +33,7 @@ export interface Service {
 
 export interface Order {
   id: string;
+  tenantId: string;
   invoiceNumber: string;
   customerId: string;
   dateIn: string;
@@ -33,16 +54,14 @@ export interface OrderItem {
 }
 
 export interface OrderWithItems extends Order {
-  customer: Customer;
-  items: (OrderItem & { serviceName: string; serviceType: string; pricePerUnit: number })[];
+  customerName?: string;
+  items?: OrderItemWithService[];
 }
 
-export interface CreateOrderInput {
-  customerName: string;
-  customerPhone: string;
-  items: { serviceId: string; qty: number }[];
-  notes?: string;
-  daysEstimate: number;
+export interface OrderItemWithService extends OrderItem {
+  serviceName?: string;
+  serviceType?: string;
+  pricePerUnit?: number;
 }
 
 export interface DashboardStats {

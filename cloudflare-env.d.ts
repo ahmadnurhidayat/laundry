@@ -5,6 +5,7 @@ interface __BaseEnv_CloudflareEnv {
 	DB: D1Database;
 	ASSETS: Fetcher;
 	D1_DATABASE_ID: string;
+	JWT_SECRET: string;
 	WORKER_SELF_REFERENCE: Service<typeof import("./.open-next/worker").default>;
 }
 declare namespace Cloudflare {

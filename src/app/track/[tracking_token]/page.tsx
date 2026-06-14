@@ -2,7 +2,7 @@ import { eq } from 'drizzle-orm';
 import { notFound } from 'next/navigation';
 import { getCloudflareContext } from '@opennextjs/cloudflare';
 import { orders, customers, orderItems, services, tenants } from '@/db/schema';
-import { createDb } from '@/db/index';
+import { createDb } from '@/lib/db';
 import { TrackingView } from '@/components/tracking/tracking-view';
 
 export default async function TrackingPage({ params }: { params: Promise<{ tracking_token: string }> }) {

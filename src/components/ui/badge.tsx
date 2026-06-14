@@ -1,26 +1,52 @@
+import { HTMLAttributes } from 'react';
 import { cn } from '@/lib/utils';
 
-interface BadgeProps {
-  children: React.ReactNode;
-  variant?: 'default' | 'success' | 'warning' | 'danger' | 'info';
+type BadgeVariant = 'default' | 'success' | 'warning' | 'danger' | 'info' | 'neutral';
+type BadgeSize = 'sm' | 'md';
+
+interface BadgeProps extends HTMLAttributes<HTMLSpanElement> {
+  variant?: BadgeVariant;
+  size?: BadgeSize;
+  dot?: boolean;
 }
 
-const variantStyles = {
-  default: 'bg-gray-100 text-gray-800',
-  success: 'bg-green-100 text-green-800',
-  warning: 'bg-yellow-100 text-yellow-800',
-  danger: 'bg-red-100 text-red-800',
-  info: 'bg-blue-100 text-blue-800',
+const variantStyles: Record<BadgeVariant, string> = {
+  default: 'bg-gray-100 text-gray-700',
+  success: 'bg-green-50 text-green-700 border border-green-200',
+  warning: 'bg-amber-50 text-amber-700 border border-amber-200',
+  danger: 'bg-red-50 text-red-700 border border-red-200',
+  info: 'bg-blue-50 text-blue-700 border border-blue-200',
+  neutral: 'bg-gray-50 text-gray-600 border border-gray-200',
 };
 
-export function Badge({ children, variant = 'default' }: BadgeProps) {
+const dotColors: Record<BadgeVariant, string> = {
+  default: 'bg-gray-500',
+  success: 'bg-green-500',
+  warning: 'bg-amber-500',
+  danger: 'bg-red-500',
+  info: 'bg-blue-500',
+  neutral: 'bg-gray-400',
+};
+
+const sizeStyles: Record<BadgeSize, string> = {
+  sm: 'px-2 py-0.5 text-xs',
+  md: 'px-2.5 py-1 text-sm',
+};
+
+export function Badge({ variant = 'default', size = 'sm', dot, className, children, ...props }: BadgeProps) {
   return (
     <span
       className={cn(
-        'inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium',
-        variantStyles[variant]
+        'inline-flex items-center font-medium rounded-full',
+        variantStyles[variant],
+        sizeStyles[size],
+        className
       )}
+      {...props}
     >
+      {dot && (
+        <span className={cn('w-1.5 h-1.5 rounded-full mr-1.5', dotColors[variant])} />
+      )}
       {children}
     </span>
   );
