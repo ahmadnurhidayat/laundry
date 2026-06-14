@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getCloudflareContext } from '@opennextjs/cloudflare';
 import { eq } from 'drizzle-orm';
-import { createDb } from '@/db';
+import { createDb } from '@/lib/db';
 import { tenants, users, services } from '@/db/schema';
 import { hashPassword, createSession, SESSION_COOKIE } from '@/lib/auth';
 import { DEFAULT_SERVICES } from '@/lib/defaults';
@@ -96,7 +96,7 @@ export async function POST(request: NextRequest) {
       email,
       name,
       role: 'OWNER',
-    });
+    }, env.JWT_SECRET);
 
     const response = NextResponse.json({
       user: { id: userId, name, email, role: 'OWNER' },

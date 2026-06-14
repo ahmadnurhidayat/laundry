@@ -1,6 +1,6 @@
 import { drizzle } from 'drizzle-orm/d1';
 import { tenants, services, users } from './schema';
-import { hashPassword } from '../lib/auth';
+import { hashPassword } from '@/lib/auth';
 
 function generateId(): string {
   return crypto.randomUUID();

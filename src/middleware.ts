@@ -1,22 +1,20 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { verifySession, SESSION_COOKIE } from '@/lib/auth/session';
+import { getCloudflareContext } from '@opennextjs/cloudflare';
+import { verifySession, SESSION_COOKIE } from '@/lib/auth';
 
 const PUBLIC_PATHS = ['/', '/login', '/register', '/track', '/api/auth', '/api/track', '/_next', '/icons', '/manifest.json', '/favicon.ico'];
 
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
-  // Allow public paths
   if (PUBLIC_PATHS.some(p => pathname === p || pathname.startsWith(p + '/'))) {
     return NextResponse.next();
   }
 
-  // Allow static assets
   if (pathname.startsWith('/_next/') || pathname.startsWith('/icons/') || pathname.includes('.')) {
     return NextResponse.next();
   }
 
-  // Check session for protected paths
   const sessionToken = request.cookies.get(SESSION_COOKIE)?.value;
 
   if (!sessionToken) {
@@ -26,7 +24,8 @@ export async function middleware(request: NextRequest) {
     return NextResponse.next();
   }
 
-  const session = await verifySession(sessionToken);
+  const { env } = getCloudflareContext();
+  const session = await verifySession(sessionToken, env.JWT_SECRET);
 
   if (!session) {
     if (pathname.startsWith('/dashboard') || pathname.startsWith('/api/')) {
@@ -37,7 +36,6 @@ export async function middleware(request: NextRequest) {
     return NextResponse.next();
   }
 
-  // Inject tenant context into headers for downstream use
   if (pathname.startsWith('/dashboard') || pathname.startsWith('/api/')) {
     const response = NextResponse.next();
     response.headers.set('x-tenant-id', session.tenantId);

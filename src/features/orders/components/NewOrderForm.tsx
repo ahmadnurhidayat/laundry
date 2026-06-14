@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
-import { Plus, Trash2, Loader2 } from 'lucide-react';
+import { Plus, Trash2, Minus, ShoppingBag } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Select } from '@/components/ui/select';
@@ -41,17 +41,15 @@ export function NewOrderForm() {
   }, []);
 
   const getServicePrice = useCallback(
-    (serviceId: string) => {
-      const service = services.find((s) => s.id === serviceId);
-      return service?.pricePerUnit || 0;
-    },
+    (serviceId: string) => services.find((s) => s.id === serviceId)?.pricePerUnit || 0,
     [services]
   );
 
   const updateItemQty = (index: number, qty: number) => {
+    const newQty = Math.max(0.5, qty);
     const newItems = [...items];
-    newItems[index].qty = qty;
-    newItems[index].subtotal = qty * getServicePrice(newItems[index].serviceId);
+    newItems[index].qty = newQty;
+    newItems[index].subtotal = newQty * getServicePrice(newItems[index].serviceId);
     setItems(newItems);
   };
 
@@ -62,14 +60,9 @@ export function NewOrderForm() {
     setItems(newItems);
   };
 
-  const addItem = () => {
-    setItems([...items, { serviceId: '', qty: 1, subtotal: 0 }]);
-  };
-
+  const addItem = () => setItems([...items, { serviceId: '', qty: 1, subtotal: 0 }]);
   const removeItem = (index: number) => {
-    if (items.length > 1) {
-      setItems(items.filter((_, i) => i !== index));
-    }
+    if (items.length > 1) setItems(items.filter((_, i) => i !== index));
   };
 
   const totalAmount = items.reduce((sum, item) => sum + item.subtotal, 0);
@@ -94,11 +87,11 @@ export function NewOrderForm() {
       });
 
       if (!res.ok) {
-        const data = await res.json() as any;
+        const data = await res.json() as { error?: string };
         throw new Error(data.error || 'Failed to create order');
       }
 
-      router.push('/dashboard');
+      router.push('/dashboard/orders');
       router.refresh();
     } catch (err: any) {
       setError(err.message || 'Failed to create order');
@@ -108,131 +101,138 @@ export function NewOrderForm() {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-6">
+    <form onSubmit={handleSubmit} className="space-y-6 max-w-2xl">
+      {/* Customer Info */}
       <Card>
         <CardHeader>
-          <h2 className="text-lg font-semibold">Customer Information</h2>
+          <h2 className="text-lg font-semibold">Informasi Pelanggan</h2>
         </CardHeader>
         <CardContent className="space-y-4">
           <Input
-            id="customerName"
-            label="Customer Name"
+            label="Nama Pelanggan"
             value={customerName}
             onChange={(e) => setCustomerName(e.target.value)}
-            placeholder="Enter customer name"
+            placeholder="Masukkan nama pelanggan"
             required
           />
           <Input
-            id="customerPhone"
-            label="Phone Number"
+            label="Nomor Telepon"
             value={customerPhone}
             onChange={(e) => setCustomerPhone(e.target.value)}
-            placeholder="Enter phone number"
+            placeholder="Masukkan nomor telepon"
             required
           />
         </CardContent>
       </Card>
 
+      {/* Order Items */}
       <Card>
         <CardHeader>
-          <h2 className="text-lg font-semibold">Order Items</h2>
+          <h2 className="text-lg font-semibold">Item Pesanan</h2>
         </CardHeader>
         <CardContent className="space-y-4">
           {items.map((item, index) => (
             <div key={index} className="flex gap-3 items-end">
               <div className="flex-1">
                 <Select
-                  id={`service-${index}`}
-                  label={index === 0 ? 'Service' : undefined}
+                  label={index === 0 ? 'Layanan' : undefined}
                   value={item.serviceId}
                   onChange={(e) => updateItemService(index, e.target.value)}
                   options={services.map((s) => ({
                     value: s.id,
                     label: `${s.serviceName} (${s.type === 'KILOAN' ? 'per kg' : 'per item'}) - ${formatCurrency(s.pricePerUnit)}`,
                   }))}
-                  placeholder="Select service"
+                  placeholder="Pilih layanan"
                 />
               </div>
-              <div className="w-24">
-                <Input
-                  id={`qty-${index}`}
-                  label={index === 0 ? 'Qty' : undefined}
-                  type="number"
-                  min="0.1"
-                  step="0.1"
-                  value={item.qty || ''}
-                  onChange={(e) => updateItemQty(index, parseFloat(e.target.value) || 0)}
-                  placeholder="Qty"
-                />
+
+              {/* Quantity Counter */}
+              <div className="w-28">
+                {index === 0 && <label className="block text-sm font-medium text-gray-700 mb-1.5">Qty</label>}
+                <div className="flex items-center h-10 border border-gray-300 rounded-lg">
+                  <button
+                    type="button"
+                    onClick={() => updateItemQty(index, item.qty - 0.5)}
+                    className="h-full px-2 text-gray-500 hover:bg-gray-50 transition-colors"
+                  >
+                    <Minus className="h-3.5 w-3.5" />
+                  </button>
+                  <input
+                    type="number"
+                    min="0.5"
+                    step="0.5"
+                    value={item.qty}
+                    onChange={(e) => updateItemQty(index, parseFloat(e.target.value) || 0.5)}
+                    className="h-full w-12 text-center text-sm font-medium border-x border-gray-300 focus:outline-none"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => updateItemQty(index, item.qty + 0.5)}
+                    className="h-full px-2 text-gray-500 hover:bg-gray-50 transition-colors"
+                  >
+                    <Plus className="h-3.5 w-3.5" />
+                  </button>
+                </div>
               </div>
+
               <div className="w-28 text-right">
-                {index === 0 && <label className="block text-sm font-medium text-gray-700 mb-1">Subtotal</label>}
-                <p className="py-2 text-sm font-medium">{formatCurrency(item.subtotal)}</p>
+                {index === 0 && <label className="block text-sm font-medium text-gray-700 mb-1.5">Subtotal</label>}
+                <p className="h-10 flex items-center justify-end text-sm font-medium">{formatCurrency(item.subtotal)}</p>
               </div>
+
               {items.length > 1 && (
-                <Button type="button" variant="ghost" size="sm" onClick={() => removeItem(index)}>
+                <Button type="button" variant="ghost" size="icon" onClick={() => removeItem(index)}>
                   <Trash2 className="h-4 w-4 text-red-500" />
                 </Button>
               )}
             </div>
           ))}
-          <Button type="button" variant="secondary" onClick={addItem}>
+          <Button type="button" variant="outline" onClick={addItem}>
             <Plus className="h-4 w-4 mr-2" />
-            Add Item
+            Tambah Item
           </Button>
         </CardContent>
       </Card>
 
+      {/* Order Details */}
       <Card>
         <CardHeader>
-          <h2 className="text-lg font-semibold">Order Details</h2>
+          <h2 className="text-lg font-semibold">Detail Pesanan</h2>
         </CardHeader>
         <CardContent className="space-y-4">
           <Select
-            id="daysEstimate"
-            label="Estimated Days"
+            label="Estimasi Hari"
             value={daysEstimate}
             onChange={(e) => setDaysEstimate(e.target.value)}
             options={[
-              { value: '1', label: '1 Day (Express)' },
-              { value: '2', label: '2 Days' },
-              { value: '3', label: '3 Days (Standard)' },
-              { value: '5', label: '5 Days' },
-              { value: '7', label: '7 Days' },
+              { value: '1', label: '1 Hari (Express)' },
+              { value: '2', label: '2 Hari' },
+              { value: '3', label: '3 Hari (Standar)' },
+              { value: '5', label: '5 Hari' },
+              { value: '7', label: '7 Hari' },
             ]}
           />
+          <Input label="Estimasi Selesai" value={estimatedDate} disabled />
           <Input
-            id="estimatedDate"
-            label="Estimated Completion"
-            value={estimatedDate}
-            disabled
-          />
-          <Input
-            id="notes"
-            label="Notes (Optional)"
+            label="Catatan (Opsional)"
             value={notes}
             onChange={(e) => setNotes(e.target.value)}
-            placeholder="Special instructions..."
+            placeholder="Catatan khusus..."
           />
         </CardContent>
       </Card>
 
+      {/* Total & Submit */}
       <Card>
         <CardContent>
-          <div className="flex justify-between items-center mb-4">
-            <span className="text-lg font-semibold">Total Amount</span>
+          <div className="flex items-center justify-between mb-4">
+            <span className="text-lg font-semibold">Total</span>
             <span className="text-2xl font-bold text-blue-600">{formatCurrency(totalAmount)}</span>
           </div>
           {error && <p className="text-sm text-red-600 mb-4">{error}</p>}
-          <Button type="submit" className="w-full" size="lg" disabled={loading}>
-            {loading ? (
-              <>
-                <Loader2 className="h-5 w-5 mr-2 animate-spin" />
-                Creating Order...
-              </>
-            ) : (
-              'Create Order'
-            )}
+          <Button type="submit" className="w-full" size="lg" loading={loading}>
+            <ShoppingBag className="h-5 w-5 mr-2" />
+            Buat Pesanan
           </Button>
         </CardContent>
       </Card>
