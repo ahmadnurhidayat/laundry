@@ -5,4 +5,4 @@ export function createDb(env: { DB: D1Database }) {
   return drizzle(env.DB, { schema });
 }
 
-export type DB = ReturnType<typeof createDb>;
+export type Database = ReturnType<typeof createDb>;

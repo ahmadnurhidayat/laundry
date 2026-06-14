@@ -1,13 +1,15 @@
-import { NextResponse } from 'next/server';
-import { like, or } from 'drizzle-orm';
+import { NextRequest, NextResponse } from 'next/server';
+import { like, or, eq } from 'drizzle-orm';
 import { getCloudflareContext } from '@opennextjs/cloudflare';
 import { customers } from '@/db/schema';
 import { createDb } from '@/db/index';
+import { getTenantContext } from '@/lib/tenant-context';
 
-export async function GET(request: Request) {
+export async function GET(request: NextRequest) {
   try {
-    const { env } = getCloudflareContext();
-    const db = createDb(env as any);
+    const ctx = await getTenantContext();
+    const env = getCloudflareContext().env;
+    const db = createDb(env);
 
     const { searchParams } = new URL(request.url);
     const query = searchParams.get('q');
@@ -20,6 +22,7 @@ export async function GET(request: Request) {
       .select()
       .from(customers)
       .where(
+        eq(customers.tenantId, ctx.tenantId) &&
         or(
           like(customers.name, `%${query}%`),
           like(customers.phoneNumber, `%${query}%`)

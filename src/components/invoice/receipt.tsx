@@ -1,13 +1,20 @@
-import { BASE_URL, SHOP_NAME, SHOP_PHONE, SHOP_TAGLINE, TERMS_AND_CONDITIONS } from '@/lib/constants';
-import { formatCurrency, formatDate, formatDateShort } from '@/lib/utils';
+import { TERMS_AND_CONDITIONS } from '@/lib/constants';
+import { formatCurrency, formatDateShort } from '@/lib/utils';
 import type { OrderWithItems } from '@/types';
 
 interface ReceiptProps {
   order: OrderWithItems;
+  tenant?: {
+    name: string;
+    phone?: string | null;
+    address?: string | null;
+  };
 }
 
-export function Receipt({ order }: ReceiptProps) {
-  const trackingUrl = `${BASE_URL}/track/${order.trackingToken}`;
+export function Receipt({ order, tenant }: ReceiptProps) {
+  const shopName = tenant?.name || 'Daya Laundry';
+  const shopPhone = tenant?.phone || '';
+  const shopAddress = tenant?.address || '';
 
   return (
     <div className="receipt">
@@ -37,9 +44,9 @@ export function Receipt({ order }: ReceiptProps) {
       `}</style>
 
       <div className="text-center mb-4">
-        <h1 className="text-lg font-bold">{SHOP_NAME}</h1>
-        <p className="text-xs">{SHOP_TAGLINE}</p>
-        <p className="text-xs">Telp: {SHOP_PHONE}</p>
+        <h1 className="text-lg font-bold">{shopName}</h1>
+        {shopAddress && <p className="text-xs">{shopAddress}</p>}
+        {shopPhone && <p className="text-xs">Telp: {shopPhone}</p>}
       </div>
 
       <div className="border-t border-b border-dashed border-gray-400 py-2 mb-3">
@@ -87,7 +94,7 @@ export function Receipt({ order }: ReceiptProps) {
 
       <div className="border-t border-dashed border-gray-400 pt-2 mb-3 text-center">
         <p className="text-xs font-bold">LACAK PESANAN:</p>
-        <p className="text-xs break-all">{trackingUrl}</p>
+        <p className="text-xs break-all">{`${typeof window !== 'undefined' ? window.location.origin : ''}/track/${order.trackingToken}`}</p>
       </div>
 
       <div className="border-t border-dashed border-gray-400 pt-2">

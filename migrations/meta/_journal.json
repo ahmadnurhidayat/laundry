@@ -8,6 +8,20 @@
       "when": 1781410116441,
       "tag": "0000_flaky_vision",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "5",
+      "when": 1781442884936,
+      "tag": "0001_handy_spyke",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "5",
+      "when": 1781443268418,
+      "tag": "0002_sparkling_lifeguard",
+      "breakpoints": true
     }
   ]
 }

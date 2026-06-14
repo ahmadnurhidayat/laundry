@@ -1,6 +1,25 @@
+'use client';
+
 import Link from 'next/link';
+import { useRouter, usePathname } from 'next/navigation';
+import { useState } from 'react';
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
+  const router = useRouter();
+  const pathname = usePathname();
+  const [loggingOut, setLoggingOut] = useState(false);
+
+  const handleLogout = async () => {
+    setLoggingOut(true);
+    await fetch('/api/auth/logout', { method: 'POST' });
+    router.push('/login');
+  };
+
+  const navItems = [
+    { href: '/dashboard', label: 'Dashboard' },
+    { href: '/orders/new', label: 'Pesanan Baru' },
+  ];
+
   return (
     <div className="min-h-screen bg-gray-50">
       <header className="bg-white border-b border-gray-200 sticky top-0 z-50">
@@ -12,13 +31,27 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
               </div>
               <span className="font-bold text-gray-900">Daya Laundry</span>
             </Link>
-            <nav className="flex gap-4">
-              <Link href="/dashboard" className="text-sm text-gray-600 hover:text-gray-900">
-                Dashboard
-              </Link>
-              <Link href="/orders/new" className="text-sm text-gray-600 hover:text-gray-900">
-                New Order
-              </Link>
+            <nav className="flex items-center gap-4">
+              {navItems.map((item) => (
+                <Link
+                  key={item.href}
+                  href={item.href}
+                  className={`text-sm ${
+                    pathname === item.href
+                      ? 'text-blue-600 font-medium'
+                      : 'text-gray-600 hover:text-gray-900'
+                  }`}
+                >
+                  {item.label}
+                </Link>
+              ))}
+              <button
+                onClick={handleLogout}
+                disabled={loggingOut}
+                className="text-sm text-gray-500 hover:text-red-600 ml-4"
+              >
+                {loggingOut ? 'Logout...' : 'Logout'}
+              </button>
             </nav>
           </div>
         </div>

@@ -1,13 +1,15 @@
-import { NextResponse } from 'next/server';
-import { eq } from 'drizzle-orm';
+import { NextRequest, NextResponse } from 'next/server';
+import { eq, and } from 'drizzle-orm';
 import { getCloudflareContext } from '@opennextjs/cloudflare';
 import { orders } from '@/db/schema';
 import { createDb } from '@/db/index';
+import { getTenantContext } from '@/lib/tenant-context';
 
-export async function PATCH(request: Request) {
+export async function PATCH(request: NextRequest) {
   try {
-    const { env } = getCloudflareContext();
-    const db = createDb(env as any);
+    const ctx = await getTenantContext();
+    const env = getCloudflareContext().env;
+    const db = createDb(env);
     const body = await request.json() as { orderId?: string; status?: string };
     const { orderId, status } = body;
 
@@ -15,7 +17,10 @@ export async function PATCH(request: Request) {
       return NextResponse.json({ error: 'Missing orderId or status' }, { status: 400 });
     }
 
-    await db.update(orders).set({ paymentStatus: status }).where(eq(orders.id, orderId));
+    await db
+      .update(orders)
+      .set({ paymentStatus: status as 'UNPAID' | 'PAID' })
+      .where(and(eq(orders.id, orderId), eq(orders.tenantId, ctx.tenantId)));
 
     return NextResponse.json({ success: true });
   } catch (error) {

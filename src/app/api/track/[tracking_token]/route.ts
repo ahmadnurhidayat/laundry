@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import { eq } from 'drizzle-orm';
 import { getCloudflareContext } from '@opennextjs/cloudflare';
-import { customers, services, orders, orderItems } from '@/db/schema';
+import { customers, services, orders, orderItems, tenants } from '@/db/schema';
 import { createDb } from '@/db/index';
 
 export async function GET(
@@ -10,8 +10,8 @@ export async function GET(
 ) {
   const { tracking_token } = await params;
   try {
-    const { env } = getCloudflareContext();
-    const db = createDb(env as any);
+    const env = getCloudflareContext().env;
+    const db = createDb(env);
 
     const order = await db
       .select()
@@ -37,9 +37,16 @@ export async function GET(
       .where(eq(customers.id, orderData.customerId))
       .limit(1);
 
+    const tenant = await db
+      .select()
+      .from(tenants)
+      .where(eq(tenants.id, orderData.tenantId))
+      .limit(1);
+
     return NextResponse.json({
       order: orderData,
       customer: customer[0],
+      tenant: tenant[0] || null,
       items: items.map((item) => ({
         ...item.order_items,
         serviceName: item.services?.serviceName,

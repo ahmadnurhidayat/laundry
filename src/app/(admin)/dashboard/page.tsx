@@ -1,5 +1,6 @@
 import { Plus } from 'lucide-react';
 import Link from 'next/link';
+import { headers } from 'next/headers';
 import { eq } from 'drizzle-orm';
 import { getCloudflareContext } from '@opennextjs/cloudflare';
 import { orders, customers } from '@/db/schema';
@@ -9,15 +10,28 @@ import { OrderCard } from '@/components/dashboard/order-card';
 import { Button } from '@/components/ui/button';
 
 export default async function DashboardPage() {
+  const h = await headers();
+  const tenantId = h.get('x-tenant-id') || '';
+  const userName = h.get('x-user-name') || 'User';
+
   let allOrders: any[] = [];
   let customerMap = new Map<string, string>();
 
   try {
     const { env } = getCloudflareContext();
-    const db = createDb(env as any);
-    allOrders = await db.select().from(orders);
-    const allCustomers = await db.select().from(customers);
-    customerMap = new Map(allCustomers.map((c: any) => [c.id, c.name]));
+    const db = createDb(env);
+
+    allOrders = await db
+      .select()
+      .from(orders)
+      .where(eq(orders.tenantId, tenantId));
+
+    const tenantCustomers = await db
+      .select()
+      .from(customers)
+      .where(eq(customers.tenantId, tenantId));
+
+    customerMap = new Map(tenantCustomers.map((c: any) => [c.id, c.name]));
   } catch (e) {
     console.error('Error:', e);
   }
@@ -40,12 +54,12 @@ export default async function DashboardPage() {
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8">
         <div>
           <h1 className="text-3xl font-bold text-gray-900">Dashboard</h1>
-          <p className="text-gray-600 mt-1">Welcome back to Daya Laundry</p>
+          <p className="text-gray-600 mt-1">Selamat datang, {userName}</p>
         </div>
         <Link href="/orders/new">
           <Button size="lg" className="mt-4 md:mt-0">
             <Plus className="h-5 w-5 mr-2" />
-            Create New Order
+            Pesanan Baru
           </Button>
         </Link>
       </div>
@@ -54,7 +68,7 @@ export default async function DashboardPage() {
 
       {activeOrders.length > 0 && (
         <section className="mb-8">
-          <h2 className="text-xl font-semibold text-gray-900 mb-4">Active Orders</h2>
+          <h2 className="text-xl font-semibold text-gray-900 mb-4">Pesanan Aktif</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
             {activeOrders.map((order) => (
               <OrderCard key={order.id} order={order} customerName={customerMap.get(order.customerId)} />
@@ -65,7 +79,7 @@ export default async function DashboardPage() {
 
       {pendingOrders.length > 0 && (
         <section>
-          <h2 className="text-xl font-semibold text-gray-900 mb-4">Pending Orders</h2>
+          <h2 className="text-xl font-semibold text-gray-900 mb-4">Menunggu Proses</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
             {pendingOrders.map((order) => (
               <OrderCard key={order.id} order={order} customerName={customerMap.get(order.customerId)} />
@@ -76,7 +90,7 @@ export default async function DashboardPage() {
 
       {allOrders.length === 0 && (
         <div className="text-center py-16">
-          <p className="text-gray-500 text-lg">No orders yet. Create your first order!</p>
+          <p className="text-gray-500 text-lg">Belum ada pesanan. Buat pesanan pertama Anda!</p>
         </div>
       )}
     </div>

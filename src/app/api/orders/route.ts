@@ -1,21 +1,44 @@
-import { NextResponse } from 'next/server';
-import { eq } from 'drizzle-orm';
+import { NextRequest, NextResponse } from 'next/server';
+import { eq, and } from 'drizzle-orm';
 import { getCloudflareContext } from '@opennextjs/cloudflare';
 import { customers, orders, orderItems, services } from '@/db/schema';
 import { createDb } from '@/db/index';
-import { generateId, generateTrackingToken, generateInvoiceNumber } from '@/lib/utils';
+import { getTenantContext } from '@/lib/tenant-context';
+
+function generateId(): string {
+  return crypto.randomUUID();
+}
+
+function generateTrackingToken(): string {
+  return crypto.randomUUID().replace(/-/g, '').substring(0, 16);
+}
+
+function generateInvoiceNumber(): string {
+  const now = new Date();
+  const date = now.toISOString().split('T')[0].replace(/-/g, '');
+  const rand = Math.floor(Math.random() * 10000).toString().padStart(4, '0');
+  return `INV-${date}-${rand}`;
+}
 
 export async function GET() {
   try {
-    const { env } = getCloudflareContext();
-    const db = createDb(env as any);
+    const ctx = await getTenantContext();
+    const env = getCloudflareContext().env;
+    const db = createDb(env);
 
-    const allOrders = await db.select().from(orders);
-    const allCustomers = await db.select().from(customers);
+    const tenantOrders = await db
+      .select()
+      .from(orders)
+      .where(eq(orders.tenantId, ctx.tenantId));
 
-    const customerMap = new Map(allCustomers.map((c) => [c.id, c.name]));
+    const tenantCustomers = await db
+      .select()
+      .from(customers)
+      .where(eq(customers.tenantId, ctx.tenantId));
 
-    const ordersWithNames = allOrders.map((o) => ({
+    const customerMap = new Map(tenantCustomers.map((c) => [c.id, c.name]));
+
+    const ordersWithNames = tenantOrders.map((o) => ({
       ...o,
       customerName: customerMap.get(o.customerId) || 'Unknown',
     }));
@@ -27,10 +50,11 @@ export async function GET() {
   }
 }
 
-export async function POST(request: Request) {
+export async function POST(request: NextRequest) {
   try {
-    const { env } = getCloudflareContext();
-    const db = createDb(env as any);
+    const ctx = await getTenantContext();
+    const env = getCloudflareContext().env;
+    const db = createDb(env);
     const body = await request.json() as {
       customerName?: string;
       customerPhone?: string;
@@ -44,10 +68,16 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
     }
 
-    let existingCustomer = await db
+    // Find or create customer within tenant
+    const existingCustomer = await db
       .select()
       .from(customers)
-      .where(eq(customers.phoneNumber, customerPhone))
+      .where(
+        and(
+          eq(customers.tenantId, ctx.tenantId),
+          eq(customers.phoneNumber, customerPhone)
+        )
+      )
       .limit(1);
 
     let customerId: string;
@@ -57,13 +87,19 @@ export async function POST(request: Request) {
       customerId = generateId();
       await db.insert(customers).values({
         id: customerId,
+        tenantId: ctx.tenantId,
         name: customerName,
         phoneNumber: customerPhone,
       });
     }
 
-    const allServices = await db.select().from(services);
-    const serviceMap = new Map(allServices.map((s) => [s.id, s]));
+    // Get tenant services for price calculation
+    const tenantServices = await db
+      .select()
+      .from(services)
+      .where(eq(services.tenantId, ctx.tenantId));
+
+    const serviceMap = new Map(tenantServices.map((s) => [s.id, s]));
 
     let totalAmount = 0;
     const orderItemsData = items.map((item) => {
@@ -90,6 +126,7 @@ export async function POST(request: Request) {
 
     await db.insert(orders).values({
       id: orderId,
+      tenantId: ctx.tenantId,
       invoiceNumber,
       customerId,
       dateIn,
@@ -121,10 +158,11 @@ export async function POST(request: Request) {
   }
 }
 
-export async function PATCH(request: Request) {
+export async function PATCH(request: NextRequest) {
   try {
-    const { env } = getCloudflareContext();
-    const db = createDb(env as any);
+    const ctx = await getTenantContext();
+    const env = getCloudflareContext().env;
+    const db = createDb(env);
     const body = await request.json() as { orderId?: string; status?: string };
     const { orderId, status } = body;
 
@@ -132,7 +170,10 @@ export async function PATCH(request: Request) {
       return NextResponse.json({ error: 'Missing orderId or status' }, { status: 400 });
     }
 
-    await db.update(orders).set({ orderStatus: status }).where(eq(orders.id, orderId));
+    await db
+      .update(orders)
+      .set({ orderStatus: status as 'PENDING' | 'PROCESSING' | 'FINISHED' | 'PICKED_UP' })
+      .where(and(eq(orders.id, orderId), eq(orders.tenantId, ctx.tenantId)));
 
     return NextResponse.json({ success: true });
   } catch (error) {

@@ -6,14 +6,6 @@ interface StatsMatrixProps {
   stats: DashboardStats;
 }
 
-const stats = (s: DashboardStats) => [
-  { label: 'Pending', value: s.pending, icon: Clock, color: 'text-yellow-600 bg-yellow-50' },
-  { label: 'Processing', value: s.processing, icon: Loader2, color: 'text-blue-600 bg-blue-50' },
-  { label: 'Finished', value: s.finished, icon: CheckCircle, color: 'text-green-600 bg-green-50' },
-  { label: 'Picked Up', value: s.pickedUp, icon: Package, color: 'text-purple-600 bg-purple-50' },
-  { label: 'Unpaid', value: s.unpaid, icon: CreditCard, color: 'text-red-600 bg-red-50' },
-];
-
 export function StatsMatrix({ stats: s }: StatsMatrixProps) {
   const items = [
     { label: 'Pending', value: s.pending, icon: Clock, color: 'text-yellow-600 bg-yellow-50' },
