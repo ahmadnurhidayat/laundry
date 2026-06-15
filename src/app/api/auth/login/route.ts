@@ -6,18 +6,18 @@ import { users } from '@/db/schema';
 import { verifyPassword, createSession, SESSION_COOKIE } from '@/lib/auth';
 
 const DUMMY_HASH = '00:0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000';
-const GENERIC_ERROR = 'Invalid credentials';
+const GENERIC_ERROR = 'Nomor telepon atau password salah';
 
 export async function POST(request: NextRequest) {
   try {
-    const body = await request.json() as { email?: string; password?: string };
-    const email = body.email ?? '';
+    const body = await request.json() as { phone?: string; password?: string };
+    const phone = body.phone ?? '';
     const password = body.password ?? '';
 
     const env = getCloudflareContext().env;
     const db = createDb(env);
 
-    const [user] = await db.select().from(users).where(eq(users.email, email)).limit(1);
+    const [user] = await db.select().from(users).where(eq(users.phone, phone)).limit(1);
 
     const hashToCheck = user?.passwordHash || DUMMY_HASH;
     const valid = await verifyPassword(password, hashToCheck);
@@ -29,13 +29,13 @@ export async function POST(request: NextRequest) {
     const token = await createSession({
       userId: user.id,
       tenantId: user.tenantId,
-      email: user.email,
+      phone: user.phone,
       name: user.name,
       role: user.role as 'OWNER' | 'CASHIER',
     }, env.JWT_SECRET);
 
     const response = NextResponse.json({
-      user: { id: user.id, name: user.name, email: user.email, role: user.role },
+      user: { id: user.id, name: user.name, phone: user.phone, role: user.role },
     });
 
     response.cookies.set(SESSION_COOKIE, token, {

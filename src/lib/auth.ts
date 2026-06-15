@@ -9,7 +9,7 @@ export const SESSION_COOKIE = 'session_token';
 export interface SessionPayload {
   userId: string;
   tenantId: string;
-  email: string;
+  phone: string;
   name: string;
   role: 'OWNER' | 'CASHIER';
 }
@@ -104,7 +104,7 @@ export async function verifySession(token: string, secret: string): Promise<Sess
     return {
       userId: claims.userId,
       tenantId: claims.tenantId,
-      email: claims.email,
+      phone: claims.phone,
       name: claims.name,
       role: claims.role,
     };

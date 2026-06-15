@@ -16,12 +16,12 @@ export const tenants = sqliteTable('tenants', {
 export const users = sqliteTable('users', {
   id: text('id').primaryKey(),
   tenantId: text('tenant_id').notNull().references(() => tenants.id),
-  email: text('email').notNull(),
+  phone: text('phone').notNull(),
   passwordHash: text('password_hash').notNull(),
   name: text('name').notNull(),
   role: text('role', { enum: ['OWNER', 'CASHIER'] }).notNull().default('CASHIER'),
 }, (t) => ({
-  emailIdx: uniqueIndex('users_email_idx').on(t.email),
+  phoneIdx: uniqueIndex('users_phone_idx').on(t.phone),
 }));
 
 // ── Customers ────────────────────────────────────────────

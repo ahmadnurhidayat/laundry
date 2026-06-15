@@ -28,7 +28,7 @@ async function seed() {
   await db.insert(users).values({
     id: generateId(),
     tenantId,
-    email: 'admin@laundry.com',
+    phone: '08123456789',
     passwordHash,
     name: 'Admin Laundry',
     role: 'OWNER',
@@ -48,7 +48,7 @@ async function seed() {
   }
 
   console.log('Seed completed!');
-  console.log('Demo login: admin@laundry.com / password123');
+  console.log('Demo login: 08123456789 / password123');
 }
 
 seed().catch(console.error);
