@@ -62,9 +62,9 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
           {!collapsed && (
             <Link href="/dashboard" className="flex items-center gap-2.5">
               <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center shrink-0">
-                <span className="text-white font-bold text-sm">DL</span>
+                <span className="text-white font-bold text-sm">L</span>
               </div>
-              <span className="font-bold text-gray-900 text-sm">Daya Laundry</span>
+              <span className="font-bold text-gray-900 text-sm">Laundry</span>
             </Link>
           )}
           {collapsed && (
@@ -131,9 +131,9 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         <header className="sticky top-0 z-30 bg-white border-b border-gray-200 h-14 flex items-center justify-between px-4 lg:hidden">
           <Link href="/dashboard" className="flex items-center gap-2">
             <div className="w-7 h-7 bg-blue-600 rounded-lg flex items-center justify-center">
-              <span className="text-white font-bold text-xs">DL</span>
+                <span className="text-white font-bold text-xs">L</span>
             </div>
-            <span className="font-bold text-gray-900 text-sm">Daya Laundry</span>
+            <span className="font-bold text-gray-900 text-sm">Laundry</span>
           </Link>
           <span className="text-xs text-gray-500">POS</span>
         </header>

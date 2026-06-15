@@ -1,5 +1,5 @@
 export const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL || 'https://laundry.beyondyou.my.id';
-export const SHOP_NAME = process.env.NEXT_PUBLIC_SHOP_NAME || 'Daya Laundry';
+export const SHOP_NAME = process.env.NEXT_PUBLIC_SHOP_NAME || 'Laundry';
 export const SHOP_PHONE = process.env.NEXT_PUBLIC_SHOP_PHONE || '08123456789';
 export const SHOP_TAGLINE = process.env.NEXT_PUBLIC_SHOP_TAGLINE || 'Laundry Bersih & Wangi';
 

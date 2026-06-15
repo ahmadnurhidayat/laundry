@@ -88,9 +88,9 @@ export default function LandingPage() {
         <div className="max-w-6xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
           <Link href="/" className="flex items-center gap-2">
             <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
-              <span className="text-white font-bold text-sm">DL</span>
+              <span className="text-white font-bold text-sm">L</span>
             </div>
-            <span className="font-bold text-gray-900">Daya Laundry</span>
+            <span className="font-bold text-gray-900">Laundry</span>
           </Link>
           <div className="flex items-center gap-3">
             <Link href="/login" className="text-sm font-medium text-gray-600 hover:text-gray-900 px-3 py-2">
@@ -243,7 +243,7 @@ export default function LandingPage() {
       {/* Footer */}
       <footer className="border-t border-gray-100 py-8">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 text-center text-sm text-gray-500">
-          &copy; 2026 Daya Laundry SaaS. All rights reserved.
+          &copy; 2026 Laundry SaaS. All rights reserved.
         </div>
       </footer>
     </div>
