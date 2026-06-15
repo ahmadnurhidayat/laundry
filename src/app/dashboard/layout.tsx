@@ -45,7 +45,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
 
   const isActive = (href: string) => {
     if (href === '/dashboard') return pathname === '/dashboard';
-    return pathname.startsWith(href);
+    return pathname === href || pathname.startsWith(href + '/');
   };
 
   return (
