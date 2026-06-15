@@ -15,12 +15,10 @@ export default function RegisterPage() {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
-  // Step 1: Business info
   const [businessName, setBusinessName] = useState('');
   const [phone, setPhone] = useState('');
   const [address, setAddress] = useState('');
 
-  // Step 2: Account info
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -74,28 +72,28 @@ export default function RegisterPage() {
 
   return (
     <div className="w-full max-w-md">
-      <Card>
+      <Card variant="bordered">
         <CardContent className="p-8">
           <div className="text-center mb-8">
             <Link href="/" className="inline-flex items-center gap-2 mb-6">
-              <div className="w-10 h-10 bg-blue-600 rounded-xl flex items-center justify-center">
+              <div className="w-10 h-10 bg-primary rounded-md flex items-center justify-center">
                 <span className="text-white font-bold">L</span>
               </div>
             </Link>
-            <h1 className="text-2xl font-bold text-gray-900">Daftar Akun Baru</h1>
-            <p className="text-gray-500 mt-1">
+            <h1 className="text-2xl font-display font-medium text-ink">Daftar Akun Baru</h1>
+            <p className="text-body-mid mt-1">
               {step === 1 ? 'Informasi usaha laundry' : 'Buat akun login Anda'}
             </p>
           </div>
 
           {/* Progress */}
           <div className="flex items-center gap-2 mb-8">
-            <div className={`h-1.5 flex-1 rounded-full ${step >= 1 ? 'bg-blue-600' : 'bg-gray-200'}`} />
-            <div className={`h-1.5 flex-1 rounded-full ${step >= 2 ? 'bg-blue-600' : 'bg-gray-200'}`} />
+            <div className={`h-1.5 flex-1 rounded-full transition-colors ${step >= 1 ? 'bg-primary' : 'bg-muted'}`} />
+            <div className={`h-1.5 flex-1 rounded-full transition-colors ${step >= 2 ? 'bg-primary' : 'bg-muted'}`} />
           </div>
 
           {error && (
-            <div className="bg-red-50 text-red-600 text-sm p-3 rounded-lg mb-4">{error}</div>
+            <div className="bg-red-50 text-red-600 text-sm p-3 rounded-sm mb-4">{error}</div>
           )}
 
           {step === 1 ? (
@@ -150,7 +148,7 @@ export default function RegisterPage() {
                 minLength={8}
               />
               <div className="flex gap-3">
-                <Button type="button" variant="outline" className="flex-1" onClick={() => setStep(1)}>
+                <Button type="button" variant="tertiary" className="flex-1" onClick={() => setStep(1)}>
                   Kembali
                 </Button>
                 <Button type="submit" className="flex-1" loading={loading}>
@@ -160,9 +158,9 @@ export default function RegisterPage() {
             </form>
           )}
 
-          <p className="text-center text-sm text-gray-500 mt-6">
+          <p className="text-center text-sm text-body-mid mt-6">
             Sudah punya akun?{' '}
-            <Link href="/login" className="text-blue-600 hover:text-blue-700 font-medium">
+            <Link href="/login" className="text-primary hover:text-primary-hover font-medium">
               Login
             </Link>
           </p>

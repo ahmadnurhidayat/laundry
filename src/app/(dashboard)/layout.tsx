@@ -49,27 +49,27 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-canvas-soft">
       {/* Desktop Sidebar */}
       <aside
         className={cn(
-          'fixed top-0 left-0 z-40 h-screen bg-white border-r border-gray-200 transition-all duration-300 hidden lg:flex lg:flex-col',
+          'fixed top-0 left-0 z-40 h-screen bg-canvas border-r border-muted transition-all duration-300 hidden lg:flex lg:flex-col',
           collapsed ? 'w-[68px]' : 'w-60'
         )}
       >
         {/* Logo */}
-        <div className={cn('flex items-center h-16 border-b border-gray-100', collapsed ? 'justify-center px-2' : 'px-5')}>
+        <div className={cn('flex items-center h-16 border-b border-muted', collapsed ? 'justify-center px-2' : 'px-5')}>
           {!collapsed && (
             <Link href="/dashboard" className="flex items-center gap-2.5">
-              <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center shrink-0">
+              <div className="w-8 h-8 bg-primary rounded-md flex items-center justify-center shrink-0">
                 <span className="text-white font-bold text-sm">L</span>
               </div>
-              <span className="font-bold text-gray-900 text-sm">Laundry</span>
+              <span className="font-display font-medium text-ink text-sm">Laundry</span>
             </Link>
           )}
           {collapsed && (
-            <Link href="/dashboard" className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
-              <span className="text-white font-bold text-sm">DL</span>
+            <Link href="/dashboard" className="w-8 h-8 bg-primary rounded-md flex items-center justify-center">
+              <span className="text-white font-bold text-sm">L</span>
             </Link>
           )}
         </div>
@@ -84,15 +84,15 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                 key={item.href}
                 href={item.href}
                 className={cn(
-                  'flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all duration-150',
+                  'flex items-center gap-3 px-3 py-2.5 rounded-md text-sm font-medium transition-all duration-150',
                   active
-                    ? 'bg-blue-50 text-blue-700'
-                    : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900',
+                    ? 'bg-primary/10 text-primary'
+                    : 'text-body hover:bg-canvas-soft hover:text-ink',
                   collapsed && 'justify-center px-2'
                 )}
                 title={collapsed ? item.label : undefined}
               >
-                <Icon className={cn('h-5 w-5 shrink-0', active ? 'text-blue-600' : 'text-gray-400')} />
+                <Icon className={cn('h-5 w-5 shrink-0', active ? 'text-primary' : 'text-body-mid')} />
                 {!collapsed && <span>{item.label}</span>}
               </Link>
             );
@@ -100,11 +100,11 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         </nav>
 
         {/* Collapse Toggle + Logout */}
-        <div className="border-t border-gray-100 p-3 space-y-1">
+        <div className="border-t border-muted p-3 space-y-1">
           <button
             onClick={() => setCollapsed(!collapsed)}
             className={cn(
-              'flex items-center gap-3 w-full px-3 py-2.5 rounded-lg text-sm font-medium text-gray-500 hover:bg-gray-50 transition-colors',
+              'flex items-center gap-3 w-full px-3 py-2.5 rounded-md text-sm font-medium text-body-mid hover:bg-canvas-soft transition-colors',
               collapsed && 'justify-center px-2'
             )}
           >
@@ -115,7 +115,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
             onClick={handleLogout}
             disabled={loggingOut}
             className={cn(
-              'flex items-center gap-3 w-full px-3 py-2.5 rounded-lg text-sm font-medium text-red-600 hover:bg-red-50 transition-colors',
+              'flex items-center gap-3 w-full px-3 py-2.5 rounded-md text-sm font-medium text-red-600 hover:bg-red-50 transition-colors',
               collapsed && 'justify-center px-2'
             )}
           >
@@ -128,14 +128,14 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
       {/* Main Content */}
       <div className={cn('transition-all duration-300', collapsed ? 'lg:ml-[68px]' : 'lg:ml-60')}>
         {/* Top bar (mobile) */}
-        <header className="sticky top-0 z-30 bg-white border-b border-gray-200 h-14 flex items-center justify-between px-4 lg:hidden">
+        <header className="sticky top-0 z-30 bg-canvas border-b border-muted h-14 flex items-center justify-between px-4 lg:hidden">
           <Link href="/dashboard" className="flex items-center gap-2">
-            <div className="w-7 h-7 bg-blue-600 rounded-lg flex items-center justify-center">
-                <span className="text-white font-bold text-xs">L</span>
+            <div className="w-7 h-7 bg-primary rounded-md flex items-center justify-center">
+              <span className="text-white font-bold text-xs">L</span>
             </div>
-            <span className="font-bold text-gray-900 text-sm">Laundry</span>
+            <span className="font-display font-medium text-ink text-sm">Laundry</span>
           </Link>
-          <span className="text-xs text-gray-500">POS</span>
+          <span className="text-xs text-body-mid">POS</span>
         </header>
 
         {/* Page content */}
@@ -143,7 +143,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
       </div>
 
       {/* Mobile Bottom Navigation */}
-      <nav className="fixed bottom-0 left-0 right-0 z-50 bg-white border-t border-gray-200 lg:hidden safe-area-bottom">
+      <nav className="fixed bottom-0 left-0 right-0 z-50 bg-canvas border-t border-muted lg:hidden safe-area-bottom">
         <div className="grid grid-cols-4 h-16">
           {mobileNavItems.map((item) => {
             const Icon = item.icon;
@@ -154,10 +154,10 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                 href={item.href}
                 className={cn(
                   'flex flex-col items-center justify-center gap-1 text-xs font-medium transition-colors',
-                  active ? 'text-blue-600' : 'text-gray-500'
+                  active ? 'text-primary' : 'text-body-mid'
                 )}
               >
-                <Icon className={cn('h-5 w-5', active && 'text-blue-600')} />
+                <Icon className={cn('h-5 w-5', active && 'text-primary')} />
                 <span>{item.label}</span>
               </Link>
             );
