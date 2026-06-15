@@ -43,21 +43,21 @@ export default function LoginPage() {
 
   return (
     <div className="w-full max-w-md">
-      <Card>
+      <Card variant="bordered">
         <CardContent className="p-8">
           <div className="text-center mb-8">
             <Link href="/" className="inline-flex items-center gap-2 mb-6">
-              <div className="w-10 h-10 bg-blue-600 rounded-xl flex items-center justify-center">
+              <div className="w-10 h-10 bg-primary rounded-md flex items-center justify-center">
                 <span className="text-white font-bold">L</span>
               </div>
             </Link>
-            <h1 className="text-2xl font-bold text-gray-900">Login</h1>
-            <p className="text-gray-500 mt-1">Masuk ke dashboard laundry Anda</p>
+            <h1 className="text-2xl font-display font-medium text-ink">Login</h1>
+            <p className="text-body-mid mt-1">Masuk ke dashboard laundry Anda</p>
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-4">
             {error && (
-              <div className="bg-red-50 text-red-600 text-sm p-3 rounded-lg">{error}</div>
+              <div className="bg-red-50 text-red-600 text-sm p-3 rounded-sm">{error}</div>
             )}
 
             <Input
@@ -83,9 +83,9 @@ export default function LoginPage() {
             </Button>
           </form>
 
-          <p className="text-center text-sm text-gray-500 mt-6">
+          <p className="text-center text-sm text-body-mid mt-6">
             Belum punya akun?{' '}
-            <Link href="/register" className="text-blue-600 hover:text-blue-700 font-medium">
+            <Link href="/register" className="text-primary hover:text-primary-hover font-medium">
               Daftar gratis
             </Link>
           </p>

@@ -187,7 +187,7 @@ export function NewOrderForm() {
               )}
             </div>
           ))}
-          <Button type="button" variant="outline" onClick={addItem}>
+          <Button type="button" variant="tertiary" onClick={addItem}>
             <Plus className="h-4 w-4 mr-2" />
             Tambah Item
           </Button>
