@@ -1,11 +1,43 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getCloudflareContext } from '@opennextjs/cloudflare';
 import { verifySession, SESSION_COOKIE } from '@/lib/auth';
 
 const PUBLIC_PATHS = ['/', '/login', '/register', '/track', '/api/auth', '/api/track', '/_next', '/icons', '/manifest.json', '/favicon.ico'];
 
+const rateLimitMap = new Map<string, { count: number; resetTime: number }>();
+
+function checkRateLimit(ip: string, maxAttempts: number = 10, windowMs: number = 15 * 60 * 1000): boolean {
+  const now = Date.now();
+  const entry = rateLimitMap.get(ip);
+
+  if (entry && now < entry.resetTime) {
+    if (entry.count >= maxAttempts) return false;
+    entry.count++;
+  } else {
+    rateLimitMap.set(ip, { count: 1, resetTime: now + windowMs });
+  }
+
+  if (rateLimitMap.size > 10000) {
+    const cutoff = now - windowMs;
+    for (const [key, val] of rateLimitMap) {
+      if (val.resetTime < cutoff) rateLimitMap.delete(key);
+    }
+  }
+
+  return true;
+}
+
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
+
+  if (pathname === '/api/auth/login' || pathname === '/api/auth/register') {
+    const ip = request.headers.get('x-forwarded-for')?.split(',')[0]?.trim()
+      || request.headers.get('cf-connecting-ip')
+      || 'unknown';
+
+    if (!checkRateLimit(ip)) {
+      return NextResponse.json({ error: 'Terlalu banyak percobaan. Coba lagi nanti.' }, { status: 429 });
+    }
+  }
 
   if (PUBLIC_PATHS.some(p => pathname === p || pathname.startsWith(p + '/'))) {
     return NextResponse.next();
@@ -24,8 +56,14 @@ export async function middleware(request: NextRequest) {
     return NextResponse.next();
   }
 
-  const { env } = getCloudflareContext();
-  const session = await verifySession(sessionToken, env.JWT_SECRET);
+  let session;
+  try {
+    const { getCloudflareContext } = await import('@opennextjs/cloudflare');
+    const { env } = getCloudflareContext();
+    session = await verifySession(sessionToken, env.JWT_SECRET);
+  } catch {
+    session = null;
+  }
 
   if (!session) {
     if (pathname.startsWith('/dashboard') || pathname.startsWith('/api/')) {

@@ -8,11 +8,28 @@ import { verifyPassword, createSession, SESSION_COOKIE } from '@/lib/auth';
 const DUMMY_HASH = '00:0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000';
 const GENERIC_ERROR = 'Nomor telepon atau password salah';
 
+function validatePhone(phone: string): boolean {
+  return typeof phone === 'string' && /^[0-9]{10,15}$/.test(phone);
+}
+
+function validatePassword(password: string): boolean {
+  return typeof password === 'string' && password.length >= 8 && password.length <= 128;
+}
+
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json() as { phone?: string; password?: string };
-    const phone = body.phone ?? '';
-    const password = body.password ?? '';
+
+    if (typeof body !== 'object' || body === null) {
+      return NextResponse.json({ error: GENERIC_ERROR }, { status: 400 });
+    }
+
+    const phone = typeof body.phone === 'string' ? body.phone : '';
+    const password = typeof body.password === 'string' ? body.password : '';
+
+    if (!validatePhone(phone) || !validatePassword(password)) {
+      return NextResponse.json({ error: GENERIC_ERROR }, { status: 400 });
+    }
 
     const env = getCloudflareContext().env;
     const db = createDb(env);
@@ -43,12 +60,11 @@ export async function POST(request: NextRequest) {
       secure: true,
       sameSite: 'lax',
       path: '/',
-      maxAge: 7 * 24 * 60 * 60,
+      maxAge: 24 * 60 * 60,
     });
 
     return response;
-  } catch (error) {
-    console.error('Login error:', error);
-    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+  } catch {
+    return NextResponse.json({ error: GENERIC_ERROR }, { status: 500 });
   }
 }

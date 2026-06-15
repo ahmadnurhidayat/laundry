@@ -10,11 +10,22 @@ export async function PATCH(request: NextRequest) {
     const ctx = await getTenantContext();
     const env = getCloudflareContext().env;
     const db = createDb(env);
-    const body = await request.json() as { orderId?: string; status?: string };
-    const { orderId, status } = body;
+    const body = await request.json() as Record<string, unknown>;
+
+    if (typeof body !== 'object' || body === null) {
+      return NextResponse.json({ error: 'Data tidak valid' }, { status: 400 });
+    }
+
+    const orderId = typeof body.orderId === 'string' ? body.orderId : '';
+    const status = typeof body.status === 'string' ? body.status : '';
 
     if (!orderId || !status) {
-      return NextResponse.json({ error: 'Missing orderId or status' }, { status: 400 });
+      return NextResponse.json({ error: 'Data tidak lengkap' }, { status: 400 });
+    }
+
+    const validStatuses = ['UNPAID', 'PAID'];
+    if (!validStatuses.includes(status)) {
+      return NextResponse.json({ error: 'Status tidak valid' }, { status: 400 });
     }
 
     await db
@@ -23,8 +34,7 @@ export async function PATCH(request: NextRequest) {
       .where(and(eq(orders.id, orderId), eq(orders.tenantId, ctx.tenantId)));
 
     return NextResponse.json({ success: true });
-  } catch (error) {
-    console.error('Error updating payment:', error);
-    return NextResponse.json({ error: 'Failed to update payment' }, { status: 500 });
+  } catch {
+    return NextResponse.json({ error: 'Gagal memperbarui pembayaran' }, { status: 500 });
   }
 }

@@ -2,7 +2,7 @@ const ALGORITHM = 'PBKDF2';
 const ITERATIONS = 100000;
 const KEY_LENGTH = 64;
 const DIGEST = 'SHA-256';
-const EXPIRY = 7 * 24 * 60 * 60;
+const EXPIRY = 24 * 60 * 60;
 
 export const SESSION_COOKIE = 'session_token';
 
@@ -13,8 +13,6 @@ export interface SessionPayload {
   name: string;
   role: 'OWNER' | 'CASHIER';
 }
-
-// ── Password Hashing ────────────────────────────────────
 
 export async function hashPassword(password: string): Promise<string> {
   const saltBuf = new ArrayBuffer(16);
@@ -51,8 +49,6 @@ export async function verifyPassword(password: string, stored: string): Promise<
 
   return bufToHex(new Uint8Array(derivedBits)) === hashHex;
 }
-
-// ── JWT Session ─────────────────────────────────────────
 
 export async function createSession(payload: SessionPayload, secret: string): Promise<string> {
   const header = { alg: 'HS256', typ: 'JWT' };
@@ -112,8 +108,6 @@ export async function verifySession(token: string, secret: string): Promise<Sess
     return null;
   }
 }
-
-// ── Helpers ─────────────────────────────────────────────
 
 function bufToHex(buf: Uint8Array): string {
   return Array.from(buf).map(b => b.toString(16).padStart(2, '0')).join('');
