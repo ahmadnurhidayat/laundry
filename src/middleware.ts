@@ -42,7 +42,7 @@ export async function middleware(request: NextRequest) {
     response.headers.set('x-user-id', session.userId);
     response.headers.set('x-user-role', session.role);
     response.headers.set('x-user-name', session.name);
-    response.headers.set('x-user-email', session.email);
+    response.headers.set('x-user-phone', session.phone);
     return response;
   }
 

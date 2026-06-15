@@ -22,29 +22,28 @@ export async function POST(request: NextRequest) {
   try {
     const body = await request.json() as {
       businessName: string;
-      email: string;
+      phone: string;
       password: string;
       name: string;
-      phone?: string;
       address?: string;
     };
-    const { businessName, email, password, name, phone, address } = body;
+    const { businessName, phone, password, name, address } = body;
 
-    if (!businessName || !email || !password || !name) {
-      return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
+    if (!businessName || !phone || !password || !name) {
+      return NextResponse.json({ error: 'Semua field wajib diisi' }, { status: 400 });
     }
 
     if (password.length < 8) {
-      return NextResponse.json({ error: 'Password must be at least 8 characters' }, { status: 400 });
+      return NextResponse.json({ error: 'Password minimal 8 karakter' }, { status: 400 });
     }
 
     const env = getCloudflareContext().env;
     const db = createDb(env);
 
-    // Check if email already exists
-    const [existing] = await db.select().from(users).where(eq(users.email, email)).limit(1);
+    // Check if phone already exists
+    const [existing] = await db.select().from(users).where(eq(users.phone, phone)).limit(1);
     if (existing) {
-      return NextResponse.json({ error: 'Email already registered' }, { status: 409 });
+      return NextResponse.json({ error: 'Nomor telepon sudah terdaftar' }, { status: 409 });
     }
 
     // Create tenant
@@ -62,7 +61,7 @@ export async function POST(request: NextRequest) {
       businessName,
       slug,
       address: address || null,
-      phone: phone || null,
+      phone,
       status: 'ACTIVE',
       createdAt: new Date().toISOString(),
     });
@@ -74,7 +73,7 @@ export async function POST(request: NextRequest) {
     await db.insert(users).values({
       id: userId,
       tenantId,
-      email,
+      phone,
       passwordHash,
       name,
       role: 'OWNER',
@@ -93,13 +92,13 @@ export async function POST(request: NextRequest) {
     const token = await createSession({
       userId,
       tenantId,
-      email,
+      phone,
       name,
       role: 'OWNER',
     }, env.JWT_SECRET);
 
     const response = NextResponse.json({
-      user: { id: userId, name, email, role: 'OWNER' },
+      user: { id: userId, name, phone, role: 'OWNER' },
       tenant: { id: tenantId, businessName, slug },
     }, { status: 201 });
 

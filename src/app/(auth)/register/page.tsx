@@ -16,11 +16,10 @@ export default function RegisterPage() {
   const [loading, setLoading] = useState(false);
 
   const [businessName, setBusinessName] = useState('');
-  const [phone, setPhone] = useState('');
   const [address, setAddress] = useState('');
 
   const [name, setName] = useState('');
-  const [email, setEmail] = useState('');
+  const [phone, setPhone] = useState('');
   const [password, setPassword] = useState('');
 
   const handleStep1 = (e: React.FormEvent) => {
@@ -37,7 +36,7 @@ export default function RegisterPage() {
     e.preventDefault();
     setError('');
 
-    if (!name.trim() || !email.trim() || !password) {
+    if (!name.trim() || !phone.trim() || !password) {
       setError('Semua field wajib diisi');
       return;
     }
@@ -52,7 +51,7 @@ export default function RegisterPage() {
       const res = await fetch('/api/auth/register', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ businessName, phone, address, name, email, password }),
+        body: JSON.stringify({ businessName, phone, address, name, password }),
       });
 
       const data = await res.json() as { error?: string };
@@ -106,12 +105,6 @@ export default function RegisterPage() {
                 required
               />
               <Input
-                label="Nomor Telepon"
-                value={phone}
-                onChange={(e) => setPhone(e.target.value)}
-                placeholder="0812xxxx"
-              />
-              <Input
                 label="Alamat"
                 value={address}
                 onChange={(e) => setAddress(e.target.value)}
@@ -131,11 +124,11 @@ export default function RegisterPage() {
                 required
               />
               <Input
-                label="Email *"
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder="you@example.com"
+                label="Nomor Telepon *"
+                type="tel"
+                value={phone}
+                onChange={(e) => setPhone(e.target.value)}
+                placeholder="08123456789"
                 required
               />
               <Input
