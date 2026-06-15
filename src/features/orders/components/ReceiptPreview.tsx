@@ -31,7 +31,7 @@ interface ReceiptPreviewProps {
 }
 
 export function ReceiptPreview({ order, customer, items, tenant }: ReceiptPreviewProps) {
-  const shopName = tenant?.name || 'Daya Laundry';
+  const shopName = tenant?.name || 'Laundry';
   const shopPhone = tenant?.phone || '';
 
   return (

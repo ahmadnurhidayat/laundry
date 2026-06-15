@@ -2,13 +2,13 @@ import type { Metadata, Viewport } from 'next';
 import './globals.css';
 
 export const metadata: Metadata = {
-  title: 'Daya Laundry - Laundry Management System',
+  title: 'Laundry - Laundry Management System',
   description: 'Professional laundry service management system',
   manifest: '/manifest.json',
   appleWebApp: {
     capable: true,
     statusBarStyle: 'default',
-    title: 'Daya Laundry',
+    title: 'Laundry',
   },
 };
 
