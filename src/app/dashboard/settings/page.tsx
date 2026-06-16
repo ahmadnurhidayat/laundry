@@ -4,7 +4,7 @@ import { getCloudflareContext } from '@opennextjs/cloudflare';
 import { tenants } from '@/db/schema';
 import { createDb } from '@/lib/db';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
-import { Building2, Phone, MapPin, CreditCard } from 'lucide-react';
+import { Building2, Phone } from 'lucide-react';
 
 export default async function SettingsPage() {
   const h = await headers();

@@ -18,14 +18,15 @@ function validatePassword(password: string): boolean {
 
 export async function POST(request: NextRequest) {
   try {
-    const body = await request.json() as { phone?: string; password?: string };
+    const body: unknown = await request.json();
 
     if (typeof body !== 'object' || body === null) {
       return NextResponse.json({ error: GENERIC_ERROR }, { status: 400 });
     }
 
-    const phone = typeof body.phone === 'string' ? body.phone : '';
-    const password = typeof body.password === 'string' ? body.password : '';
+    const data = body as Record<string, unknown>;
+    const phone = typeof data.phone === 'string' ? data.phone : '';
+    const password = typeof data.password === 'string' ? data.password : '';
 
     if (!validatePhone(phone) || !validatePassword(password)) {
       return NextResponse.json({ error: GENERIC_ERROR }, { status: 400 });
@@ -43,12 +44,13 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: GENERIC_ERROR }, { status: 401 });
     }
 
+    const role = user.role === 'OWNER' || user.role === 'CASHIER' ? user.role : 'CASHIER';
     const token = await createSession({
       userId: user.id,
       tenantId: user.tenantId,
       phone: user.phone,
       name: user.name,
-      role: user.role as 'OWNER' | 'CASHIER',
+      role,
     }, env.JWT_SECRET);
 
     const response = NextResponse.json({

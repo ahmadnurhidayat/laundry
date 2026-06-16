@@ -1,10 +1,10 @@
 import { headers } from 'next/headers';
 import { eq, desc } from 'drizzle-orm';
 import { getCloudflareContext } from '@opennextjs/cloudflare';
-import { customers, orders } from '@/db/schema';
+import { customers } from '@/db/schema';
 import { createDb } from '@/lib/db';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
-import { Users, Phone, ShoppingBag } from 'lucide-react';
+import { Users, Phone } from 'lucide-react';
 
 export default async function CustomersPage() {
   const h = await headers();

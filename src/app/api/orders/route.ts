@@ -22,10 +22,12 @@ function generateInvoiceNumber(): string {
 
 function sanitize(input: unknown, maxLength: number = 200): string {
   if (typeof input !== 'string') return '';
-  return input
-    .replace(/<[^>]*>/g, '')
-    .trim()
-    .substring(0, maxLength);
+  let s = '';
+  for (let i = 0; i < input.length; i++) {
+    const c = input[i];
+    if (c !== '<' && c !== '>') s += c;
+  }
+  return s.trim().substring(0, maxLength);
 }
 
 export async function GET() {
