@@ -2,7 +2,7 @@ import { ButtonHTMLAttributes, forwardRef } from 'react';
 import { Loader2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
-type Variant = 'primary' | 'secondary' | 'ghost' | 'danger' | 'outline';
+type Variant = 'primary' | 'secondary' | 'tertiary' | 'ghost' | 'danger';
 type Size = 'sm' | 'md' | 'lg' | 'icon';
 
 interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
@@ -12,18 +12,18 @@ interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
 }
 
 const variants: Record<Variant, string> = {
-  primary: 'bg-blue-600 text-white hover:bg-blue-700 active:bg-blue-800 shadow-sm',
-  secondary: 'bg-white text-gray-700 border border-gray-300 hover:bg-gray-50 active:bg-gray-100 shadow-sm',
-  ghost: 'text-gray-600 hover:bg-gray-100 active:bg-gray-200',
+  primary: 'bg-primary text-white hover:bg-primary-hover active:bg-primary-active shadow-sm',
+  secondary: 'bg-ink text-white hover:bg-ink-soft active:bg-ink-mid shadow-sm',
+  tertiary: 'bg-canvas text-ink border border-ink hover:bg-canvas-soft active:bg-canvas-soft',
+  ghost: 'text-ink hover:bg-canvas-soft active:bg-canvas-soft',
   danger: 'bg-red-600 text-white hover:bg-red-700 active:bg-red-800 shadow-sm',
-  outline: 'border border-gray-300 text-gray-700 hover:bg-gray-50 active:bg-gray-100',
 };
 
 const sizes: Record<Size, string> = {
-  sm: 'h-8 px-3 text-sm gap-1.5 rounded-md',
-  md: 'h-9 px-4 text-sm gap-2 rounded-lg',
-  lg: 'h-11 px-6 text-base gap-2 rounded-lg',
-  icon: 'h-9 w-9 rounded-lg flex items-center justify-center',
+  sm: 'h-9 px-4 text-sm gap-1.5 rounded-md',
+  md: 'h-11 px-6 text-base gap-2 rounded-md',
+  lg: 'h-12 px-8 text-base gap-2 rounded-md',
+  icon: 'h-11 w-11 rounded-md flex items-center justify-center',
 };
 
 export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
@@ -32,8 +32,8 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
       ref={ref}
       disabled={disabled || loading}
       className={cn(
-        'inline-flex items-center justify-center font-medium transition-all duration-150',
-        'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2',
+        'inline-flex items-center justify-center font-semibold transition-all duration-150',
+        'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2',
         'disabled:pointer-events-none disabled:opacity-50',
         'active:scale-[0.98]',
         variants[variant],

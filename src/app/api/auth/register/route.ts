@@ -6,6 +6,8 @@ import { tenants, users, services } from '@/db/schema';
 import { hashPassword, createSession, SESSION_COOKIE } from '@/lib/auth';
 import { DEFAULT_SERVICES } from '@/lib/defaults';
 
+const GENERIC_ERROR = 'Gagal mendaftar';
+
 function generateId(): string {
   return crypto.randomUUID();
 }
@@ -18,40 +20,64 @@ function slugify(text: string): string {
     .substring(0, 50);
 }
 
+function validateInput(value: unknown, maxLength: number = 100): string {
+  if (typeof value !== 'string') return '';
+  return value.trim().substring(0, maxLength);
+}
+
+function validatePhone(phone: string): boolean {
+  return /^[0-9]{10,15}$/.test(phone);
+}
+
+function validatePassword(password: string): { valid: boolean; error?: string } {
+  if (typeof password !== 'string') return { valid: false, error: 'Password wajib diisi' };
+  if (password.length < 8) return { valid: false, error: 'Password minimal 8 karakter' };
+  if (password.length > 128) return { valid: false, error: 'Password maksimal 128 karakter' };
+  if (!/[a-z]/.test(password)) return { valid: false, error: 'Password harus mengandung huruf kecil' };
+  if (!/[0-9]/.test(password)) return { valid: false, error: 'Password harus mengandung angka' };
+  return { valid: true };
+}
+
 export async function POST(request: NextRequest) {
   try {
-    const body = await request.json() as {
-      businessName: string;
-      email: string;
-      password: string;
-      name: string;
-      phone?: string;
-      address?: string;
-    };
-    const { businessName, email, password, name, phone, address } = body;
+    const body = await request.json() as Record<string, unknown>;
 
-    if (!businessName || !email || !password || !name) {
-      return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
+    if (typeof body !== 'object' || body === null) {
+      return NextResponse.json({ error: GENERIC_ERROR }, { status: 400 });
     }
 
-    if (password.length < 8) {
-      return NextResponse.json({ error: 'Password must be at least 8 characters' }, { status: 400 });
+    const businessName = validateInput(body.businessName, 100);
+    const phone = validateInput(body.phone, 15);
+    const name = validateInput(body.name, 100);
+    const address = validateInput(body.address, 200);
+
+    if (!businessName || !phone || !name) {
+      return NextResponse.json({ error: 'Semua field wajib diisi' }, { status: 400 });
     }
+
+    if (!validatePhone(phone)) {
+      return NextResponse.json({ error: 'Nomor telepon tidak valid' }, { status: 400 });
+    }
+
+    const passwordRaw = typeof body.password === 'string' ? body.password : '';
+    const passwordCheck = validatePassword(passwordRaw);
+    if (!passwordCheck.valid) {
+      return NextResponse.json({ error: passwordCheck.error }, { status: 400 });
+    }
+
+    const password = passwordRaw;
 
     const env = getCloudflareContext().env;
     const db = createDb(env);
 
-    // Check if email already exists
-    const [existing] = await db.select().from(users).where(eq(users.email, email)).limit(1);
+    const [existing] = await db.select().from(users).where(eq(users.phone, phone)).limit(1);
     if (existing) {
-      return NextResponse.json({ error: 'Email already registered' }, { status: 409 });
+      return NextResponse.json({ error: 'Nomor telepon sudah terdaftar' }, { status: 409 });
     }
 
-    // Create tenant
     const tenantId = generateId();
     let slug = slugify(businessName);
 
-    // Ensure unique slug
     const [existingSlug] = await db.select().from(tenants).where(eq(tenants.slug, slug)).limit(1);
     if (existingSlug) {
       slug = `${slug}-${Date.now().toString(36)}`;
@@ -62,25 +88,23 @@ export async function POST(request: NextRequest) {
       businessName,
       slug,
       address: address || null,
-      phone: phone || null,
+      phone,
       status: 'ACTIVE',
       createdAt: new Date().toISOString(),
     });
 
-    // Create owner user
     const userId = generateId();
     const passwordHash = await hashPassword(password);
 
     await db.insert(users).values({
       id: userId,
       tenantId,
-      email,
+      phone,
       passwordHash,
       name,
       role: 'OWNER',
     });
 
-    // Seed default services
     for (const svc of DEFAULT_SERVICES) {
       await db.insert(services).values({
         id: generateId(),
@@ -89,17 +113,16 @@ export async function POST(request: NextRequest) {
       });
     }
 
-    // Create session
     const token = await createSession({
       userId,
       tenantId,
-      email,
+      phone,
       name,
       role: 'OWNER',
     }, env.JWT_SECRET);
 
     const response = NextResponse.json({
-      user: { id: userId, name, email, role: 'OWNER' },
+      user: { id: userId, name, phone, role: 'OWNER' },
       tenant: { id: tenantId, businessName, slug },
     }, { status: 201 });
 
@@ -108,12 +131,11 @@ export async function POST(request: NextRequest) {
       secure: true,
       sameSite: 'lax',
       path: '/',
-      maxAge: 7 * 24 * 60 * 60,
+      maxAge: 24 * 60 * 60,
     });
 
     return response;
-  } catch (error) {
-    console.error('Register error:', error);
-    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+  } catch {
+    return NextResponse.json({ error: GENERIC_ERROR }, { status: 500 });
   }
 }

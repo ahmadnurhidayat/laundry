@@ -20,6 +20,16 @@ function generateInvoiceNumber(): string {
   return `INV-${date}-${rand}`;
 }
 
+function sanitize(input: unknown, maxLength: number = 200): string {
+  if (typeof input !== 'string') return '';
+  let s = '';
+  for (let i = 0; i < input.length; i++) {
+    const c = input[i];
+    if (c !== '<' && c !== '>') s += c;
+  }
+  return s.trim().substring(0, maxLength);
+}
+
 export async function GET() {
   try {
     const ctx = await getTenantContext();
@@ -44,9 +54,8 @@ export async function GET() {
     }));
 
     return NextResponse.json({ orders: ordersWithNames });
-  } catch (error) {
-    console.error('Error fetching orders:', error);
-    return NextResponse.json({ error: 'Failed to fetch orders' }, { status: 500 });
+  } catch {
+    return NextResponse.json({ error: 'Gagal memuat pesanan' }, { status: 500 });
   }
 }
 
@@ -55,20 +64,26 @@ export async function POST(request: NextRequest) {
     const ctx = await getTenantContext();
     const env = getCloudflareContext().env;
     const db = createDb(env);
-    const body = await request.json() as {
-      customerName?: string;
-      customerPhone?: string;
-      items?: { serviceId: string; qty: number }[];
-      notes?: string;
-      daysEstimate?: number;
-    };
-    const { customerName, customerPhone, items, notes, daysEstimate } = body;
+    const body = await request.json() as Record<string, unknown>;
 
-    if (!customerName || !customerPhone || !items?.length) {
-      return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
+    if (typeof body !== 'object' || body === null) {
+      return NextResponse.json({ error: 'Data tidak valid' }, { status: 400 });
     }
 
-    // Find or create customer within tenant
+    const customerName = sanitize(body.customerName, 100);
+    const customerPhone = sanitize(body.customerPhone, 15);
+    const notes = sanitize(body.notes, 500);
+    const items = Array.isArray(body.items) ? body.items : [];
+    const daysEstimate = typeof body.daysEstimate === 'number' ? Math.min(Math.max(body.daysEstimate, 1), 30) : 3;
+
+    if (!customerName || !customerPhone || !items.length) {
+      return NextResponse.json({ error: 'Data tidak lengkap' }, { status: 400 });
+    }
+
+    if (!/^[0-9]{10,15}$/.test(customerPhone)) {
+      return NextResponse.json({ error: 'Nomor telepon tidak valid' }, { status: 400 });
+    }
+
     const existingCustomer = await db
       .select()
       .from(customers)
@@ -93,7 +108,6 @@ export async function POST(request: NextRequest) {
       });
     }
 
-    // Get tenant services for price calculation
     const tenantServices = await db
       .select()
       .from(services)
@@ -102,17 +116,25 @@ export async function POST(request: NextRequest) {
     const serviceMap = new Map(tenantServices.map((s) => [s.id, s]));
 
     let totalAmount = 0;
-    const orderItemsData = items.map((item) => {
-      const service = serviceMap.get(item.serviceId);
-      const subtotal = service ? service.pricePerUnit * item.qty : 0;
-      totalAmount += subtotal;
-      return {
-        id: generateId(),
-        serviceId: item.serviceId,
-        qty: item.qty,
-        subtotal,
-      };
-    });
+    const orderItemsData = items
+      .filter((item: any) => item && typeof item.serviceId === 'string' && typeof item.qty === 'number' && item.qty > 0)
+      .slice(0, 50)
+      .map((item: any) => {
+        const service = serviceMap.get(item.serviceId);
+        const qty = Math.min(Math.max(Math.floor(item.qty), 1), 1000);
+        const subtotal = service ? service.pricePerUnit * qty : 0;
+        totalAmount += subtotal;
+        return {
+          id: generateId(),
+          serviceId: item.serviceId,
+          qty,
+          subtotal,
+        };
+      });
+
+    if (orderItemsData.length === 0) {
+      return NextResponse.json({ error: 'Tidak ada item valid' }, { status: 400 });
+    }
 
     const orderId = generateId();
     const trackingToken = generateTrackingToken();
@@ -120,7 +142,7 @@ export async function POST(request: NextRequest) {
 
     const now = new Date();
     const dateIn = now.toISOString().split('T')[0];
-    const estimated = new Date(now.getTime() + (daysEstimate || 3) * 24 * 60 * 60 * 1000)
+    const estimated = new Date(now.getTime() + daysEstimate * 24 * 60 * 60 * 1000)
       .toISOString()
       .split('T')[0];
 
@@ -152,9 +174,8 @@ export async function POST(request: NextRequest) {
       success: true,
       order: { id: orderId, invoiceNumber, trackingToken },
     });
-  } catch (error) {
-    console.error('Error creating order:', error);
-    return NextResponse.json({ error: 'Failed to create order' }, { status: 500 });
+  } catch {
+    return NextResponse.json({ error: 'Gagal membuat pesanan' }, { status: 500 });
   }
 }
 
@@ -163,11 +184,22 @@ export async function PATCH(request: NextRequest) {
     const ctx = await getTenantContext();
     const env = getCloudflareContext().env;
     const db = createDb(env);
-    const body = await request.json() as { orderId?: string; status?: string };
-    const { orderId, status } = body;
+    const body = await request.json() as Record<string, unknown>;
+
+    if (typeof body !== 'object' || body === null) {
+      return NextResponse.json({ error: 'Data tidak valid' }, { status: 400 });
+    }
+
+    const orderId = typeof body.orderId === 'string' ? body.orderId : '';
+    const status = typeof body.status === 'string' ? body.status : '';
 
     if (!orderId || !status) {
-      return NextResponse.json({ error: 'Missing orderId or status' }, { status: 400 });
+      return NextResponse.json({ error: 'Data tidak lengkap' }, { status: 400 });
+    }
+
+    const validStatuses = ['PENDING', 'PROCESSING', 'FINISHED', 'PICKED_UP'];
+    if (!validStatuses.includes(status)) {
+      return NextResponse.json({ error: 'Status tidak valid' }, { status: 400 });
     }
 
     await db
@@ -176,8 +208,7 @@ export async function PATCH(request: NextRequest) {
       .where(and(eq(orders.id, orderId), eq(orders.tenantId, ctx.tenantId)));
 
     return NextResponse.json({ success: true });
-  } catch (error) {
-    console.error('Error updating order:', error);
-    return NextResponse.json({ error: 'Failed to update order' }, { status: 500 });
+  } catch {
+    return NextResponse.json({ error: 'Gagal memperbarui status' }, { status: 500 });
   }
 }

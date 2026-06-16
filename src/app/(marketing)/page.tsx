@@ -1,5 +1,8 @@
+'use client';
+
+import { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
-import { Check, ArrowRight, BarChart3, Users, Receipt, Smartphone } from 'lucide-react';
+import { ArrowRight, BarChart3, Users, Receipt, Smartphone, Zap, Clock, Star, ChevronDown, MessageSquare, TrendingUp } from 'lucide-react';
 
 const features = [
   {
@@ -10,7 +13,7 @@ const features = [
   {
     icon: BarChart3,
     title: 'Dashboard Analitik',
-    desc: 'Pantau performa bisnis Anda dengan grafik pendapatan dan statistik harian.',
+    desc: 'Pantau performa bisnis dengan grafik pendapatan dan statistik harian.',
   },
   {
     icon: Users,
@@ -20,85 +23,170 @@ const features = [
   {
     icon: Smartphone,
     title: 'Tracking Pelanggan',
-    desc: 'Pelanggan bisa cek status pesanan tanpa login melalui link unik.',
+    desc: 'Pelanggan cek status pesanan tanpa login melalui link unik.',
   },
 ];
 
-const pricingPlans = [
+const steps = [
   {
-    name: 'Starter',
-    price: 'Gratis',
-    period: 'Selamanya',
-    desc: 'Cocok untuk laundry kecil yang baru memulai',
-    features: [
-      '1 pengguna',
-      '50 pesanan/bulan',
-      'Dashboard dasar',
-      'Tracking pelanggan',
-    ],
-    cta: 'Mulai Gratis',
-    popular: false,
+    num: '01',
+    title: 'Daftar Akun',
+    desc: 'Buat akun gratis dalam 30 detik. Tanpa kartu kredit.',
+    icon: Zap,
   },
   {
-    name: 'Growth',
-    price: 'Rp 99K',
-    period: '/bulan',
-    desc: 'Untuk laundry yang berkembang pesat',
-    features: [
-      '5 pengguna',
-      'Unlimited pesanan',
-      'Analitik lanjutan',
-      'Laporan keuangan',
-      'Multi-cabang',
-      'Prioritas support',
-    ],
-    cta: 'Upgrade ke Growth',
-    popular: true,
+    num: '02',
+    title: 'Atur Laundry',
+    desc: 'Tambah layanan, harga, dan preferensi bisnis Anda.',
+    icon: SettingsIcon,
   },
   {
-    name: 'Enterprise',
-    price: 'Rp 299K',
-    period: '/bulan',
-    desc: 'Solusi lengkap untuk jaringan laundry',
-    features: [
-      'Unlimited pengguna',
-      'Unlimited pesanan',
-      'White-label branding',
-      'API akses',
-      'Dedicated support',
-      'Custom integrasi',
-    ],
-    cta: 'Hubungi Sales',
-    popular: false,
+    num: '03',
+    title: 'Mulai Operasi',
+    desc: 'Buat pesanan, pantau status, dan kelola pembayaran.',
+    icon: TrendingUp,
   },
 ];
 
-const stats = [
-  { value: '2,500+', label: 'Laundry Aktif' },
-  { value: '1M+', label: 'Pesanan Diproses' },
-  { value: '99.9%', label: 'Uptime' },
-  { value: '4.9/5', label: 'Rating Pengguna' },
+const testimonials = [
+  {
+    name: 'Budi Santoso',
+    role: 'Owner, Laundry Bersih',
+    content: 'Sejak pakai Laundry, omzet naik 40% karena pelanggan bisa tracking sendiri. Admin juga lebih mudah.',
+    rating: 5,
+  },
+  {
+    name: 'Siti Rahayu',
+    role: 'Manager, King Laundry',
+    content: 'Dashboard analitiknya luar biasa. Saya bisa lihat jam sibuk dan atur staf dengan lebih efisien.',
+    rating: 5,
+  },
+  {
+    name: 'Andi Wijaya',
+    role: 'Owner, Clean Pro',
+    content: 'Multi-cabang jadi gampang. Semua data terpusat dan real-time. Recommended banget!',
+    rating: 5,
+  },
 ];
+
+const faqs = [
+  {
+    q: 'Berapa biaya untuk mulai?',
+    a: 'Gratis selamanya untuk paket Starter. Tidak perlu kartu kredit.',
+  },
+  {
+    q: 'Apakah bisa digunakan di HP?',
+    a: 'Ya! Laundry dirancang mobile-first. Akses dari browser HP tanpa install aplikasi.',
+  },
+  {
+    q: 'Bagaimana dengan keamanan data?',
+    a: 'Data dienkripsi dan tersimpan di Cloudflare global network. Uptime 99.9%.',
+  },
+  {
+    q: 'Bisa integrasi dengan sistem lain?',
+    a: 'Saat ini fokus sebagai standalone SaaS. API akses tersedia di paket Enterprise.',
+  },
+];
+
+function SettingsIcon(props: React.SVGProps<SVGSVGElement>) {
+  return (
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}>
+      <path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z" />
+      <circle cx="12" cy="12" r="3" />
+    </svg>
+  );
+}
+
+function useCountUp(end: number, duration: number = 2000) {
+  const [count, setCount] = useState(0);
+  const ref = useRef<HTMLDivElement>(null);
+  const [started, setStarted] = useState(false);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting && !started) {
+          setStarted(true);
+        }
+      },
+      { threshold: 0.5 }
+    );
+
+    if (ref.current) observer.observe(ref.current);
+    return () => observer.disconnect();
+  }, [started]);
+
+  useEffect(() => {
+    if (!started) return;
+    let startTime: number;
+    const animate = (currentTime: number) => {
+      if (!startTime) startTime = currentTime;
+      const progress = Math.min((currentTime - startTime) / duration, 1);
+      setCount(Math.floor(progress * end));
+      if (progress < 1) requestAnimationFrame(animate);
+    };
+    requestAnimationFrame(animate);
+  }, [started, end, duration]);
+
+  return { count, ref };
+}
+
+function StatCounter({ value, label, suffix = '' }: { value: number; label: string; suffix?: string }) {
+  const { count, ref } = useCountUp(value);
+  return (
+    <div ref={ref} className="text-center">
+      <p className="text-4xl font-display font-medium text-ink">{count.toLocaleString()}{suffix}</p>
+      <p className="mt-1 text-sm text-body-mid">{label}</p>
+    </div>
+  );
+}
+
+function FAQ({ q, a }: { q: string; a: string }) {
+  const [open, setOpen] = useState(false);
+  return (
+    <div className="border-b border-muted">
+      <button
+        onClick={() => setOpen(!open)}
+        className="w-full flex items-center justify-between py-4 text-left hover:text-primary transition-colors"
+      >
+        <span className="font-medium text-ink">{q}</span>
+        <ChevronDown className={`h-5 w-5 text-body-mid transition-transform ${open ? 'rotate-180' : ''}`} />
+      </button>
+      <div className={`overflow-hidden transition-all ${open ? 'max-h-40' : 'max-h-0'}`}>
+        <p className="pb-4 text-body">{a}</p>
+      </div>
+    </div>
+  );
+}
 
 export default function LandingPage() {
+  const [activeTestimonial, setActiveTestimonial] = useState(0);
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setActiveTestimonial((prev) => (prev + 1) % testimonials.length);
+    }, 5000);
+    return () => clearInterval(timer);
+  }, []);
+
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-canvas">
       {/* Navigation */}
-      <nav className="sticky top-0 z-50 bg-white/80 backdrop-blur-md border-b border-gray-100">
+      <nav className="sticky top-0 z-50 bg-canvas/80 backdrop-blur-md border-b border-muted/50">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
           <Link href="/" className="flex items-center gap-2">
-            <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
-              <span className="text-white font-bold text-sm">DL</span>
+            <div className="w-8 h-8 bg-primary rounded-md flex items-center justify-center">
+              <span className="text-white font-bold text-sm">L</span>
             </div>
-            <span className="font-bold text-gray-900">Daya Laundry</span>
+            <span className="font-display font-medium text-ink">Laundry</span>
           </Link>
           <div className="flex items-center gap-3">
-            <Link href="/login" className="text-sm font-medium text-gray-600 hover:text-gray-900 px-3 py-2">
+            <Link href="/login" className="text-sm font-medium text-body hover:text-ink px-3 py-2">
               Login
             </Link>
             <Link
               href="/register"
-              className="text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded-lg transition-colors"
+              className="text-sm font-semibold text-white bg-primary hover:bg-primary-hover px-4 py-2 rounded-md transition-all active:scale-[0.98]"
             >
               Daftar Gratis
             </Link>
@@ -107,61 +195,86 @@ export default function LandingPage() {
       </nav>
 
       {/* Hero */}
-      <section className="max-w-6xl mx-auto px-4 sm:px-6 py-20 lg:py-28">
-        <div className="text-center max-w-3xl mx-auto">
-          <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-gray-900 leading-tight">
-            Kelola Laundry <span className="text-blue-600">Lebih Mudah</span> & Cepat
-          </h1>
-          <p className="mt-6 text-lg text-gray-600 max-w-2xl mx-auto">
-            Platform SaaS all-in-one untuk pengelolaan laundry. Pantau pesanan, kelola pembayaran, dan berikan pengalaman terbaik untuk pelanggan Anda.
-          </p>
-          <div className="mt-8 flex flex-col sm:flex-row gap-4 justify-center">
-            <Link
-              href="/register"
-              className="inline-flex items-center justify-center px-6 py-3 text-base font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-lg transition-colors"
-            >
-              Mulai Gratis
-              <ArrowRight className="ml-2 h-4 w-4" />
-            </Link>
-            <Link
-              href="/login"
-              className="inline-flex items-center justify-center px-6 py-3 text-base font-medium text-gray-700 bg-white border border-gray-300 hover:bg-gray-50 rounded-lg transition-colors"
-            >
-              Lihat Demo
-            </Link>
+      <section className="relative overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-br from-canvas via-canvas to-canvas-soft" />
+        <div className="absolute top-20 left-10 w-72 h-72 bg-primary/5 rounded-full mix-blend-multiply filter blur-3xl animate-pulse" />
+        <div className="absolute top-40 right-10 w-72 h-72 bg-primary/5 rounded-full mix-blend-multiply filter blur-3xl animate-pulse" style={{ animationDelay: '2s' }} />
+        
+        <div className="relative max-w-6xl mx-auto px-4 sm:px-6 py-20 lg:py-28">
+          <div className="text-center max-w-3xl mx-auto">
+            <div className="inline-flex items-center gap-2 bg-canvas-soft text-primary text-sm font-medium px-4 py-2 rounded-pill mb-6">
+              <Zap className="h-4 w-4" />
+              <span>Gratis Selamanya untuk Starter</span>
+            </div>
+            <h1 className="text-4xl sm:text-5xl lg:text-[56px] font-display font-medium text-ink leading-[1.1]">
+              Kelola Laundry{' '}
+              <span className="text-primary">
+                Lebih Mudah
+              </span>
+              <br />& Cepat
+            </h1>
+            <p className="mt-6 text-lg text-body max-w-2xl mx-auto">
+              Platform SaaS all-in-one untuk pengelolaan laundry. Pantau pesanan, kelola pembayaran, dan berikan pengalaman terbaik untuk pelanggan Anda.
+            </p>
+            <div className="mt-8 flex flex-col sm:flex-row gap-4 justify-center">
+              <Link
+                href="/register"
+                className="inline-flex items-center justify-center px-6 py-3 text-base font-semibold text-white bg-primary hover:bg-primary-hover rounded-md transition-all active:scale-[0.98] shadow-lg shadow-primary/25"
+              >
+                Mulai Gratis
+                <ArrowRight className="ml-2 h-4 w-4" />
+              </Link>
+              <a
+                href="https://wa.me/6285643858412?text=Halo,%20saya%20mau%20demo%20Laundry%20SaaS"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center justify-center px-6 py-3 text-base font-medium text-ink bg-canvas border border-ink hover:bg-canvas-soft rounded-md transition-all active:scale-[0.98]"
+              >
+                <MessageSquare className="mr-2 h-4 w-4" />
+                Chat Demo
+              </a>
+            </div>
+            <p className="mt-4 text-sm text-body-mid">Tanpa kartu kredit. Setup 30 detik.</p>
           </div>
         </div>
+      </section>
 
-        {/* Stats */}
-        <div className="mt-16 grid grid-cols-2 md:grid-cols-4 gap-8">
-          {stats.map((stat) => (
-            <div key={stat.label} className="text-center">
-              <p className="text-3xl font-bold text-gray-900">{stat.value}</p>
-              <p className="mt-1 text-sm text-gray-500">{stat.label}</p>
-            </div>
-          ))}
+      {/* Stats */}
+      <section className="border-y border-muted/50 bg-canvas-soft">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 py-12">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
+            <StatCounter value={2500} suffix="+" label="Laundry Aktif" />
+            <StatCounter value={1000000} suffix="+" label="Pesanan Diproses" />
+            <StatCounter value={99} suffix=".9%" label="Uptime" />
+            <StatCounter value={49} suffix="/50" label="Rating Pengguna" />
+          </div>
         </div>
       </section>
 
       {/* Features */}
-      <section className="bg-gray-50 py-20">
+      <section className="py-20 bg-canvas">
         <div className="max-w-6xl mx-auto px-4 sm:px-6">
           <div className="text-center max-w-2xl mx-auto mb-16">
-            <h2 className="text-3xl font-bold text-gray-900">Fitur Lengkap untuk Laundry Anda</h2>
-            <p className="mt-4 text-gray-600">
+            <p className="text-sm font-medium text-primary uppercase tracking-wider mb-2">Fitur</p>
+            <h2 className="text-3xl font-display font-medium text-ink">Fitur Lengkap untuk Laundry Anda</h2>
+            <p className="mt-4 text-body">
               Semua yang Anda butuhkan untuk mengelola laundry dalam satu platform.
             </p>
           </div>
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+          <div className="grid md:grid-cols-2 gap-6">
             {features.map((feature) => {
               const Icon = feature.icon;
               return (
-                <div key={feature.title} className="bg-white p-6 rounded-2xl border border-gray-100">
-                  <div className="w-12 h-12 bg-blue-50 rounded-xl flex items-center justify-center mb-4">
-                    <Icon className="h-6 w-6 text-blue-600" />
+                <div
+                  key={feature.title}
+                  className="group bg-canvas-soft p-8 rounded-md hover:shadow-lg transition-all duration-300 cursor-pointer"
+                >
+                  <div className="w-12 h-12 bg-primary/10 rounded-md flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+                    <Icon className="h-6 w-6 text-primary" />
                   </div>
-                  <h3 className="text-lg font-semibold text-gray-900 mb-2">{feature.title}</h3>
-                  <p className="text-sm text-gray-600">{feature.desc}</p>
+                  <h3 className="text-lg font-semibold text-ink mb-2">{feature.title}</h3>
+                  <p className="text-body">{feature.desc}</p>
+                  <ArrowRight className="mt-4 h-5 w-5 text-muted opacity-0 group-hover:opacity-100 group-hover:translate-x-1 transition-all" />
                 </div>
               );
             })}
@@ -169,81 +282,137 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* Pricing */}
-      <section className="py-20">
+      {/* How It Works */}
+      <section className="py-20 bg-canvas-soft">
         <div className="max-w-6xl mx-auto px-4 sm:px-6">
           <div className="text-center max-w-2xl mx-auto mb-16">
-            <h2 className="text-3xl font-bold text-gray-900">Harga yang Transparan</h2>
-            <p className="mt-4 text-gray-600">
-              Pilih paket yang sesuai dengan kebutuhan bisnis Anda.
-            </p>
+            <p className="text-sm font-medium text-primary uppercase tracking-wider mb-2">Cara Kerja</p>
+            <h2 className="text-3xl font-display font-medium text-ink">3 Langkah Sederhana</h2>
           </div>
-          <div className="grid md:grid-cols-3 gap-8 max-w-4xl mx-auto">
-            {pricingPlans.map((plan) => (
-              <div
-                key={plan.name}
-                className={`relative rounded-2xl border-2 p-8 ${
-                  plan.popular
-                    ? 'border-blue-600 shadow-lg shadow-blue-500/10'
-                    : 'border-gray-200'
-                }`}
-              >
-                {plan.popular && (
-                  <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-blue-600 text-white text-xs font-medium px-3 py-1 rounded-full">
-                    Paling Populer
+          <div className="grid md:grid-cols-3 gap-8">
+            {steps.map((step, i) => {
+              const Icon = step.icon;
+              return (
+                <div key={step.num} className="relative text-center">
+                  {i < steps.length - 1 && (
+                    <div className="hidden md:block absolute top-10 left-[60%] w-[80%] h-[2px] bg-gradient-to-r from-primary/20 to-transparent" />
+                  )}
+                  <div className="inline-flex items-center justify-center w-20 h-20 bg-canvas rounded-md border border-muted mb-6 relative z-10">
+                    <Icon className="h-8 w-8 text-primary" />
                   </div>
-                )}
-                <h3 className="text-lg font-semibold text-gray-900">{plan.name}</h3>
-                <p className="mt-1 text-sm text-gray-500">{plan.desc}</p>
-                <div className="mt-4">
-                  <span className="text-3xl font-bold text-gray-900">{plan.price}</span>
-                  <span className="text-sm text-gray-500">{plan.period}</span>
+                  <p className="text-sm font-bold text-primary mb-2">{step.num}</p>
+                  <h3 className="text-lg font-semibold text-ink mb-2">{step.title}</h3>
+                  <p className="text-body">{step.desc}</p>
                 </div>
-                <ul className="mt-6 space-y-3">
-                  {plan.features.map((feature) => (
-                    <li key={feature} className="flex items-center text-sm text-gray-600">
-                      <Check className="h-4 w-4 text-green-500 mr-2 shrink-0" />
-                      {feature}
-                    </li>
-                  ))}
-                </ul>
-                <Link
-                  href="/register"
-                  className={`mt-8 block w-full text-center py-2.5 rounded-lg text-sm font-medium transition-colors ${
-                    plan.popular
-                      ? 'bg-blue-600 text-white hover:bg-blue-700'
-                      : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                  }`}
-                >
-                  {plan.cta}
-                </Link>
+              );
+            })}
+          </div>
+        </div>
+      </section>
+
+      {/* Testimonials */}
+      <section className="py-20 bg-canvas">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6">
+          <div className="text-center max-w-2xl mx-auto mb-16">
+            <p className="text-sm font-medium text-primary uppercase tracking-wider mb-2">Testimoni</p>
+            <h2 className="text-3xl font-display font-medium text-ink">Dipercaya Ribuan Laundry</h2>
+          </div>
+          <div className="max-w-3xl mx-auto">
+            <div className="bg-canvas-soft p-8 rounded-md relative">
+              <div className="absolute -top-3 left-8 bg-primary text-white px-3 py-1 rounded-pill text-sm font-medium flex items-center gap-1">
+                <Star className="h-4 w-4 fill-current" />
+                Testimoni
               </div>
+              <div className="min-h-[120px]">
+                <p className="text-lg text-ink mb-6">&ldquo;{testimonials[activeTestimonial].content}&rdquo;</p>
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 bg-primary/10 rounded-full flex items-center justify-center">
+                    <span className="text-primary font-medium">{testimonials[activeTestimonial].name.charAt(0)}</span>
+                  </div>
+                  <div>
+                    <p className="font-medium text-ink">{testimonials[activeTestimonial].name}</p>
+                    <p className="text-sm text-body-mid">{testimonials[activeTestimonial].role}</p>
+                  </div>
+                </div>
+              </div>
+              <div className="flex justify-center gap-2 mt-6">
+                {testimonials.map((_, i) => (
+                  <button
+                    key={i}
+                    onClick={() => setActiveTestimonial(i)}
+                    className={`w-2 h-2 rounded-full transition-all ${i === activeTestimonial ? 'bg-primary w-6' : 'bg-muted'}`}
+                  />
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* FAQ */}
+      <section className="py-20 bg-canvas-soft">
+        <div className="max-w-3xl mx-auto px-4 sm:px-6">
+          <div className="text-center mb-12">
+            <p className="text-sm font-medium text-primary uppercase tracking-wider mb-2">FAQ</p>
+            <h2 className="text-3xl font-display font-medium text-ink">Pertanyaan Umum</h2>
+          </div>
+          <div className="bg-canvas rounded-md border border-muted p-6">
+            {faqs.map((faq, i) => (
+              <FAQ key={i} q={faq.q} a={faq.a} />
             ))}
           </div>
         </div>
       </section>
 
       {/* CTA */}
-      <section className="bg-blue-600 py-16">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 text-center">
-          <h2 className="text-3xl font-bold text-white">Siap Mengelola Laundry?</h2>
-          <p className="mt-4 text-blue-100">
-            Daftar gratis sekarang dan mulai kelola dalam hitungan menit.
+      <section className="relative overflow-hidden bg-ink py-20">
+        <div className="absolute inset-0">
+          <div className="absolute top-0 left-1/4 w-96 h-96 bg-primary/10 rounded-full mix-blend-overlay filter blur-3xl" />
+          <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-primary/10 rounded-full mix-blend-overlay filter blur-3xl" />
+        </div>
+        <div className="relative max-w-4xl mx-auto px-4 sm:px-6 text-center">
+          <h2 className="text-3xl sm:text-4xl font-display font-medium text-white">Siap Mengelola Laundry?</h2>
+          <p className="mt-4 text-white/70 text-lg">
+            Hubungi kami untuk informasi lebih lanjut atau mulai gunakan layanan ini.
           </p>
-          <Link
-            href="/register"
-            className="mt-8 inline-flex items-center px-6 py-3 text-base font-medium text-blue-600 bg-white rounded-lg hover:bg-blue-50 transition-colors"
-          >
-            Daftar Sekarang
-            <ArrowRight className="ml-2 h-4 w-4" />
-          </Link>
+          <div className="mt-8 flex flex-col sm:flex-row gap-4 justify-center">
+            <a
+              href="https://wa.me/6285643858412?text=Halo,%20saya%20tertarik%20dengan%20Laundry%20SaaS"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center justify-center px-8 py-4 text-base font-semibold text-white bg-primary rounded-md hover:bg-primary-hover transition-all active:scale-[0.98] shadow-lg"
+            >
+              <MessageSquare className="mr-2 h-5 w-5" />
+              Hubungi Kami
+            </a>
+            <Link
+              href="/register"
+              className="inline-flex items-center justify-center px-8 py-4 text-base font-medium text-white border border-white/30 rounded-md hover:bg-white/10 transition-all active:scale-[0.98]"
+            >
+              Daftar Gratis
+              <ArrowRight className="ml-2 h-4 w-4" />
+            </Link>
+          </div>
         </div>
       </section>
 
       {/* Footer */}
-      <footer className="border-t border-gray-100 py-8">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 text-center text-sm text-gray-500">
-          &copy; 2026 Daya Laundry SaaS. All rights reserved.
+      <footer className="bg-ink border-t border-white/10 py-12">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6">
+          <div className="flex flex-col md:flex-row items-center justify-between gap-6">
+            <div className="flex items-center gap-2">
+              <div className="w-8 h-8 bg-primary rounded-md flex items-center justify-center">
+                <span className="text-white font-bold text-sm">L</span>
+              </div>
+              <span className="font-display font-medium text-white">Laundry</span>
+            </div>
+            <div className="flex items-center gap-6 text-sm text-white/60">
+              <a href="#" className="hover:text-white transition-colors">Kebijakan Privasi</a>
+              <a href="#" className="hover:text-white transition-colors">Syarat & Ketentuan</a>
+              <a href="https://wa.me/6285643858412" target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors">Kontak</a>
+            </div>
+            <p className="text-sm text-white/40">&copy; 2026 Laundry SaaS. All rights reserved.</p>
+          </div>
         </div>
       </footer>
     </div>

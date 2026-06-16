@@ -1,53 +1,45 @@
-import { HTMLAttributes } from 'react';
+import { HTMLAttributes, forwardRef } from 'react';
 import { cn } from '@/lib/utils';
 
-type BadgeVariant = 'default' | 'success' | 'warning' | 'danger' | 'info' | 'neutral';
-type BadgeSize = 'sm' | 'md';
+type Variant = 'default' | 'success' | 'warning' | 'danger' | 'info' | 'neutral';
 
 interface BadgeProps extends HTMLAttributes<HTMLSpanElement> {
-  variant?: BadgeVariant;
-  size?: BadgeSize;
+  variant?: Variant;
   dot?: boolean;
 }
 
-const variantStyles: Record<BadgeVariant, string> = {
-  default: 'bg-gray-100 text-gray-700',
-  success: 'bg-green-50 text-green-700 border border-green-200',
-  warning: 'bg-amber-50 text-amber-700 border border-amber-200',
-  danger: 'bg-red-50 text-red-700 border border-red-200',
-  info: 'bg-blue-50 text-blue-700 border border-blue-200',
-  neutral: 'bg-gray-50 text-gray-600 border border-gray-200',
+const variants: Record<Variant, string> = {
+  default: 'bg-canvas-soft text-ink',
+  success: 'bg-green-50 text-green-700',
+  warning: 'bg-amber-50 text-amber-700',
+  danger: 'bg-red-50 text-red-700',
+  info: 'bg-blue-50 text-blue-700',
+  neutral: 'bg-gray-100 text-gray-700',
 };
 
-const dotColors: Record<BadgeVariant, string> = {
-  default: 'bg-gray-500',
+const dotColors: Record<Variant, string> = {
+  default: 'bg-ink',
   success: 'bg-green-500',
   warning: 'bg-amber-500',
   danger: 'bg-red-500',
   info: 'bg-blue-500',
-  neutral: 'bg-gray-400',
+  neutral: 'bg-gray-500',
 };
 
-const sizeStyles: Record<BadgeSize, string> = {
-  sm: 'px-2 py-0.5 text-xs',
-  md: 'px-2.5 py-1 text-sm',
-};
-
-export function Badge({ variant = 'default', size = 'sm', dot, className, children, ...props }: BadgeProps) {
-  return (
+export const Badge = forwardRef<HTMLSpanElement, BadgeProps>(
+  ({ className, variant = 'default', dot, children, ...props }, ref) => (
     <span
+      ref={ref}
       className={cn(
-        'inline-flex items-center font-medium rounded-full',
-        variantStyles[variant],
-        sizeStyles[size],
+        'inline-flex items-center gap-1.5 px-3 py-1 text-sm font-medium rounded-pill',
+        variants[variant],
         className
       )}
       {...props}
     >
-      {dot && (
-        <span className={cn('w-1.5 h-1.5 rounded-full mr-1.5', dotColors[variant])} />
-      )}
+      {dot && <span className={cn('w-2 h-2 rounded-full', dotColors[variant])} />}
       {children}
     </span>
-  );
-}
+  )
+);
+Badge.displayName = 'Badge';

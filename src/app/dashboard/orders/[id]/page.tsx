@@ -3,14 +3,14 @@ import { headers } from 'next/headers';
 import { eq, and } from 'drizzle-orm';
 import { notFound } from 'next/navigation';
 import { getCloudflareContext } from '@opennextjs/cloudflare';
-import { orders, customers, orderItems, services } from '@/db/schema';
+import { orders, customers, orderItems, services, tenants } from '@/db/schema';
 import { createDb } from '@/lib/db';
 import { ArrowLeft } from 'lucide-react';
-import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { formatCurrency, formatDate } from '@/lib/utils';
 import { StatusToggle } from '@/features/orders/components/StatusToggle';
 import { ReceiptPreview } from '@/features/orders/components/ReceiptPreview';
+import { ShareReceipt } from '@/features/orders/components/ShareReceipt';
 
 export default async function OrderDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
@@ -20,6 +20,7 @@ export default async function OrderDetailPage({ params }: { params: Promise<{ id
   let order: any = null;
   let customer: any = null;
   let items: any[] = [];
+  let tenant: any = null;
 
   try {
     const { env } = getCloudflareContext();
@@ -49,6 +50,9 @@ export default async function OrderDetailPage({ params }: { params: Promise<{ id
       serviceType: item.services?.type,
       pricePerUnit: item.services?.pricePerUnit,
     }));
+
+    const tenantResult = await db.select().from(tenants).where(eq(tenants.id, tenantId)).limit(1);
+    tenant = tenantResult[0];
   } catch (e) {
     console.error('Error:', e);
     return notFound();
@@ -60,7 +64,7 @@ export default async function OrderDetailPage({ params }: { params: Promise<{ id
     <div className="space-y-6">
       <Link
         href="/dashboard/orders"
-        className="inline-flex items-center text-sm text-gray-600 hover:text-gray-900"
+        className="inline-flex items-center text-sm text-body-mid hover:text-ink transition-colors"
       >
         <ArrowLeft className="h-4 w-4 mr-1" />
         Kembali ke Pesanan
@@ -68,9 +72,19 @@ export default async function OrderDetailPage({ params }: { params: Promise<{ id
 
       <div className="flex flex-col sm:flex-row justify-between items-start gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Pesanan #{order.invoiceNumber}</h1>
-          <p className="text-gray-500 mt-1">{customer?.name} - {customer?.phoneNumber}</p>
+          <h1 className="text-2xl font-bold text-ink">Pesanan #{order.invoiceNumber}</h1>
+          <p className="text-body-mid mt-1">{customer?.name} - {customer?.phoneNumber}</p>
         </div>
+        <ShareReceipt
+          order={order}
+          customer={customer}
+          items={items.map((item: any) => ({
+            serviceName: item.serviceName || '',
+            qty: item.qty,
+            subtotal: item.subtotal,
+          }))}
+          tenantName={tenant?.businessName || 'Laundry'}
+        />
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
@@ -101,17 +115,17 @@ export default async function OrderDetailPage({ params }: { params: Promise<{ id
             <CardContent>
               <div className="space-y-3 text-sm">
                 <div className="flex justify-between">
-                  <span className="text-gray-500">Tanggal Masuk</span>
-                  <span className="text-gray-900">{formatDate(order.dateIn)}</span>
+                  <span className="text-body-mid">Tanggal Masuk</span>
+                  <span className="text-ink">{formatDate(order.dateIn)}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-gray-500">Estimasi Selesai</span>
-                  <span className="text-gray-900">{formatDate(order.dateEstimated)}</span>
+                  <span className="text-body-mid">Estimasi Selesai</span>
+                  <span className="text-ink">{formatDate(order.dateEstimated)}</span>
                 </div>
                 {order.notes && (
                   <div className="flex justify-between">
-                    <span className="text-gray-500">Catatan</span>
-                    <span className="text-gray-900">{order.notes}</span>
+                    <span className="text-body-mid">Catatan</span>
+                    <span className="text-ink">{order.notes}</span>
                   </div>
                 )}
               </div>
@@ -126,15 +140,15 @@ export default async function OrderDetailPage({ params }: { params: Promise<{ id
               <div className="space-y-2">
                 {items.map((item: any, i: number) => (
                   <div key={i} className="flex justify-between text-sm">
-                    <span className="text-gray-600">
+                    <span className="text-body">
                       {item.serviceName} x{item.qty}
                     </span>
-                    <span className="font-medium text-gray-900">{formatCurrency(item.subtotal)}</span>
+                    <span className="font-medium text-ink">{formatCurrency(item.subtotal)}</span>
                   </div>
                 ))}
-                <div className="flex justify-between font-bold pt-3 mt-3 border-t border-gray-200">
-                  <span className="text-gray-900">Total</span>
-                  <span className="text-gray-900">{formatCurrency(order.totalAmount)}</span>
+                <div className="flex justify-between font-bold pt-3 mt-3 border-t border-muted">
+                  <span className="text-ink">Total</span>
+                  <span className="text-ink">{formatCurrency(order.totalAmount)}</span>
                 </div>
               </div>
             </CardContent>
@@ -143,7 +157,7 @@ export default async function OrderDetailPage({ params }: { params: Promise<{ id
 
         {/* Right Column - Receipt Preview */}
         <div>
-          <h2 className="text-lg font-semibold text-gray-900 mb-4">Preview Struk</h2>
+          <h2 className="text-lg font-semibold text-ink mb-4">Preview Struk</h2>
           <ReceiptPreview
             order={order}
             customer={customer}
@@ -152,10 +166,10 @@ export default async function OrderDetailPage({ params }: { params: Promise<{ id
               qty: item.qty,
               subtotal: item.subtotal,
             }))}
+            tenant={tenant ? { name: tenant.businessName, phone: tenant.phone, address: tenant.address } : undefined}
           />
         </div>
       </div>
     </div>
   );
 }
-

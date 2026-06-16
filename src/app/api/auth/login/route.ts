@@ -6,18 +6,36 @@ import { users } from '@/db/schema';
 import { verifyPassword, createSession, SESSION_COOKIE } from '@/lib/auth';
 
 const DUMMY_HASH = '00:0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000';
-const GENERIC_ERROR = 'Invalid credentials';
+const GENERIC_ERROR = 'Nomor telepon atau password salah';
+
+function validatePhone(phone: string): boolean {
+  return typeof phone === 'string' && /^[0-9]{10,15}$/.test(phone);
+}
+
+function validatePassword(password: string): boolean {
+  return typeof password === 'string' && password.length >= 8 && password.length <= 128;
+}
 
 export async function POST(request: NextRequest) {
   try {
-    const body = await request.json() as { email?: string; password?: string };
-    const email = body.email ?? '';
-    const password = body.password ?? '';
+    const body: unknown = await request.json();
+
+    if (typeof body !== 'object' || body === null) {
+      return NextResponse.json({ error: GENERIC_ERROR }, { status: 400 });
+    }
+
+    const data = body as Record<string, unknown>;
+    const phone = typeof data.phone === 'string' ? data.phone : '';
+    const password = typeof data.password === 'string' ? data.password : '';
+
+    if (!validatePhone(phone) || !validatePassword(password)) {
+      return NextResponse.json({ error: GENERIC_ERROR }, { status: 400 });
+    }
 
     const env = getCloudflareContext().env;
     const db = createDb(env);
 
-    const [user] = await db.select().from(users).where(eq(users.email, email)).limit(1);
+    const [user] = await db.select().from(users).where(eq(users.phone, phone)).limit(1);
 
     const hashToCheck = user?.passwordHash || DUMMY_HASH;
     const valid = await verifyPassword(password, hashToCheck);
@@ -26,16 +44,17 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: GENERIC_ERROR }, { status: 401 });
     }
 
+    const role = user.role === 'OWNER' || user.role === 'CASHIER' ? user.role : 'CASHIER';
     const token = await createSession({
       userId: user.id,
       tenantId: user.tenantId,
-      email: user.email,
+      phone: user.phone,
       name: user.name,
-      role: user.role as 'OWNER' | 'CASHIER',
+      role,
     }, env.JWT_SECRET);
 
     const response = NextResponse.json({
-      user: { id: user.id, name: user.name, email: user.email, role: user.role },
+      user: { id: user.id, name: user.name, phone: user.phone, role: user.role },
     });
 
     response.cookies.set(SESSION_COOKIE, token, {
@@ -43,12 +62,11 @@ export async function POST(request: NextRequest) {
       secure: true,
       sameSite: 'lax',
       path: '/',
-      maxAge: 7 * 24 * 60 * 60,
+      maxAge: 24 * 60 * 60,
     });
 
     return response;
-  } catch (error) {
-    console.error('Login error:', error);
-    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+  } catch {
+    return NextResponse.json({ error: GENERIC_ERROR }, { status: 500 });
   }
 }

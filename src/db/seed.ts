@@ -15,8 +15,8 @@ async function seed() {
   const tenantId = 'demo-tenant-001';
   await db.insert(tenants).values({
     id: tenantId,
-    businessName: 'Daya Laundry Demo',
-    slug: 'daya-laundry-demo',
+    businessName: 'Laundry Demo',
+    slug: 'laundry-demo',
     address: 'Jl. Contoh No. 123',
     phone: '08123456789',
     status: 'ACTIVE',
@@ -28,9 +28,9 @@ async function seed() {
   await db.insert(users).values({
     id: generateId(),
     tenantId,
-    email: 'admin@dayalaundry.com',
+    phone: '08123456789',
     passwordHash,
-    name: 'Admin Daya Laundry',
+    name: 'Admin Laundry',
     role: 'OWNER',
   }).onConflictDoNothing();
 
@@ -48,7 +48,7 @@ async function seed() {
   }
 
   console.log('Seed completed!');
-  console.log('Demo login: admin@dayalaundry.com / password123');
+  console.log('Demo login: 08123456789 / password123');
 }
 
 seed().catch(console.error);

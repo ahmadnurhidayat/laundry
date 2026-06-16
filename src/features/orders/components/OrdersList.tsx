@@ -2,7 +2,6 @@
 
 import { useState } from 'react';
 import { OrderCard } from './OrderCard';
-import { Badge } from '@/components/ui/badge';
 import { Search } from 'lucide-react';
 
 interface Order {
