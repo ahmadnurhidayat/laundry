@@ -39,7 +39,7 @@ jobs:
 
       - name: Comment scan result on PR
         if: always() && github.event_name == 'pull_request'
-        uses: actions/github-script@v7
+        uses: actions/github-script@v9
         with:
           script: |
             const outcome = '${{ steps.gitleaks_scan.outcome }}';
@@ -119,7 +119,7 @@ jobs:
 
       - name: Comment scan result on PR
         if: always() && github.event_name == 'pull_request'
-        uses: actions/github-script@v7
+        uses: actions/github-script@v9
         with:
           script: |
             const outcome = '${{ steps.trivy_scan.outcome }}';
