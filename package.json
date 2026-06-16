@@ -32,7 +32,7 @@
     "tailwind-merge": "^1.14.0"
   },
   "devDependencies": {
-    "@cloudflare/workers-types": "^4.0.0",
+    "@cloudflare/workers-types": "^4.20260615.1",
     "@eslint/eslintrc": "^3.3.5",
     "@opennextjs/cloudflare": "^1.19.11",
     "@types/node": "^20.0.0",
