@@ -5,9 +5,10 @@ import { notFound } from 'next/navigation';
 import { getCloudflareContext } from '@opennextjs/cloudflare';
 import { customers, orders } from '@/db/schema';
 import { createDb } from '@/lib/db';
-import { ArrowLeft, Phone, MapPin, FileText, Calendar, ShoppingBag, CreditCard, Clock } from 'lucide-react';
+import { ArrowLeft, ShoppingBag, CreditCard, Clock } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
-import { formatCurrency, formatDate, formatDateShort, isRecentlyActive } from '@/lib/utils';
+import { formatCurrency, formatDateShort, isRecentlyActive } from '@/lib/utils';
+import { CustomerForm } from '@/features/customers/components/CustomerForm';
 
 const statusConfig = {
   PENDING: { label: 'Menunggu', variant: 'warning' as const },
@@ -109,41 +110,12 @@ export default async function CustomerDetailPage({ params }: { params: Promise<{
             </div>
 
             <div className="flex flex-wrap items-center gap-4 text-sm text-body">
-              <span className="flex items-center gap-1.5">
-                <Phone className="h-4 w-4 text-body-mid" />
-                {customer.phoneNumber}
-                <a
-                  href={`https://wa.me/${customer.phoneNumber.replace(/[^0-9]/g, '').replace(/^0/, '62')}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-emerald-600 hover:text-emerald-700 font-medium ml-1"
-                >
-                  WhatsApp
-                </a>
-              </span>
-              {customer.address && (
-                <span className="flex items-center gap-1.5">
-                  <MapPin className="h-4 w-4 text-body-mid" />
-                  {customer.address}
-                </span>
-              )}
               {customer.createdAt && (
                 <span className="flex items-center gap-1.5">
-                  <Calendar className="h-4 w-4 text-body-mid" />
                   Terdaftar {formatDateShort(customer.createdAt)}
                 </span>
               )}
             </div>
-
-            {customer.notes && (
-              <div className="mt-3 p-3 bg-amber-50 rounded-lg border border-amber-100">
-                <div className="flex items-center gap-1.5 mb-1">
-                  <FileText className="h-3.5 w-3.5 text-amber-600" />
-                  <span className="text-xs font-medium text-amber-700">Catatan</span>
-                </div>
-                <p className="text-sm text-amber-800">{customer.notes}</p>
-              </div>
-            )}
           </div>
         </div>
       </div>
@@ -193,71 +165,53 @@ export default async function CustomerDetailPage({ params }: { params: Promise<{
         </div>
       </div>
 
-      {/* Order History */}
-      <div>
-        <div className="flex items-center justify-between mb-4">
-          <h2 className="text-lg font-semibold text-ink">Riwayat Pesanan</h2>
-          <Link
-            href={`/dashboard/orders?customer=${customer.id}`}
-            className="text-sm text-primary hover:text-primary-hover font-medium"
-          >
-            Lihat Semua
-          </Link>
-        </div>
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        {/* Editable Customer Form */}
+        <CustomerForm customer={customer} totalOrders={stats.totalOrders} />
 
-        {recentOrders.length > 0 ? (
-          <div className="bg-canvas rounded-xl border border-muted overflow-hidden">
-            {/* Table Header */}
-            <div className="hidden md:grid md:grid-cols-12 gap-4 px-4 py-3 bg-canvas-soft border-b border-muted text-xs font-medium text-body-mid uppercase tracking-wider">
-              <div className="col-span-3">Invoice</div>
-              <div className="col-span-2">Tanggal</div>
-              <div className="col-span-2">Estimasi</div>
-              <div className="col-span-2">Status</div>
-              <div className="col-span-1">Bayar</div>
-              <div className="col-span-2 text-right">Total</div>
-            </div>
+        {/* Order History */}
+        <div>
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-lg font-semibold text-ink">Riwayat Pesanan</h2>
+            <Link
+              href="/dashboard/orders"
+              className="text-sm text-primary hover:text-primary-hover font-medium"
+            >
+              Lihat Semua
+            </Link>
+          </div>
 
-            {/* Table Body */}
-            {recentOrders.map((order) => {
-              const status = statusConfig[order.orderStatus as keyof typeof statusConfig];
-              const payment = paymentConfig[order.paymentStatus as keyof typeof paymentConfig];
-              return (
-                <Link
-                  key={order.id}
-                  href={`/dashboard/orders/${order.id}`}
-                  className="block hover:bg-canvas-soft/50 transition-colors border-b border-muted/50 last:border-b-0"
-                >
-                  <div className="grid grid-cols-2 md:grid-cols-12 gap-2 md:gap-4 px-4 py-3 items-center">
-                    <div className="md:col-span-3">
+          {recentOrders.length > 0 ? (
+            <div className="bg-canvas rounded-xl border border-muted overflow-hidden">
+              {recentOrders.map((order) => {
+                const status = statusConfig[order.orderStatus as keyof typeof statusConfig];
+                const payment = paymentConfig[order.paymentStatus as keyof typeof paymentConfig];
+                return (
+                  <Link
+                    key={order.id}
+                    href={`/dashboard/orders/${order.id}`}
+                    className="flex items-center justify-between px-4 py-3 hover:bg-canvas-soft/50 transition-colors border-b border-muted/50 last:border-b-0"
+                  >
+                    <div className="min-w-0">
                       <p className="font-medium text-ink text-sm">{order.invoiceNumber}</p>
+                      <p className="text-xs text-body-mid">{formatDateShort(order.dateIn)}</p>
                     </div>
-                    <div className="md:col-span-2 text-sm text-body">
-                      {formatDateShort(order.dateIn)}
-                    </div>
-                    <div className="md:col-span-2 text-sm text-body">
-                      {formatDateShort(order.dateEstimated)}
-                    </div>
-                    <div className="md:col-span-2">
+                    <div className="flex items-center gap-2 shrink-0">
                       <Badge variant={status.variant}>{status.label}</Badge>
+                      <span className="text-sm font-semibold text-ink">{formatCurrency(order.totalAmount)}</span>
                     </div>
-                    <div className="md:col-span-1">
-                      <Badge variant={payment.variant} dot>{payment.label}</Badge>
-                    </div>
-                    <div className="md:col-span-2 text-right font-semibold text-ink">
-                      {formatCurrency(order.totalAmount)}
-                    </div>
-                  </div>
-                </Link>
-              );
-            })}
-          </div>
-        ) : (
-          <div className="bg-canvas rounded-xl border border-muted p-8 text-center">
-            <ShoppingBag className="h-10 w-10 text-muted mx-auto mb-3" />
-            <p className="text-ink font-medium mb-1">Belum ada pesanan</p>
-            <p className="text-sm text-body-mid">Pesanan pelanggan ini akan muncul di sini</p>
-          </div>
-        )}
+                  </Link>
+                );
+              })}
+            </div>
+          ) : (
+            <div className="bg-canvas rounded-xl border border-muted p-8 text-center">
+              <ShoppingBag className="h-10 w-10 text-muted mx-auto mb-3" />
+              <p className="text-ink font-medium mb-1">Belum ada pesanan</p>
+              <p className="text-sm text-body-mid">Pesanan pelanggan ini akan muncul di sini</p>
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );

@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { like, or, eq, sql, desc } from 'drizzle-orm';
+import { like, or, eq, and, sql, desc } from 'drizzle-orm';
 import { getCloudflareContext } from '@opennextjs/cloudflare';
 import { customers, orders } from '@/db/schema';
 import { createDb } from '@/lib/db';
@@ -184,6 +184,22 @@ export async function PATCH(request: NextRequest) {
       return NextResponse.json({ error: 'ID pelanggan wajib diisi' }, { status: 400 });
     }
 
+    // Check phone uniqueness if changing phone
+    if (phoneNumber) {
+      const existing = await db
+        .select()
+        .from(customers)
+        .where(
+          eq(customers.tenantId, ctx.tenantId) &&
+          eq(customers.phoneNumber, phoneNumber) 
+        )
+        .limit(1);
+
+      if (existing.length && existing[0].id !== id) {
+        return NextResponse.json({ error: 'Nomor telepon sudah digunakan pelanggan lain' }, { status: 400 });
+      }
+    }
+
     await db
       .update(customers)
       .set({
@@ -198,5 +214,51 @@ export async function PATCH(request: NextRequest) {
   } catch (error) {
     console.error('Error updating customer:', error);
     return NextResponse.json({ error: 'Gagal memperbarui pelanggan' }, { status: 500 });
+  }
+}
+
+export async function DELETE(request: NextRequest) {
+  try {
+    const ctx = await getTenantContext();
+    const env = getCloudflareContext().env;
+    const db = createDb(env);
+
+    const { searchParams } = new URL(request.url);
+    const id = searchParams.get('id');
+
+    if (!id) {
+      return NextResponse.json({ error: 'ID pelanggan wajib diisi' }, { status: 400 });
+    }
+
+    // Check if customer has orders
+    const orderCount = await db
+      .select({ count: sql<number>`count(*)` })
+      .from(orders)
+      .where(eq(orders.customerId, id));
+
+    if (orderCount[0].count > 0) {
+      return NextResponse.json(
+        { error: 'Tidak dapat menghapus pelanggan yang memiliki riwayat pesanan' },
+        { status: 400 }
+      );
+    }
+
+    // Verify customer belongs to this tenant
+    const customer = await db
+      .select()
+      .from(customers)
+      .where(and(eq(customers.id, id), eq(customers.tenantId, ctx.tenantId)))
+      .limit(1);
+
+    if (!customer.length) {
+      return NextResponse.json({ error: 'Pelanggan tidak ditemukan' }, { status: 404 });
+    }
+
+    await db.delete(customers).where(eq(customers.id, id));
+
+    return NextResponse.json({ success: true });
+  } catch (error) {
+    console.error('Error deleting customer:', error);
+    return NextResponse.json({ error: 'Gagal menghapus pelanggan' }, { status: 500 });
   }
 }
