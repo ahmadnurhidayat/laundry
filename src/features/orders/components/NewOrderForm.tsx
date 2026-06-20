@@ -14,6 +14,8 @@ interface Service {
   serviceName: string;
   type: string;
   pricePerUnit: number;
+  minWeight: number | null;
+  isActive: number | null;
 }
 
 interface OrderItem {
@@ -47,8 +49,15 @@ export function NewOrderForm() {
     [services]
   );
 
+  const getServiceDetails = useCallback(
+    (serviceId: string) => services.find((s) => s.id === serviceId),
+    [services]
+  );
+
   const updateItemQty = (index: number, qty: number) => {
-    const newQty = Math.max(0.5, qty);
+    const service = getServiceDetails(items[index].serviceId);
+    const minWeight = service?.minWeight || 0;
+    const newQty = Math.max(minWeight > 0 ? minWeight : 0.5, qty);
     const newItems = [...items];
     newItems[index].qty = newQty;
     newItems[index].subtotal = newQty * getServicePrice(newItems[index].serviceId);
@@ -58,7 +67,11 @@ export function NewOrderForm() {
   const updateItemService = (index: number, serviceId: string) => {
     const newItems = [...items];
     newItems[index].serviceId = serviceId;
-    newItems[index].subtotal = newItems[index].qty * getServicePrice(serviceId);
+    const service = getServiceDetails(serviceId);
+    const minWeight = service?.minWeight || 0;
+    const newQty = minWeight > 0 ? minWeight : newItems[index].qty;
+    newItems[index].qty = newQty;
+    newItems[index].subtotal = newQty * getServicePrice(serviceId);
     setItems(newItems);
   };
 
@@ -147,62 +160,91 @@ export function NewOrderForm() {
           <h2 className="text-lg font-semibold">Item Pesanan</h2>
         </CardHeader>
         <CardContent className="space-y-4">
-          {items.map((item, index) => (
-            <div key={index} className="flex gap-3 items-end">
-              <div className="flex-1">
-                <Select
-                  label={index === 0 ? 'Layanan' : undefined}
-                  value={item.serviceId}
-                  onChange={(e) => updateItemService(index, e.target.value)}
-                  options={services.map((s) => ({
-                    value: s.id,
-                    label: `${s.serviceName} (${s.type === 'KILOAN' ? 'per kg' : 'per item'}) - ${formatCurrency(s.pricePerUnit)}`,
-                  }))}
-                  placeholder="Pilih layanan"
-                />
-              </div>
+          {items.map((item, index) => {
+            const service = getServiceDetails(item.serviceId);
+            const isKiloan = service?.type === 'KILOAN';
+            const minWeight = service?.minWeight || 0;
+            const belowMin = isKiloan && minWeight > 0 && item.qty < minWeight;
 
-              {/* Quantity Counter */}
-              <div className="w-28">
-                {index === 0 && <label className="block text-sm font-medium text-gray-700 mb-1.5">Qty</label>}
-                <div className="flex items-center h-10 border border-gray-300 rounded-lg">
-                  <button
-                    type="button"
-                    onClick={() => updateItemQty(index, item.qty - 0.5)}
-                    className="h-full px-2 text-gray-500 hover:bg-gray-50 transition-colors"
-                  >
-                    <Minus className="h-3.5 w-3.5" />
-                  </button>
-                  <input
-                    type="number"
-                    min="0.5"
-                    step="0.5"
-                    value={item.qty}
-                    onChange={(e) => updateItemQty(index, parseFloat(e.target.value) || 0.5)}
-                    className="h-full w-12 text-center text-sm font-medium border-x border-gray-300 focus:outline-none"
-                  />
-                  <button
-                    type="button"
-                    onClick={() => updateItemQty(index, item.qty + 0.5)}
-                    className="h-full px-2 text-gray-500 hover:bg-gray-50 transition-colors"
-                  >
-                    <Plus className="h-3.5 w-3.5" />
-                  </button>
+            return (
+              <div key={index} className="p-3 bg-canvas-soft rounded-xl space-y-3">
+                <div className="flex gap-3 items-end">
+                  <div className="flex-1">
+                    <Select
+                      label={index === 0 ? 'Layanan' : undefined}
+                      value={item.serviceId}
+                      onChange={(e) => updateItemService(index, e.target.value)}
+                      options={services.filter((s) => s.isActive !== 0).map((s) => ({
+                        value: s.id,
+                        label: `${s.serviceName} (${s.type === 'KILOAN' ? 'per kg' : 'per item'}) - ${formatCurrency(s.pricePerUnit)}`,
+                      }))}
+                      placeholder="Pilih layanan"
+                    />
+                  </div>
+
+                  {/* Quantity Counter */}
+                  <div className="w-28">
+                    {index === 0 && <label className="block text-sm font-medium text-gray-700 mb-1.5">
+                      {isKiloan ? 'Berat (kg)' : 'Qty'}
+                    </label>}
+                    <div className="flex items-center h-10 border border-gray-300 rounded-lg">
+                      <button
+                        type="button"
+                        onClick={() => updateItemQty(index, item.qty - (isKiloan ? 1 : 1))}
+                        className="h-full px-2 text-gray-500 hover:bg-gray-50 transition-colors"
+                      >
+                        <Minus className="h-3.5 w-3.5" />
+                      </button>
+                      <input
+                        type="number"
+                        min={minWeight > 0 ? minWeight : 0.5}
+                        step={isKiloan ? 1 : 0.5}
+                        value={item.qty}
+                        onChange={(e) => updateItemQty(index, parseFloat(e.target.value) || 0.5)}
+                        className="h-full w-12 text-center text-sm font-medium border-x border-gray-300 focus:outline-none"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => updateItemQty(index, item.qty + (isKiloan ? 1 : 1))}
+                        className="h-full px-2 text-gray-500 hover:bg-gray-50 transition-colors"
+                      >
+                        <Plus className="h-3.5 w-3.5" />
+                      </button>
+                    </div>
+                  </div>
+
+                  <div className="w-28 text-right">
+                    {index === 0 && <label className="block text-sm font-medium text-gray-700 mb-1.5">Subtotal</label>}
+                    <p className="h-10 flex items-center justify-end text-sm font-medium">{formatCurrency(item.subtotal)}</p>
+                  </div>
+
+                  {items.length > 1 && (
+                    <Button type="button" variant="ghost" size="icon" onClick={() => removeItem(index)}>
+                      <Trash2 className="h-4 w-4 text-red-500" />
+                    </Button>
+                  )}
                 </div>
-              </div>
 
-              <div className="w-28 text-right">
-                {index === 0 && <label className="block text-sm font-medium text-gray-700 mb-1.5">Subtotal</label>}
-                <p className="h-10 flex items-center justify-end text-sm font-medium">{formatCurrency(item.subtotal)}</p>
-              </div>
+                {/* Price Calculator */}
+                {service && item.qty > 0 && (
+                  <div className="flex items-center justify-between text-xs text-body-mid">
+                    <span>
+                      {item.qty} {isKiloan ? 'kg' : 'item'} × {formatCurrency(service.pricePerUnit)}/{isKiloan ? 'kg' : 'item'}
+                      {minWeight > 0 && ` (min ${minWeight} kg)`}
+                    </span>
+                    <span className="font-semibold text-ink">{formatCurrency(item.subtotal)}</span>
+                  </div>
+                )}
 
-              {items.length > 1 && (
-                <Button type="button" variant="ghost" size="icon" onClick={() => removeItem(index)}>
-                  <Trash2 className="h-4 w-4 text-red-500" />
-                </Button>
-              )}
-            </div>
-          ))}
+                {/* Min Weight Warning */}
+                {belowMin && (
+                  <p className="text-xs text-amber-600">
+                    Berat minimum untuk layanan ini adalah {minWeight} kg
+                  </p>
+                )}
+              </div>
+            );
+          })}
           <Button type="button" variant="tertiary" onClick={addItem}>
             <Plus className="h-4 w-4 mr-2" />
             Tambah Item

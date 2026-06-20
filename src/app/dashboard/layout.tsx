@@ -12,6 +12,7 @@ import {
   ChevronLeft,
   ChevronRight,
   Plus,
+  Package,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
@@ -19,6 +20,7 @@ const navItems = [
   { href: '/dashboard', label: 'Beranda', icon: LayoutDashboard },
   { href: '/dashboard/orders', label: 'Pesanan', icon: ShoppingCart },
   { href: '/dashboard/customers', label: 'Pelanggan', icon: Users },
+  { href: '/dashboard/services', label: 'Layanan', icon: Package },
   { href: '/dashboard/settings', label: 'Pengaturan', icon: Settings },
 ];
 
@@ -26,7 +28,7 @@ const mobileNavItems = [
   { href: '/dashboard', label: 'Beranda', icon: LayoutDashboard },
   { href: '/dashboard/orders', label: 'Pesanan', icon: ShoppingCart },
   { href: '/dashboard/customers', label: 'Pelanggan', icon: Users },
-  { href: '/dashboard/settings', label: 'Pengaturan', icon: Settings },
+  { href: '/dashboard/services', label: 'Layanan', icon: Package },
 ];
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
@@ -149,7 +151,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
 
       {/* Mobile Bottom Navigation */}
       <nav className="fixed bottom-0 left-0 right-0 z-50 bg-canvas/95 backdrop-blur-lg border-t border-muted lg:hidden safe-area-bottom">
-        <div className="grid grid-cols-4 h-16">
+        <div className="grid grid-cols-5 h-16">
           {mobileNavItems.map((item) => {
             const Icon = item.icon;
             const active = isActive(item.href);

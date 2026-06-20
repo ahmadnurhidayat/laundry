@@ -43,8 +43,12 @@ export const services = sqliteTable('services', {
   id: text('id').primaryKey(),
   tenantId: text('tenant_id').notNull().references(() => tenants.id),
   serviceName: text('service_name').notNull(),
+  description: text('description'),
   type: text('type', { enum: ['KILOAN', 'SATUAN'] }).notNull(),
   pricePerUnit: real('price_per_unit').notNull(),
+  minWeight: real('min_weight').default(0),
+  isActive: real('is_active').default(1),
+  sortOrder: real('sort_order').default(0),
 });
 
 // ── Orders ───────────────────────────────────────────────
