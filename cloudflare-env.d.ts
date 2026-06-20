@@ -3,6 +3,7 @@
 // Runtime types generated with workerd@1.20260611.1 2025-12-01 global_fetch_strictly_public,nodejs_compat
 interface __BaseEnv_CloudflareEnv {
 	DB: D1Database;
+	R2: R2Bucket;
 	ASSETS: Fetcher;
 	D1_DATABASE_ID: string;
 	JWT_SECRET: string;
