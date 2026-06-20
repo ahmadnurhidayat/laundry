@@ -2,8 +2,8 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
-import { Search, X, Users, Phone, MapPin, ChevronRight } from 'lucide-react';
-import { formatCurrency, formatDateShort, isRecentlyActive } from '@/lib/utils';
+import { Search, X, Users, Phone, MapPin, ShoppingBag, ChevronRight } from 'lucide-react';
+import { formatCurrency, isRecentlyActive } from '@/lib/utils';
 
 interface Customer {
   id: string;
@@ -71,87 +71,73 @@ export function CustomersList({ customers }: CustomersListProps) {
         )}
       </div>
 
-      {/* Customer Table */}
+      {/* Customer Cards */}
       {filtered.length > 0 ? (
-        <div className="bg-canvas rounded-xl border border-muted overflow-hidden">
-          {/* Table Header */}
-          <div className="hidden md:grid md:grid-cols-12 gap-4 px-4 py-3 bg-canvas-soft border-b border-muted text-xs font-medium text-body-mid uppercase tracking-wider">
-            <div className="col-span-3">Pelanggan</div>
-            <div className="col-span-2">Telepon</div>
-            <div className="col-span-2">Alamat</div>
-            <div className="col-span-1 text-center">Pesanan</div>
-            <div className="col-span-2 text-right">Total Belanja</div>
-            <div className="col-span-1 text-center">Status</div>
-            <div className="col-span-1"></div>
-          </div>
-
-          {/* Table Body */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
           {filtered.map((customer) => {
             const isActive = customer.lastOrderDate && isRecentlyActive(customer.lastOrderDate);
             return (
               <Link
                 key={customer.id}
                 href={`/dashboard/customers/${customer.id}`}
-                className="block hover:bg-canvas-soft/50 transition-colors border-b border-muted/50 last:border-b-0"
+                className="bg-canvas rounded-xl border border-muted p-4 hover:shadow-md hover:-translate-y-0.5 transition-all duration-200 group"
               >
-                <div className="grid grid-cols-1 md:grid-cols-12 gap-2 md:gap-4 px-4 py-3">
-                  {/* Name + Avatar */}
-                  <div className="md:col-span-3 flex items-center gap-3">
-                    <div className="w-9 h-9 bg-primary/10 rounded-full flex items-center justify-center shrink-0">
-                      <span className="text-primary font-bold text-sm">
-                        {customer.name.charAt(0).toUpperCase()}
-                      </span>
-                    </div>
-                    <div className="min-w-0">
-                      <p className="font-medium text-ink text-sm truncate">{customer.name}</p>
-                      {customer.notes && (
-                        <p className="text-xs text-body-mid truncate mt-0.5">{customer.notes}</p>
-                      )}
-                    </div>
-                  </div>
-
-                  {/* Phone */}
-                  <div className="md:col-span-2 flex items-center gap-1.5 text-sm text-body">
-                    <Phone className="h-3.5 w-3.5 text-body-mid md:hidden" />
-                    {customer.phoneNumber}
-                  </div>
-
-                  {/* Address */}
-                  <div className="md:col-span-2 flex items-center gap-1.5 text-sm text-body truncate">
-                    <MapPin className="h-3.5 w-3.5 text-body-mid shrink-0 md:hidden" />
-                    <span className="truncate">{customer.address || '-'}</span>
-                  </div>
-
-                  {/* Orders Count */}
-                  <div className="md:col-span-1 flex items-center justify-start md:justify-center text-sm">
-                    <span className="font-medium text-ink">{customer.totalOrders}</span>
-                  </div>
-
-                  {/* Total Spent */}
-                  <div className="md:col-span-2 flex items-center justify-start md:justify-end text-sm font-semibold text-ink">
-                    {formatCurrency(customer.totalSpent)}
-                  </div>
-
-                  {/* Status */}
-                  <div className="md:col-span-1 flex items-center justify-start md:justify-center">
-                    <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium ${
-                      isActive
-                        ? 'bg-emerald-50 text-emerald-700'
-                        : customer.totalOrders === 0
-                        ? 'bg-gray-100 text-gray-500'
-                        : 'bg-amber-50 text-amber-700'
-                    }`}>
-                      <span className={`w-1.5 h-1.5 rounded-full ${
-                        isActive ? 'bg-emerald-500' : customer.totalOrders === 0 ? 'bg-gray-400' : 'bg-amber-500'
-                      }`} />
-                      {isActive ? 'Aktif' : customer.totalOrders === 0 ? 'Baru' : 'Diam'}
+                <div className="flex items-start gap-3">
+                  {/* Avatar */}
+                  <div className="w-11 h-11 bg-primary/10 rounded-full flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
+                    <span className="text-primary font-bold text-base">
+                      {customer.name.charAt(0).toUpperCase()}
                     </span>
                   </div>
 
-                  {/* Arrow */}
-                  <div className="hidden md:flex md:col-span-1 items-center justify-end">
-                    <ChevronRight className="h-4 w-4 text-muted group-hover:text-primary transition-colors" />
+                  {/* Info */}
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center justify-between gap-2 mb-1">
+                      <h3 className="font-semibold text-ink text-sm truncate">{customer.name}</h3>
+                      <ChevronRight className="h-4 w-4 text-muted group-hover:text-primary group-hover:translate-x-0.5 transition-all shrink-0" />
+                    </div>
+
+                    <div className="flex items-center gap-1.5 text-xs text-body mb-1.5">
+                      <Phone className="h-3 w-3 text-body-mid shrink-0" />
+                      <span>{customer.phoneNumber}</span>
+                    </div>
+
+                    {customer.address && (
+                      <div className="flex items-center gap-1.5 text-xs text-body mb-1.5">
+                        <MapPin className="h-3 w-3 text-body-mid shrink-0" />
+                        <span className="truncate">{customer.address}</span>
+                      </div>
+                    )}
+
+                    {customer.notes && (
+                      <p className="text-xs text-body-mid truncate mt-1">{customer.notes}</p>
+                    )}
                   </div>
+                </div>
+
+                {/* Stats Row */}
+                <div className="flex items-center justify-between mt-3 pt-3 border-t border-muted/50">
+                  <div className="flex items-center gap-3">
+                    <div className="flex items-center gap-1.5">
+                      <ShoppingBag className="h-3.5 w-3.5 text-body-mid" />
+                      <span className="text-xs font-medium text-ink">{customer.totalOrders}</span>
+                    </div>
+                    <span className="text-muted">·</span>
+                    <span className="text-xs font-semibold text-ink">{formatCurrency(customer.totalSpent)}</span>
+                  </div>
+
+                  <span className={`inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-xs font-medium ${
+                    isActive
+                      ? 'bg-emerald-50 text-emerald-700'
+                      : customer.totalOrders === 0
+                      ? 'bg-gray-100 text-gray-500'
+                      : 'bg-amber-50 text-amber-700'
+                  }`}>
+                    <span className={`w-1.5 h-1.5 rounded-full ${
+                      isActive ? 'bg-emerald-500' : customer.totalOrders === 0 ? 'bg-gray-400' : 'bg-amber-500'
+                    }`} />
+                    {isActive ? 'Aktif' : customer.totalOrders === 0 ? 'Baru' : 'Diam'}
+                  </span>
                 </div>
               </Link>
             );
