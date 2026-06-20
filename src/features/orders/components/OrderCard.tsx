@@ -1,6 +1,5 @@
 import Link from 'next/link';
-import { Clock, Loader2, CheckCircle, Package } from 'lucide-react';
-import { Card, CardContent } from '@/components/ui/card';
+import { Clock, Loader2, CheckCircle, Package, ChevronRight } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { formatCurrency, formatDateShort } from '@/lib/utils';
 import type { Order } from '@/types';
@@ -11,10 +10,10 @@ interface OrderCardProps {
 }
 
 const statusConfig = {
-  PENDING: { label: 'Menunggu', variant: 'warning' as const, icon: Clock },
-  PROCESSING: { label: 'Diproses', variant: 'info' as const, icon: Loader2 },
-  FINISHED: { label: 'Selesai', variant: 'success' as const, icon: CheckCircle },
-  PICKED_UP: { label: 'Diambil', variant: 'neutral' as const, icon: Package },
+  PENDING: { label: 'Menunggu', variant: 'warning' as const, icon: Clock, dotColor: 'bg-amber-500' },
+  PROCESSING: { label: 'Diproses', variant: 'info' as const, icon: Loader2, dotColor: 'bg-blue-500' },
+  FINISHED: { label: 'Selesai', variant: 'success' as const, icon: CheckCircle, dotColor: 'bg-emerald-500' },
+  PICKED_UP: { label: 'Diambil', variant: 'neutral' as const, icon: Package, dotColor: 'bg-purple-500' },
 };
 
 const paymentConfig = {
@@ -25,40 +24,37 @@ const paymentConfig = {
 export function OrderCard({ order, customerName }: OrderCardProps) {
   const status = statusConfig[order.orderStatus];
   const payment = paymentConfig[order.paymentStatus];
-  const StatusIcon = status.icon;
 
   return (
     <Link href={`/dashboard/orders/${order.id}`}>
-      <Card hover>
-        <CardContent className="py-4">
-          <div className="flex items-start justify-between mb-3">
-            <div>
-              <p className="font-semibold text-gray-900 text-sm">{order.invoiceNumber}</p>
-              <p className="text-sm text-gray-500 mt-0.5">{customerName || 'Pelanggan'}</p>
+      <div className="bg-canvas rounded-xl border border-muted p-4 hover:shadow-md hover:-translate-y-0.5 transition-all duration-200 cursor-pointer group">
+        <div className="flex items-start justify-between mb-3">
+          <div className="flex-1 min-w-0">
+            <div className="flex items-center gap-2">
+              <p className="font-semibold text-ink text-sm truncate">{order.invoiceNumber}</p>
+              <ChevronRight className="h-4 w-4 text-muted group-hover:text-primary group-hover:translate-x-0.5 transition-all shrink-0" />
             </div>
-            <Badge variant={payment.variant} dot>
-              {payment.label}
-            </Badge>
+            <p className="text-sm text-body mt-0.5 truncate">{customerName || 'Pelanggan'}</p>
           </div>
+          <Badge variant={payment.variant} dot>
+            {payment.label}
+          </Badge>
+        </div>
 
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-1.5">
-              <StatusIcon className={`h-4 w-4 ${
-                order.orderStatus === 'PENDING' ? 'text-amber-500' :
-                order.orderStatus === 'PROCESSING' ? 'text-blue-500' :
-                order.orderStatus === 'FINISHED' ? 'text-green-500' : 'text-gray-400'
-              }`} />
-              <span className="text-xs font-medium text-gray-600">{status.label}</span>
-            </div>
-            <p className="font-semibold text-gray-900">{formatCurrency(order.totalAmount)}</p>
+        <div className="flex items-center gap-3">
+          <div className="flex items-center gap-1.5">
+            <span className={`w-2 h-2 rounded-full ${status.dotColor}`} />
+            <span className="text-xs font-medium text-body">{status.label}</span>
           </div>
+          <span className="text-muted">·</span>
+          <span className="text-xs text-body-mid">{formatDateShort(order.dateIn)}</span>
+        </div>
 
-          <div className="flex items-center justify-between mt-3 pt-3 border-t border-gray-100">
-            <span className="text-xs text-gray-400">{formatDateShort(order.dateIn)}</span>
-            <span className="text-xs text-gray-400">Est: {formatDateShort(order.dateEstimated)}</span>
-          </div>
-        </CardContent>
-      </Card>
+        <div className="flex items-center justify-between mt-3 pt-3 border-t border-muted/50">
+          <span className="text-xs text-body-mid">Est: {formatDateShort(order.dateEstimated)}</span>
+          <span className="font-bold text-ink">{formatCurrency(order.totalAmount)}</span>
+        </div>
+      </div>
     </Link>
   );
 }

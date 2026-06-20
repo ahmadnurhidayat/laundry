@@ -6,28 +6,26 @@ import { usePathname, useRouter } from 'next/navigation';
 import {
   LayoutDashboard,
   ShoppingCart,
-  Receipt,
   Users,
   Settings,
   LogOut,
   ChevronLeft,
   ChevronRight,
-  Package,
+  Plus,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 const navItems = [
-  { href: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
+  { href: '/dashboard', label: 'Beranda', icon: LayoutDashboard },
   { href: '/dashboard/orders', label: 'Pesanan', icon: ShoppingCart },
-  { href: '/dashboard/orders/new', label: 'Pesanan Baru', icon: Package },
   { href: '/dashboard/customers', label: 'Pelanggan', icon: Users },
   { href: '/dashboard/settings', label: 'Pengaturan', icon: Settings },
 ];
 
 const mobileNavItems = [
   { href: '/dashboard', label: 'Beranda', icon: LayoutDashboard },
-  { href: '/dashboard/orders/new', label: 'Pesanan Baru', icon: Package },
-  { href: '/dashboard/orders', label: 'Transaksi', icon: Receipt },
+  { href: '/dashboard/orders', label: 'Pesanan', icon: ShoppingCart },
+  { href: '/dashboard/customers', label: 'Pelanggan', icon: Users },
   { href: '/dashboard/settings', label: 'Pengaturan', icon: Settings },
 ];
 
@@ -61,14 +59,14 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         <div className={cn('flex items-center h-16 border-b border-muted', collapsed ? 'justify-center px-2' : 'px-5')}>
           {!collapsed && (
             <Link href="/dashboard" className="flex items-center gap-2.5">
-              <div className="w-8 h-8 bg-primary rounded-md flex items-center justify-center shrink-0">
+              <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center shrink-0">
                 <span className="text-white font-bold text-sm">L</span>
               </div>
-              <span className="font-display font-medium text-ink text-sm">Laundry</span>
+              <span className="font-display font-semibold text-ink text-sm">Laundry</span>
             </Link>
           )}
           {collapsed && (
-            <Link href="/dashboard" className="w-8 h-8 bg-primary rounded-md flex items-center justify-center">
+            <Link href="/dashboard" className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
               <span className="text-white font-bold text-sm">L</span>
             </Link>
           )}
@@ -84,7 +82,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                 key={item.href}
                 href={item.href}
                 className={cn(
-                  'flex items-center gap-3 px-3 py-2.5 rounded-md text-sm font-medium transition-all duration-150',
+                  'flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all duration-150',
                   active
                     ? 'bg-primary/10 text-primary'
                     : 'text-body hover:bg-canvas-soft hover:text-ink',
@@ -104,7 +102,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
           <button
             onClick={() => setCollapsed(!collapsed)}
             className={cn(
-              'flex items-center gap-3 w-full px-3 py-2.5 rounded-md text-sm font-medium text-body-mid hover:bg-canvas-soft transition-colors',
+              'flex items-center gap-3 w-full px-3 py-2.5 rounded-lg text-sm font-medium text-body-mid hover:bg-canvas-soft transition-colors',
               collapsed && 'justify-center px-2'
             )}
           >
@@ -115,7 +113,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
             onClick={handleLogout}
             disabled={loggingOut}
             className={cn(
-              'flex items-center gap-3 w-full px-3 py-2.5 rounded-md text-sm font-medium text-red-600 hover:bg-red-50 transition-colors',
+              'flex items-center gap-3 w-full px-3 py-2.5 rounded-lg text-sm font-medium text-red-600 hover:bg-red-50 transition-colors',
               collapsed && 'justify-center px-2'
             )}
           >
@@ -128,22 +126,29 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
       {/* Main Content */}
       <div className={cn('transition-all duration-300', collapsed ? 'lg:ml-[68px]' : 'lg:ml-60')}>
         {/* Top bar (mobile) */}
-        <header className="sticky top-0 z-30 bg-canvas border-b border-muted h-14 flex items-center justify-between px-4 lg:hidden">
+        <header className="sticky top-0 z-30 bg-canvas/80 backdrop-blur-lg border-b border-muted h-14 flex items-center justify-between px-4 lg:hidden">
           <Link href="/dashboard" className="flex items-center gap-2">
-            <div className="w-7 h-7 bg-primary rounded-md flex items-center justify-center">
+            <div className="w-7 h-7 bg-primary rounded-lg flex items-center justify-center">
               <span className="text-white font-bold text-xs">L</span>
             </div>
-            <span className="font-display font-medium text-ink text-sm">Laundry</span>
+            <span className="font-display font-semibold text-ink text-sm">Laundry</span>
           </Link>
-          <span className="text-xs text-body-mid">POS</span>
         </header>
 
         {/* Page content */}
         <main className="p-4 md:p-6 lg:p-8 pb-24 lg:pb-8">{children}</main>
       </div>
 
+      {/* Mobile FAB - New Order */}
+      <Link
+        href="/dashboard/orders/new"
+        className="fixed bottom-20 right-4 z-50 lg:hidden w-14 h-14 bg-primary rounded-full flex items-center justify-center shadow-lg shadow-primary/30 hover:bg-primary-hover active:scale-95 transition-all"
+      >
+        <Plus className="h-6 w-6 text-white" />
+      </Link>
+
       {/* Mobile Bottom Navigation */}
-      <nav className="fixed bottom-0 left-0 right-0 z-50 bg-canvas border-t border-muted lg:hidden safe-area-bottom">
+      <nav className="fixed bottom-0 left-0 right-0 z-50 bg-canvas/95 backdrop-blur-lg border-t border-muted lg:hidden safe-area-bottom">
         <div className="grid grid-cols-4 h-16">
           {mobileNavItems.map((item) => {
             const Icon = item.icon;

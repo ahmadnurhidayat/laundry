@@ -1,4 +1,4 @@
-import { Plus } from 'lucide-react';
+import { Plus, ArrowRight, ShoppingBag } from 'lucide-react';
 import Link from 'next/link';
 import { headers } from 'next/headers';
 import { eq } from 'drizzle-orm';
@@ -6,7 +6,6 @@ import { getCloudflareContext } from '@opennextjs/cloudflare';
 import { orders, customers } from '@/db/schema';
 import { createDb } from '@/lib/db';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent } from '@/components/ui/card';
 import { StatsOverview } from '@/features/orders/components/StatsOverview';
 import { OrderCard } from '@/features/orders/components/OrderCard';
 
@@ -42,13 +41,14 @@ export default async function DashboardPage() {
     .slice(0, 6);
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-6">
+      {/* Header */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Dashboard</h1>
-          <p className="text-gray-500 mt-1">Selamat datang kembali, {userName}</p>
+          <h1 className="text-2xl font-bold text-ink">Dashboard</h1>
+          <p className="text-body mt-1">Selamat datang kembali, {userName}</p>
         </div>
-        <Link href="/dashboard/orders/new">
+        <Link href="/dashboard/orders/new" className="hidden sm:inline-flex">
           <Button>
             <Plus className="h-4 w-4 mr-2" />
             Pesanan Baru
@@ -56,17 +56,23 @@ export default async function DashboardPage() {
         </Link>
       </div>
 
+      {/* Stats */}
       <StatsOverview stats={stats} />
 
+      {/* Recent Orders */}
       {recentOrders.length > 0 && (
         <section>
           <div className="flex items-center justify-between mb-4">
-            <h2 className="text-lg font-semibold text-gray-900">Pesanan Terbaru</h2>
-            <Link href="/dashboard/orders" className="text-sm text-blue-600 hover:text-blue-700 font-medium">
+            <h2 className="text-lg font-semibold text-ink">Pesanan Terbaru</h2>
+            <Link
+              href="/dashboard/orders"
+              className="flex items-center gap-1 text-sm text-primary hover:text-primary-hover font-medium group"
+            >
               Lihat Semua
+              <ArrowRight className="h-4 w-4 group-hover:translate-x-0.5 transition-transform" />
             </Link>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-3">
             {recentOrders.map((order) => (
               <OrderCard key={order.id} order={order} customerName={customerMap.get(order.customerId)} />
             ))}
@@ -74,15 +80,21 @@ export default async function DashboardPage() {
         </section>
       )}
 
+      {/* Empty State */}
       {allOrders.length === 0 && (
-        <Card>
-          <CardContent className="py-16 text-center">
-            <p className="text-gray-500 text-lg mb-4">Belum ada pesanan</p>
-            <Link href="/dashboard/orders/new">
-              <Button>Buat Pesanan Pertama</Button>
-            </Link>
-          </CardContent>
-        </Card>
+        <div className="bg-canvas rounded-xl border border-muted p-8 text-center">
+          <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
+            <ShoppingBag className="h-7 w-7 text-primary" />
+          </div>
+          <h3 className="text-ink font-semibold mb-1">Belum ada pesanan</h3>
+          <p className="text-sm text-body-mid mb-4">Mulai dengan membuat pesanan pertama Anda</p>
+          <Link href="/dashboard/orders/new">
+            <Button size="sm">
+              <Plus className="h-4 w-4 mr-1.5" />
+              Buat Pesanan
+            </Button>
+          </Link>
+        </div>
       )}
     </div>
   );

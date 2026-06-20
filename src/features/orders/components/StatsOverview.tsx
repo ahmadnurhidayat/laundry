@@ -1,13 +1,13 @@
 import { Clock, Loader2, CheckCircle, Package, CreditCard } from 'lucide-react';
-import { Card, CardContent } from '@/components/ui/card';
+import Link from 'next/link';
 import type { DashboardStats } from '@/types';
 
 const statsConfig = [
-  { key: 'pending' as const, label: 'Menunggu', icon: Clock, color: 'text-amber-600 bg-amber-50' },
-  { key: 'processing' as const, label: 'Diproses', icon: Loader2, color: 'text-blue-600 bg-blue-50' },
-  { key: 'finished' as const, label: 'Selesai', icon: CheckCircle, color: 'text-green-600 bg-green-50' },
-  { key: 'pickedUp' as const, label: 'Diambil', icon: Package, color: 'text-purple-600 bg-purple-50' },
-  { key: 'unpaid' as const, label: 'Belum Bayar', icon: CreditCard, color: 'text-red-600 bg-red-50' },
+  { key: 'pending' as const, label: 'Menunggu', icon: Clock, color: 'bg-amber-500', lightColor: 'bg-amber-50', textColor: 'text-amber-700', href: '/dashboard/orders?status=PENDING' },
+  { key: 'processing' as const, label: 'Diproses', icon: Loader2, color: 'bg-blue-500', lightColor: 'bg-blue-50', textColor: 'text-blue-700', href: '/dashboard/orders?status=PROCESSING' },
+  { key: 'finished' as const, label: 'Selesai', icon: CheckCircle, color: 'bg-emerald-500', lightColor: 'bg-emerald-50', textColor: 'text-emerald-700', href: '/dashboard/orders?status=FINISHED' },
+  { key: 'pickedUp' as const, label: 'Diambil', icon: Package, color: 'bg-purple-500', lightColor: 'bg-purple-50', textColor: 'text-purple-700', href: '/dashboard/orders?status=PICKED_UP' },
+  { key: 'unpaid' as const, label: 'Belum Bayar', icon: CreditCard, color: 'bg-red-500', lightColor: 'bg-red-50', textColor: 'text-red-700', href: '/dashboard/orders?status=UNPAID' },
 ];
 
 interface StatsOverviewProps {
@@ -20,17 +20,19 @@ export function StatsOverview({ stats }: StatsOverviewProps) {
       {statsConfig.map((item) => {
         const Icon = item.icon;
         return (
-          <Card key={item.key}>
-            <CardContent className="flex items-center gap-3 py-4">
-              <div className={`p-2 rounded-lg ${item.color}`}>
-                <Icon className="h-5 w-5" />
+          <Link key={item.key} href={item.href}>
+            <div className="bg-canvas rounded-xl border border-muted p-4 hover:shadow-md hover:-translate-y-0.5 transition-all duration-200 cursor-pointer group">
+              <div className="flex items-center justify-between mb-3">
+                <div className={`p-2 rounded-lg ${item.lightColor} group-hover:scale-110 transition-transform`}>
+                  <Icon className={`h-4 w-4 ${item.textColor}`} />
+                </div>
+                <span className={`text-2xl font-bold ${item.textColor}`}>
+                  {stats[item.key]}
+                </span>
               </div>
-              <div>
-                <p className="text-2xl font-bold text-gray-900">{stats[item.key]}</p>
-                <p className="text-xs text-gray-500">{item.label}</p>
-              </div>
-            </CardContent>
-          </Card>
+              <p className="text-xs font-medium text-body">{item.label}</p>
+            </div>
+          </Link>
         );
       })}
     </div>

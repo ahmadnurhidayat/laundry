@@ -33,12 +33,13 @@ export default async function OrdersPage() {
 
   return (
     <div className="space-y-6">
+      {/* Header */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Pesanan</h1>
-          <p className="text-gray-500 mt-1">{allOrders.length} total pesanan</p>
+          <h1 className="text-2xl font-bold text-ink">Pesanan</h1>
+          <p className="text-body mt-1">{allOrders.length} total pesanan</p>
         </div>
-        <Link href="/dashboard/orders/new">
+        <Link href="/dashboard/orders/new" className="hidden sm:inline-flex">
           <Button>
             <Plus className="h-4 w-4 mr-2" />
             Pesanan Baru
