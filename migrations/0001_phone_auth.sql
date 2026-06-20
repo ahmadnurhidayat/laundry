@@ -1,15 +1,16 @@
-/* Apply phone-based auth:
-
-1. Add phone column to users
-2. Copy email data to phone (if any)
-3. Drop email column and index
-4. Create phone index
-*/
-
---> statement-breakpoint
-ALTER TABLE users ADD COLUMN phone text;--> statement-breakpoint
-UPDATE users SET phone = email WHERE phone IS NULL;--> statement-breakpoint
-ALTER TABLE users ALTER COLUMN phone SET NOT NULL;--> statement-breakpoint
-DROP INDEX IF EXISTS users_email_idx;--> statement-breakpoint
-CREATE UNIQUE INDEX users_phone_idx ON users (phone);--> statement-breakpoint
-ALTER TABLE users DROP COLUMN email;
+/* SQLite-compatible phone auth migration:
+   Recreate users table with phone instead of email */
+CREATE TABLE `users_new` (
+	`id` text PRIMARY KEY NOT NULL,
+	`tenant_id` text NOT NULL,
+	`phone` text NOT NULL,
+	`password_hash` text NOT NULL,
+	`name` text NOT NULL,
+	`role` text DEFAULT 'CASHIER' NOT NULL,
+	FOREIGN KEY (`tenant_id`) REFERENCES `tenants`(`id`) ON UPDATE no action ON DELETE no action
+);
+INSERT INTO `users_new` (`id`, `tenant_id`, `phone`, `password_hash`, `name`, `role`)
+SELECT `id`, `tenant_id`, `email`, `password_hash`, `name`, `role` FROM `users`;
+DROP TABLE `users`;
+ALTER TABLE `users_new` RENAME TO `users`;
+CREATE UNIQUE INDEX `users_phone_idx` ON `users` (`phone`);
