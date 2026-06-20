@@ -3,7 +3,7 @@ import { headers } from 'next/headers';
 import { eq, and } from 'drizzle-orm';
 import { notFound } from 'next/navigation';
 import { getCloudflareContext } from '@opennextjs/cloudflare';
-import { orders, customers, orderItems, services, tenants } from '@/db/schema';
+import { orders, customers, orderItems, services, tenants, orderPhotos } from '@/db/schema';
 import { createDb } from '@/lib/db';
 import { ArrowLeft } from 'lucide-react';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
@@ -11,6 +11,7 @@ import { formatCurrency, formatDate } from '@/lib/utils';
 import { StatusToggle } from '@/features/orders/components/StatusToggle';
 import { ReceiptPreview } from '@/features/orders/components/ReceiptPreview';
 import { ShareReceipt } from '@/features/orders/components/ShareReceipt';
+import { PhotoUpload } from '@/features/orders/components/PhotoUpload';
 
 export default async function OrderDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
@@ -21,6 +22,7 @@ export default async function OrderDetailPage({ params }: { params: Promise<{ id
   let customer: any = null;
   let items: any[] = [];
   let tenant: any = null;
+  let photos: any[] = [];
 
   try {
     const { env } = getCloudflareContext();
@@ -53,6 +55,19 @@ export default async function OrderDetailPage({ params }: { params: Promise<{ id
 
     const tenantResult = await db.select().from(tenants).where(eq(tenants.id, tenantId)).limit(1);
     tenant = tenantResult[0];
+
+    const photosResult = await db
+      .select()
+      .from(orderPhotos)
+      .where(eq(orderPhotos.orderId, id))
+      .orderBy(orderPhotos.sortOrder);
+
+    const photos = photosResult.map((p) => ({
+      id: p.id,
+      url: p.url,
+      caption: p.caption,
+      sortOrder: p.sortOrder,
+    }));
   } catch (e) {
     console.error('Error:', e);
     return notFound();
@@ -151,6 +166,12 @@ export default async function OrderDetailPage({ params }: { params: Promise<{ id
                   <span className="text-ink">{formatCurrency(order.totalAmount)}</span>
                 </div>
               </div>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardContent>
+              <PhotoUpload orderId={order.id} initialPhotos={photos} />
             </CardContent>
           </Card>
         </div>
