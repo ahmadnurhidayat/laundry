@@ -72,6 +72,8 @@ export async function POST(request: NextRequest) {
 
     const customerName = sanitize(body.customerName, 100);
     const customerPhone = sanitize(body.customerPhone, 15);
+    const customerAddress = sanitize(body.customerAddress, 200);
+    const customerNotes = sanitize(body.customerNotes, 500);
     const notes = sanitize(body.notes, 500);
     const items = Array.isArray(body.items) ? body.items : [];
     const daysEstimate = typeof body.daysEstimate === 'number' ? Math.min(Math.max(body.daysEstimate, 1), 30) : 3;
@@ -105,6 +107,9 @@ export async function POST(request: NextRequest) {
         tenantId: ctx.tenantId,
         name: customerName,
         phoneNumber: customerPhone,
+        address: customerAddress || null,
+        notes: customerNotes || null,
+        createdAt: new Date().toISOString(),
       });
     }
 

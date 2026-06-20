@@ -27,6 +27,8 @@ export function NewOrderForm() {
   const [services, setServices] = useState<Service[]>([]);
   const [customerName, setCustomerName] = useState('');
   const [customerPhone, setCustomerPhone] = useState('');
+  const [customerAddress, setCustomerAddress] = useState('');
+  const [customerNotes, setCustomerNotes] = useState('');
   const [items, setItems] = useState<OrderItem[]>([{ serviceId: '', qty: 1, subtotal: 0 }]);
   const [notes, setNotes] = useState('');
   const [daysEstimate, setDaysEstimate] = useState('3');
@@ -80,6 +82,8 @@ export function NewOrderForm() {
         body: JSON.stringify({
           customerName,
           customerPhone,
+          customerAddress,
+          customerNotes,
           items: items.filter((item) => item.serviceId),
           notes,
           daysEstimate: parseInt(daysEstimate) || 3,
@@ -121,6 +125,18 @@ export function NewOrderForm() {
             onChange={(e) => setCustomerPhone(e.target.value)}
             placeholder="Masukkan nomor telepon"
             required
+          />
+          <Input
+            label="Alamat (Opsional)"
+            value={customerAddress}
+            onChange={(e) => setCustomerAddress(e.target.value)}
+            placeholder="Alamat pelanggan"
+          />
+          <Input
+            label="Catatan Pelanggan (Opsional)"
+            value={customerNotes}
+            onChange={(e) => setCustomerNotes(e.target.value)}
+            placeholder="Preferensi, alergi, dll."
           />
         </CardContent>
       </Card>

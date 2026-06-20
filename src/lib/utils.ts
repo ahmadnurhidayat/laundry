@@ -49,3 +49,10 @@ export function calculateEstimatedDate(days: number): string {
   date.setDate(date.getDate() + days);
   return date.toISOString().split('T')[0];
 }
+
+export function isRecentlyActive(dateStr: string, days: number = 30): boolean {
+  const date = new Date(dateStr);
+  const now = new Date();
+  const diff = now.getTime() - date.getTime();
+  return diff <= days * 24 * 60 * 60 * 1000;
+}

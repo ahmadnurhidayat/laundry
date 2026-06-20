@@ -31,6 +31,9 @@ export const customers = sqliteTable('customers', {
   tenantId: text('tenant_id').notNull().references(() => tenants.id),
   name: text('name').notNull(),
   phoneNumber: text('phone_number').notNull(),
+  address: text('address'),
+  notes: text('notes'),
+  createdAt: text('created_at'),
 }, (t) => ({
   tenantPhoneIdx: uniqueIndex('customers_tenant_phone_idx').on(t.tenantId, t.phoneNumber),
 }));
