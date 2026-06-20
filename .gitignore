@@ -39,3 +39,4 @@ yarn-error.log*
 # dev database
 *.db
 .dev.vars
+tsconfig.tsbuildinfo
