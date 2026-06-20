@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { eq, and } from 'drizzle-orm';
 import { getCloudflareContext } from '@opennextjs/cloudflare';
-import { customers, orders, orderItems, services } from '@/db/schema';
+import { customers, orders, orderItems, services, orderStatusHistory } from '@/db/schema';
 import { createDb } from '@/lib/db';
 import { getTenantContext } from '@/lib/tenant-context';
 
@@ -160,6 +160,16 @@ export async function POST(request: NextRequest) {
       trackingToken,
     });
 
+    // Record initial status history
+    await db.insert(orderStatusHistory).values({
+      id: generateId(),
+      orderId,
+      status: 'PENDING',
+      note: 'Pesanan diterima',
+      updatedBy: ctx.name || null,
+      createdAt: new Date().toISOString(),
+    });
+
     for (const item of orderItemsData) {
       await db.insert(orderItems).values({
         id: item.id,
@@ -200,6 +210,29 @@ export async function PATCH(request: NextRequest) {
     const validStatuses = ['PENDING', 'PROCESSING', 'FINISHED', 'PICKED_UP'];
     if (!validStatuses.includes(status)) {
       return NextResponse.json({ error: 'Status tidak valid' }, { status: 400 });
+    }
+
+    // Get current order to check for status change
+    const currentOrder = await db
+      .select()
+      .from(orders)
+      .where(and(eq(orders.id, orderId), eq(orders.tenantId, ctx.tenantId)))
+      .limit(1);
+
+    if (currentOrder.length === 0) {
+      return NextResponse.json({ error: 'Pesanan tidak ditemukan' }, { status: 404 });
+    }
+
+    // Only record history if status actually changed
+    if (currentOrder[0].orderStatus !== status) {
+      await db.insert(orderStatusHistory).values({
+        id: generateId(),
+        orderId,
+        status,
+        note: null,
+        updatedBy: ctx.name || null,
+        createdAt: new Date().toISOString(),
+      });
     }
 
     await db
