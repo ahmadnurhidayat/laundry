@@ -8,6 +8,7 @@ export const tenants = sqliteTable('tenants', {
   slug: text('slug').notNull().unique(),
   address: text('address'),
   phone: text('phone'),
+  termsAndConditions: text('terms_and_conditions'),
   status: text('status', { enum: ['ACTIVE', 'SUSPENDED'] }).notNull().default('ACTIVE'),
   createdAt: text('created_at').notNull(),
 });
@@ -69,6 +70,26 @@ export const orderItems = sqliteTable('order_items', {
   subtotal: real('subtotal').notNull(),
 });
 
+// ── Order Status History ─────────────────────────────────
+export const orderStatusHistory = sqliteTable('order_status_history', {
+  id: text('id').primaryKey(),
+  orderId: text('order_id').notNull().references(() => orders.id),
+  status: text('status').notNull(),
+  note: text('note'),
+  updatedBy: text('updated_by'),
+  createdAt: text('created_at').notNull(),
+});
+
+// ── Order Photos ─────────────────────────────────────────
+export const orderPhotos = sqliteTable('order_photos', {
+  id: text('id').primaryKey(),
+  orderId: text('order_id').notNull().references(() => orders.id),
+  url: text('url').notNull(),
+  caption: text('caption'),
+  sortOrder: real('sort_order').notNull().default(0),
+  createdAt: text('created_at').notNull(),
+});
+
 // ── Relations ────────────────────────────────────────────
 export const tenantsRelations = relations(tenants, ({ many }) => ({
   users: many(users),
@@ -94,9 +115,19 @@ export const ordersRelations = relations(orders, ({ one, many }) => ({
   tenant: one(tenants, { fields: [orders.tenantId], references: [tenants.id] }),
   customer: one(customers, { fields: [orders.customerId], references: [customers.id] }),
   items: many(orderItems),
+  statusHistory: many(orderStatusHistory),
+  photos: many(orderPhotos),
 }));
 
 export const orderItemsRelations = relations(orderItems, ({ one }) => ({
   order: one(orders, { fields: [orderItems.orderId], references: [orders.id] }),
   service: one(services, { fields: [orderItems.serviceId], references: [services.id] }),
+}));
+
+export const orderStatusHistoryRelations = relations(orderStatusHistory, ({ one }) => ({
+  order: one(orders, { fields: [orderStatusHistory.orderId], references: [orders.id] }),
+}));
+
+export const orderPhotosRelations = relations(orderPhotos, ({ one }) => ({
+  order: one(orders, { fields: [orderPhotos.orderId], references: [orders.id] }),
 }));
