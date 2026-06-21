@@ -62,12 +62,12 @@ export function AddServiceForm({ onClose, onCreated }: AddServiceFormProps) {
 
   return (
     <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-ink/20 backdrop-blur-sm">
-      <div className="w-full sm:max-w-md bg-canvas-elevated rounded-xl shadow-premium-lg p-6 animate-slide-up max-h-[90dvh] overflow-y-auto">
+      <div className="w-full sm:max-w-md bg-canvas-elevated rounded-3xl shadow-premium-xl p-6 animate-slide-up max-h-[90dvh] overflow-y-auto">
         <div className="flex items-center justify-between mb-5">
           <h2 className="text-lg font-bold text-ink">Tambah Layanan</h2>
           <button
             onClick={onClose}
-            className="p-1.5 text-ink-muted hover:bg-canvas-soft rounded-lg transition-colors"
+            className="p-1.5 text-ink-muted hover:bg-canvas-soft rounded-xl transition-colors"
           >
             <X className="h-5 w-5" />
           </button>

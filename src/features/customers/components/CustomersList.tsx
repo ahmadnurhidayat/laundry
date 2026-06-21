@@ -80,12 +80,12 @@ export function CustomersList({ customers }: CustomersListProps) {
               <Link
                 key={customer.id}
                 href={`/dashboard/customers/${customer.id}`}
-                className="bg-canvas-elevated rounded-lg border border-border-subtle p-4 hover:shadow-premium-md transition-shadow duration-200 group"
+                className="bg-canvas-elevated rounded-2xl border border-border-subtle border-l-4 border-l-brand p-4 hover:shadow-premium-md transition-shadow duration-200 group"
               >
                 <div className="flex items-start gap-3">
                   {/* Avatar */}
                   <div className="w-11 h-11 bg-brand-subtle rounded-full flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
-                    <span className="text-bg-brand font-bold text-base">
+                    <span className="text-brand font-bold text-base">
                       {customer.name.charAt(0).toUpperCase()}
                     </span>
                   </div>
@@ -94,7 +94,7 @@ export function CustomersList({ customers }: CustomersListProps) {
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center justify-between gap-2 mb-1">
                       <h3 className="font-semibold text-ink text-sm truncate">{customer.name}</h3>
-                      <ChevronRight className="h-4 w-4 text-ink-muted group-hover:text-bg-brand group-hover:translate-x-0.5 transition-all shrink-0" />
+                      <ChevronRight className="h-4 w-4 text-ink-muted group-hover:text-brand group-hover:translate-x-0.5 transition-all shrink-0" />
                     </div>
 
                     <div className="flex items-center gap-1.5 text-xs text-ink-muted mb-1.5">

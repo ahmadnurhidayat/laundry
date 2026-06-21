@@ -15,6 +15,7 @@ import {
   Package,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { PageTransition } from '@/components/page-transition';
 
 const navItems = [
   { href: '/dashboard', label: 'Beranda', icon: LayoutDashboard },
@@ -61,14 +62,14 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         <div className={cn('flex items-center h-16 border-b border-border-subtle', collapsed ? 'justify-center px-2' : 'px-5')}>
           {!collapsed && (
             <Link href="/dashboard" className="flex items-center gap-2.5">
-              <div className="w-8 h-8 bg-brand rounded-lg flex items-center justify-center shrink-0">
+              <div className="w-8 h-8 bg-brand rounded-full flex items-center justify-center shrink-0">
                 <span className="text-white font-bold text-sm">L</span>
               </div>
-              <span className="font-semibold text-ink text-sm">Laundry</span>
+              <span className="font-bold text-ink text-sm">Laundry</span>
             </Link>
           )}
           {collapsed && (
-            <Link href="/dashboard" className="w-8 h-8 bg-brand rounded-lg flex items-center justify-center">
+            <Link href="/dashboard" className="w-8 h-8 bg-brand rounded-full flex items-center justify-center">
               <span className="text-white font-bold text-sm">L</span>
             </Link>
           )}
@@ -84,7 +85,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                 key={item.href}
                 href={item.href}
                 className={cn(
-                  'flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all duration-150',
+                  'relative flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all duration-150',
                   active
                     ? 'bg-brand-subtle text-brand'
                     : 'text-ink-muted hover:bg-canvas hover:text-ink',
@@ -92,6 +93,10 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                 )}
                 title={collapsed ? item.label : undefined}
               >
+                {/* Blue bar indicator for active item */}
+                {active && (
+                  <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-6 bg-brand rounded-r-full" />
+                )}
                 <Icon className={cn('h-5 w-5 shrink-0', active ? 'text-brand' : 'text-ink-muted')} />
                 {!collapsed && <span>{item.label}</span>}
               </Link>
@@ -130,15 +135,17 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         {/* Top bar (mobile) */}
         <header className="sticky top-0 z-30 bg-canvas-elevated border-b border-border-subtle h-14 flex items-center justify-between px-4 lg:hidden">
           <Link href="/dashboard" className="flex items-center gap-2">
-            <div className="w-7 h-7 bg-brand rounded-lg flex items-center justify-center">
+            <div className="w-7 h-7 bg-brand rounded-full flex items-center justify-center">
               <span className="text-white font-bold text-xs">L</span>
             </div>
-            <span className="font-semibold text-ink text-sm">Laundry</span>
+            <span className="font-bold text-ink text-sm">Laundry</span>
           </Link>
         </header>
 
         {/* Page content */}
-        <main className="p-4 md:p-6 lg:p-8 pb-24 lg:pb-8">{children}</main>
+        <main className="p-4 md:p-6 lg:p-8 pb-24 lg:pb-8">
+          <PageTransition>{children}</PageTransition>
+        </main>
       </div>
 
       {/* Mobile FAB - New Order */}

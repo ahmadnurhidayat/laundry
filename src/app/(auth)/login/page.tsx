@@ -44,13 +44,13 @@ export default function LoginPage() {
     <div className="min-h-screen bg-canvas flex items-center justify-center p-4">
       <div className="w-full max-w-sm">
         <div className="flex items-center justify-center mb-8">
-          <div className="h-10 w-10 bg-brand rounded-lg flex items-center justify-center">
-            <span className="text-white font-bold text-sm">L</span>
+          <div className="h-14 w-14 bg-brand rounded-full flex items-center justify-center shadow-lg shadow-brand/20">
+            <span className="text-white font-bold text-xl">L</span>
           </div>
         </div>
 
-        <div className="bg-canvas-elevated rounded-xl border border-border-subtle shadow-premium-sm p-6">
-          <h1 className="text-lg font-semibold text-ink text-center mb-1">Masuk ke Dashboard</h1>
+        <div className="bg-canvas-elevated rounded-3xl border border-border-subtle shadow-premium-xl p-8">
+          <h1 className="text-xl font-bold text-ink text-center mb-1">Masuk ke Dashboard</h1>
           <p className="text-sm text-ink-muted text-center mb-6">Kelola pesanan laundry Anda</p>
 
           <form onSubmit={handleSubmit} className="space-y-4">

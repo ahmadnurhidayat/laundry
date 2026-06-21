@@ -233,10 +233,10 @@ export function TrackingView({ order, customer, items, tenant, statusHistory = [
 
       <div className="max-w-lg mx-auto p-4 space-y-4">
         {/* Invoice Header */}
-        <div className="bg-canvas-elevated rounded-lg shadow-premium-sm border border-border-subtle overflow-hidden">
+        <div className="bg-canvas-elevated rounded-2xl shadow-premium-sm border border-border-subtle overflow-hidden">
           <div className="p-4 text-center border-b border-border-subtle">
             <h2 className="font-bold text-ink text-lg">{customer.name}</h2>
-            <div className="mt-3 inline-flex items-center justify-center p-3 bg-canvas-elevated rounded-lg border border-border-subtle">
+            <div className="mt-3 inline-flex items-center justify-center p-3 bg-canvas-elevated rounded-xl border border-border-subtle">
               <QRCodeSVG
                 value={`${typeof window !== 'undefined' ? window.location.origin : ''}/track/${order.trackingToken}`}
                 size={80}
@@ -274,7 +274,7 @@ export function TrackingView({ order, customer, items, tenant, statusHistory = [
         </div>
 
         {/* Status Pengerjaan */}
-        <div className="bg-canvas-elevated rounded-lg shadow-premium-sm border border-border-subtle overflow-hidden">
+        <div className="bg-canvas-elevated rounded-2xl shadow-premium-sm border border-border-subtle overflow-hidden">
           <button
             onClick={() => setShowStatusDetail(!showStatusDetail)}
             className="w-full p-4 flex items-center justify-between hover:bg-canvas-soft transition-colors"
@@ -302,27 +302,40 @@ export function TrackingView({ order, customer, items, tenant, statusHistory = [
                 {currentStepIndex + 1} dari {STATUS_STEPS.length} tahap telah selesai
               </p>
 
-              {/* Progress Bar */}
-              <div className="w-full bg-canvas-soft rounded-full h-2 mb-4">
-                <div
-                  className={`h-2 rounded-full transition-all duration-500 ${statusConfig.color}`}
-                  style={{ width: `${statusConfig.progress}%` }}
-                ></div>
-              </div>
+              {/* Visual Stepper with Progress Bar */}
+              <div className="relative mb-8">
+                {/* Steps line background bar */}
+                <div className="absolute left-0 right-0 top-1/2 -translate-y-1/2 h-1 bg-canvas-soft rounded-full" />
 
-              {/* Status Steps */}
-              <div className="flex justify-between mb-4">
-                {STATUS_STEPS.map((step, i) => {
-                  const isActive = i <= currentStepIndex;
-                  return (
-                    <div key={step.key} className="flex flex-col items-center">
-                      <div className={`w-3 h-3 rounded-full mb-1 ${isActive ? statusConfig.dotColor : 'bg-canvas-soft'}`}></div>
-                      <span className={`text-xs ${isActive ? 'text-ink font-medium' : 'text-ink-muted'}`}>
-                        {step.label}
-                      </span>
-                    </div>
-                  );
-                })}
+                {/* Progress line filling up */}
+                <div
+                  className={`absolute left-0 top-1/2 -translate-y-1/2 h-1 ${statusConfig.color} rounded-full transition-all duration-500`}
+                  style={{ width: `${(Math.min(currentStepIndex, STATUS_STEPS.length - 1) / (STATUS_STEPS.length - 1)) * 100}%` }}
+                />
+
+                {/* Step dots */}
+                <div className="relative flex justify-between">
+                  {STATUS_STEPS.map((step, i) => {
+                    const isActive = i <= currentStepIndex;
+                    const isCurrent = i === currentStepIndex;
+                    return (
+                      <div key={step.key} className="flex flex-col items-center">
+                        <div className={`w-4 h-4 rounded-full flex items-center justify-center ${
+                          isActive ? `${statusConfig.color} ring-4 ring-white` : 'bg-canvas-soft'
+                        }`}>
+                          {isActive && (
+                            <div className="w-2 h-2 bg-white rounded-full" />
+                          )}
+                        </div>
+                        <span className={`text-xs mt-2 font-medium ${
+                          isCurrent ? 'text-ink' : isActive ? 'text-ink' : 'text-ink-muted'
+                        }`}>
+                          {step.label}
+                        </span>
+                      </div>
+                    );
+                  })}
+                </div>
               </div>
 
               {/* Timeline */}
@@ -372,7 +385,7 @@ export function TrackingView({ order, customer, items, tenant, statusHistory = [
 
         {/* Galeri Foto */}
         {photos.length > 0 && (
-          <div className="bg-canvas-elevated rounded-lg shadow-premium-sm border border-border-subtle overflow-hidden">
+          <div className="bg-canvas-elevated rounded-2xl shadow-premium-sm border border-border-subtle overflow-hidden">
             <div className="p-4 flex items-center justify-between">
               <div className="flex items-center gap-2">
                 <Camera className="w-5 h-5 text-ink-muted" />
@@ -386,7 +399,7 @@ export function TrackingView({ order, customer, items, tenant, statusHistory = [
                   <button
                     key={photo.id}
                     onClick={() => setLightboxIndex(index)}
-                    className="flex-shrink-0 w-24 h-24 rounded-lg overflow-hidden bg-canvas-soft hover:opacity-80 transition-opacity"
+                    className="flex-shrink-0 w-24 h-24 rounded-xl overflow-hidden bg-canvas-soft hover:opacity-80 transition-opacity"
                   >
                     <img
                       src={photo.url}
@@ -402,7 +415,7 @@ export function TrackingView({ order, customer, items, tenant, statusHistory = [
         )}
 
         {/* Rincian Harga */}
-        <div className="bg-canvas-elevated rounded-lg shadow-premium-sm border border-border-subtle overflow-hidden">
+        <div className="bg-canvas-elevated rounded-2xl shadow-premium-sm border border-border-subtle overflow-hidden">
           <button
             onClick={() => setShowPriceDetail(!showPriceDetail)}
             className="w-full p-4 flex items-center justify-between hover:bg-canvas-soft transition-colors"
@@ -480,7 +493,7 @@ export function TrackingView({ order, customer, items, tenant, statusHistory = [
 
         {/* Catatan */}
         {order.notes && (
-          <div className="bg-canvas-elevated rounded-lg shadow-premium-sm border border-border-subtle p-4">
+          <div className="bg-canvas-elevated rounded-2xl shadow-premium-sm border border-border-subtle p-4">
             <h3 className="font-semibold text-ink mb-2">Catatan</h3>
             <p className="text-sm text-ink-muted">{order.notes}</p>
           </div>
@@ -488,7 +501,7 @@ export function TrackingView({ order, customer, items, tenant, statusHistory = [
 
         {/* Syarat & Ketentuan */}
         {termsAndConditions && (
-          <div className="bg-canvas-elevated rounded-lg shadow-premium-sm border border-border-subtle p-4">
+          <div className="bg-canvas-elevated rounded-2xl shadow-premium-sm border border-border-subtle p-4">
             <h3 className="font-semibold text-ink mb-3">Syarat & Ketentuan</h3>
             <div className="text-sm text-ink-muted whitespace-pre-line leading-relaxed">
               {termsAndConditions}

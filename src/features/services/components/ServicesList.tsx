@@ -64,7 +64,7 @@ export function ServicesList() {
       {/* Header */}
       <div className="flex items-center justify-between mb-6">
         <div>
-          <h1 className="text-xl font-bold text-ink">Layanan & Harga</h1>
+          <h1 className="text-xl font-bold text-ink border-l-4 border-brand pl-3">Layanan & Harga</h1>
           <p className="text-sm text-ink-muted mt-0.5">
             {services.length} layanan · {activeCount} aktif
           </p>

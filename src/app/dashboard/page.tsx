@@ -62,7 +62,7 @@ export default async function DashboardPage() {
       {recentOrders.length > 0 && (
         <section>
           <div className="flex items-center justify-between mb-4">
-            <h2 className="text-lg font-semibold text-ink">Pesanan Terbaru</h2>
+            <h2 className="text-lg font-semibold text-ink border-l-4 border-brand pl-3">Pesanan Terbaru</h2>
             <Link
               href="/dashboard/orders"
               className="flex items-center gap-1 text-sm text-brand hover:text-brand-hover font-medium group"
@@ -81,14 +81,14 @@ export default async function DashboardPage() {
 
       {/* Empty State */}
       {allOrders.length === 0 && (
-        <div className="bg-canvas-elevated rounded-xl border border-border-subtle p-8 text-center">
+        <div className="bg-canvas-elevated rounded-2xl border border-border-subtle p-8 text-center">
           <div className="h-14 w-14 bg-canvas rounded-full flex items-center justify-center mx-auto mb-4 border border-border-subtle">
             <ShoppingBag className="h-7 w-7 text-ink-muted" />
           </div>
           <h3 className="text-ink font-semibold text-sm mb-1">Belum ada pesanan</h3>
           <p className="text-sm text-ink-muted mb-4">Mulai dengan membuat pesanan pertama Anda</p>
           <Link href="/dashboard/orders/new">
-            <button className="h-9 px-4 bg-brand text-white rounded-lg text-sm font-medium hover:bg-brand-hover active:scale-[0.98] transition-all duration-150 inline-flex items-center gap-1.5">
+            <button className="h-9 px-4 bg-brand text-white rounded-xl text-sm font-medium hover:bg-brand-hover active:scale-[0.98] transition-all duration-150 inline-flex items-center gap-1.5">
               <Plus className="h-4 w-4" />
               Buat Pesanan
             </button>

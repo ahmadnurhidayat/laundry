@@ -9,10 +9,10 @@ interface OrderCardProps {
 }
 
 const statusConfig = {
-  PENDING: { label: 'Pending', badgeClass: 'bg-zinc-100 text-zinc-800 border border-zinc-200' },
-  PROCESSING: { label: 'Processing', badgeClass: 'bg-blue-50 text-blue-700 border border-blue-200' },
-  FINISHED: { label: 'Selesai', badgeClass: 'bg-green-50 text-green-700 border border-green-200' },
-  PICKED_UP: { label: 'Diambil', badgeClass: 'bg-zinc-100 text-zinc-600 border border-zinc-200' },
+  PENDING: { label: 'Pending', badgeClass: 'bg-zinc-100 text-zinc-800 border border-zinc-200', accentColor: 'border-l-amber-500' },
+  PROCESSING: { label: 'Processing', badgeClass: 'bg-blue-50 text-blue-700 border border-blue-200', accentColor: 'border-l-blue-500' },
+  FINISHED: { label: 'Selesai', badgeClass: 'bg-green-50 text-green-700 border border-green-200', accentColor: 'border-l-green-500' },
+  PICKED_UP: { label: 'Diambil', badgeClass: 'bg-zinc-100 text-zinc-600 border border-zinc-200', accentColor: 'border-l-zinc-400' },
 };
 
 const paymentConfig = {
@@ -26,7 +26,7 @@ export function OrderCard({ order, customerName }: OrderCardProps) {
 
   return (
     <Link href={`/dashboard/orders/${order.id}`}>
-      <div className="bg-canvas-elevated rounded-xl border border-border-subtle shadow-premium-sm p-4 hover:shadow-premium-md transition-shadow duration-200 cursor-pointer group relative">
+      <div className={`bg-canvas-elevated rounded-2xl border border-border-subtle border-l-4 ${status.accentColor} shadow-premium-sm p-4 hover:shadow-premium-md transition-shadow duration-200 cursor-pointer group relative`}>
         <div className="flex items-start justify-between mb-3">
           <div className="flex-1 min-w-0">
             <p className="font-mono text-sm font-medium text-ink truncate">{order.invoiceNumber}</p>

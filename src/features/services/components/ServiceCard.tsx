@@ -83,7 +83,7 @@ export function ServiceCard({ service, onUpdate, onDelete }: ServiceCardProps) {
   const currentMinWeight = editing ? minWeight : (service.minWeight || 0);
 
   return (
-    <div className={`bg-canvas-elevated rounded-lg border transition-all ${
+    <div className={`bg-canvas-elevated rounded-2xl border transition-all ${
       service.isActive ? 'border-border-subtle' : 'border-border-subtle opacity-60'
     }`}>
       <div className="p-4">
@@ -96,7 +96,7 @@ export function ServiceCard({ service, onUpdate, onDelete }: ServiceCardProps) {
                   type="text"
                   value={name}
                   onChange={(e) => setName(e.target.value)}
-                  className="font-semibold text-ink text-sm bg-canvas-soft border border-border-subtle rounded-lg px-2 py-1 w-full focus:outline-none focus:ring-2 focus:ring-brand-subtle"
+                  className="font-semibold text-ink text-sm bg-canvas-soft border border-border-subtle rounded-xl px-2 py-1 w-full focus:outline-none focus:ring-2 focus:ring-brand-subtle"
                 />
               ) : (
                 <h3 className="font-semibold text-ink text-sm">{service.serviceName}</h3>
@@ -107,7 +107,7 @@ export function ServiceCard({ service, onUpdate, onDelete }: ServiceCardProps) {
                   value={description}
                   onChange={(e) => setDescription(e.target.value)}
                   placeholder="Deskripsi singkat"
-                  className="text-xs text-ink-muted bg-canvas-soft border border-border-subtle rounded-lg px-2 py-1 w-full mt-1 focus:outline-none focus:ring-2 focus:ring-brand-subtle"
+                  className="text-xs text-ink-muted bg-canvas-soft border border-border-subtle rounded-xl px-2 py-1 w-full mt-1 focus:outline-none focus:ring-2 focus:ring-brand-subtle"
                 />
               ) : service.description ? (
                 <p className="text-xs text-ink-muted mt-0.5">{service.description}</p>
@@ -120,14 +120,14 @@ export function ServiceCard({ service, onUpdate, onDelete }: ServiceCardProps) {
               <>
                 <button
                   onClick={handleCancel}
-                  className="p-1.5 text-ink-muted hover:bg-canvas-soft rounded-lg transition-colors"
+                  className="p-1.5 text-ink-muted hover:bg-canvas-soft rounded-xl transition-colors"
                 >
                   <X className="h-4 w-4" />
                 </button>
                 <button
                   onClick={handleSave}
                   disabled={loading || !hasChanges}
-                  className="p-1.5 text-brand hover:bg-brand-subtle rounded-lg transition-colors disabled:opacity-50"
+                  className="p-1.5 text-brand hover:bg-brand-subtle rounded-xl transition-colors disabled:opacity-50"
                 >
                   <Save className="h-4 w-4" />
                 </button>
@@ -136,7 +136,7 @@ export function ServiceCard({ service, onUpdate, onDelete }: ServiceCardProps) {
               <>
                 <button
                   onClick={handleToggleActive}
-                  className="p-1.5 text-ink-muted hover:bg-canvas-soft rounded-lg transition-colors"
+                  className="p-1.5 text-ink-muted hover:bg-canvas-soft rounded-xl transition-colors"
                   title={service.isActive ? 'Nonaktifkan' : 'Aktifkan'}
                 >
                   {service.isActive ? (
@@ -147,13 +147,13 @@ export function ServiceCard({ service, onUpdate, onDelete }: ServiceCardProps) {
                 </button>
                 <button
                   onClick={() => setEditing(true)}
-                  className="p-1.5 text-ink-muted hover:bg-canvas-soft rounded-lg transition-colors"
+                  className="p-1.5 text-ink-muted hover:bg-canvas-soft rounded-xl transition-colors"
                 >
                   <Pencil className="h-4 w-4" />
                 </button>
                 <button
                   onClick={() => setShowDelete(true)}
-                  className="p-1.5 text-red-500 hover:bg-red-50 rounded-lg transition-colors"
+                  className="p-1.5 text-red-500 hover:bg-red-50 rounded-xl transition-colors"
                 >
                   <Trash2 className="h-4 w-4" />
                 </button>
@@ -168,7 +168,7 @@ export function ServiceCard({ service, onUpdate, onDelete }: ServiceCardProps) {
             <select
               value={type}
               onChange={(e) => setType(e.target.value)}
-              className="h-8 px-2 text-xs font-medium bg-canvas-soft border border-border-subtle rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-subtle"
+              className="h-8 px-2 text-xs font-medium bg-canvas-soft border border-border-subtle rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-subtle"
             >
               <option value="KILOAN">Kiloan</option>
               <option value="SATUAN">Satuan</option>
@@ -187,7 +187,7 @@ export function ServiceCard({ service, onUpdate, onDelete }: ServiceCardProps) {
                 type="number"
                 value={price}
                 onChange={(e) => setPrice(Number(e.target.value))}
-                className="w-24 h-8 px-2 text-sm font-bold text-ink bg-canvas-soft border border-border-subtle rounded-lg font-mono focus:outline-none focus:ring-2 focus:ring-brand-subtle"
+                className="w-24 h-8 px-2 text-sm font-bold text-ink bg-canvas-soft border border-border-subtle rounded-xl font-mono focus:outline-none focus:ring-2 focus:ring-brand-subtle"
               />
             ) : (
               <span className="text-lg font-bold text-ink font-mono">{formatCurrency(service.pricePerUnit)}</span>
@@ -205,7 +205,7 @@ export function ServiceCard({ service, onUpdate, onDelete }: ServiceCardProps) {
                 type="number"
                 value={minWeight}
                 onChange={(e) => setMinWeight(Number(e.target.value))}
-                className="w-16 h-7 px-2 text-xs bg-canvas-soft border border-border-subtle rounded-lg font-mono focus:outline-none focus:ring-2 focus:ring-brand-subtle"
+                className="w-16 h-7 px-2 text-xs bg-canvas-soft border border-border-subtle rounded-xl font-mono focus:outline-none focus:ring-2 focus:ring-brand-subtle"
               />
             ) : (
               <span className="font-medium text-ink font-mono">{currentMinWeight} kg</span>
@@ -215,7 +215,7 @@ export function ServiceCard({ service, onUpdate, onDelete }: ServiceCardProps) {
 
         {/* Price Preview */}
         {isKiloan && currentMinWeight > 0 && (
-          <div className="mt-3 p-2 bg-canvas-soft rounded-lg">
+          <div className="mt-3 p-2 bg-canvas-soft rounded-xl">
             <p className="text-xs text-ink-muted mb-1">Contoh perhitungan:</p>
             <div className="flex items-center gap-2 text-xs">
               <span className="text-ink font-mono">{currentMinWeight} kg × {formatCurrency(currentPrice)}</span>
@@ -229,19 +229,19 @@ export function ServiceCard({ service, onUpdate, onDelete }: ServiceCardProps) {
       {/* Delete Confirmation */}
       {showDelete && (
         <div className="px-4 pb-4">
-          <div className="p-3 bg-red-50 border border-red-100 rounded-lg">
+          <div className="p-3 bg-red-50 border border-red-100 rounded-xl">
             <p className="text-xs text-red-700 mb-2">Hapus layanan ini?</p>
             <div className="flex gap-2">
               <button
                 onClick={() => setShowDelete(false)}
-                className="px-3 py-1 text-xs font-medium text-ink hover:bg-canvas-soft rounded-lg"
+                className="px-3 py-1 text-xs font-medium text-ink hover:bg-canvas-soft rounded-xl"
               >
                 Batal
               </button>
               <button
                 onClick={handleDelete}
                 disabled={loading}
-                className="px-3 py-1 text-xs font-medium text-white bg-red-600 hover:bg-red-700 rounded-lg disabled:opacity-50"
+                className="px-3 py-1 text-xs font-medium text-white bg-red-600 hover:bg-red-700 rounded-xl disabled:opacity-50"
               >
                 {loading ? 'Menghapus...' : 'Ya, Hapus'}
               </button>

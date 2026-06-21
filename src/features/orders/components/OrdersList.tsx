@@ -82,7 +82,7 @@ export function OrdersList({ orders }: OrdersPageProps) {
             <button
               key={status.value}
               onClick={() => setFilter(status.value)}
-              className={`px-3 py-1.5 rounded-full text-xs font-medium whitespace-nowrap transition-all ${
+              className={`px-3 py-1.5 rounded-xl text-xs font-medium whitespace-nowrap transition-all ${
                 isActive
                   ? 'bg-brand text-white shadow-premium-sm'
                   : 'bg-canvas-elevated border border-border-subtle text-ink-muted hover:bg-canvas hover:text-ink'

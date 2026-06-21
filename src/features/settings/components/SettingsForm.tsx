@@ -65,7 +65,7 @@ export function SettingsForm({ initialTenant }: { initialTenant: Tenant }) {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <Card>
           <CardHeader>
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2 border-l-4 border-brand pl-3">
               <Building2 className="h-5 w-5 text-brand" />
               <h2 className="font-semibold text-ink">Informasi Bisnis</h2>
             </div>
@@ -77,7 +77,7 @@ export function SettingsForm({ initialTenant }: { initialTenant: Tenant }) {
                 type="text"
                 defaultValue={tenant.businessName}
                 onBlur={(e) => handleSave('businessName', e.target.value)}
-                className="mt-1 w-full px-3 py-2 border border-border-subtle rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-brand/20 focus:border-brand"
+                className="mt-1 w-full px-3 py-2 border border-border-subtle rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-brand/20 focus:border-brand"
               />
             </div>
             <div>
@@ -99,7 +99,7 @@ export function SettingsForm({ initialTenant }: { initialTenant: Tenant }) {
 
         <Card>
           <CardHeader>
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2 border-l-4 border-brand pl-3">
               <Phone className="h-5 w-5 text-brand" />
               <h2 className="font-semibold text-ink">Kontak</h2>
             </div>
@@ -111,7 +111,7 @@ export function SettingsForm({ initialTenant }: { initialTenant: Tenant }) {
                 type="tel"
                 defaultValue={tenant.phone || ''}
                 onBlur={(e) => handleSave('phone', e.target.value)}
-                className="mt-1 w-full px-3 py-2 border border-border-subtle rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-brand/20 focus:border-brand"
+                className="mt-1 w-full px-3 py-2 border border-border-subtle rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-brand/20 focus:border-brand"
               />
             </div>
             <div>
@@ -120,7 +120,7 @@ export function SettingsForm({ initialTenant }: { initialTenant: Tenant }) {
                 defaultValue={tenant.address || ''}
                 onBlur={(e) => handleSave('address', e.target.value)}
                 rows={2}
-                className="mt-1 w-full px-3 py-2 border border-border-subtle rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-brand/20 focus:border-brand resize-none"
+                className="mt-1 w-full px-3 py-2 border border-border-subtle rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-brand/20 focus:border-brand resize-none"
               />
             </div>
           </CardContent>
@@ -129,7 +129,7 @@ export function SettingsForm({ initialTenant }: { initialTenant: Tenant }) {
 
       <Card>
         <CardHeader>
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 border-l-4 border-brand pl-3">
             <FileText className="h-5 w-5 text-brand" />
             <h2 className="font-semibold text-ink">Syarat & Ketentuan</h2>
           </div>
@@ -141,7 +141,7 @@ export function SettingsForm({ initialTenant }: { initialTenant: Tenant }) {
             onBlur={(e) => handleSave('termsAndConditions', e.target.value)}
             rows={6}
             placeholder="Masukkan syarat dan ketentuan laundry Anda..."
-            className="w-full px-3 py-2 border border-border-subtle rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-brand/20 focus:border-brand resize-none"
+            className="w-full px-3 py-2 border border-border-subtle rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-brand/20 focus:border-brand resize-none"
           />
           <p className="text-xs text-ink-muted mt-2">
             Contoh: &quot;1. Pengambilan barang harap disertai nota. 2. Barang yang tidak diambil selama 1 bulan, hilang/rusak tidak diganti.&quot;
