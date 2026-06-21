@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
+import { motion } from 'motion/react';
 import { ArrowRight, BarChart3, Users, Receipt, Smartphone, Zap, Clock, Star, ChevronDown, MessageSquare, TrendingUp } from 'lucide-react';
 
 const features = [
@@ -135,8 +136,8 @@ function StatCounter({ value, label, suffix = '' }: { value: number; label: stri
   const { count, ref } = useCountUp(value);
   return (
     <div ref={ref} className="text-center">
-      <p className="text-4xl font-display font-medium text-ink">{count.toLocaleString()}{suffix}</p>
-      <p className="mt-1 text-sm text-body-mid">{label}</p>
+      <p className="text-4xl font-mono font-semibold text-ink">{count.toLocaleString()}{suffix}</p>
+      <p className="mt-1 text-sm text-ink-muted uppercase tracking-wider">{label}</p>
     </div>
   );
 }
@@ -144,16 +145,16 @@ function StatCounter({ value, label, suffix = '' }: { value: number; label: stri
 function FAQ({ q, a }: { q: string; a: string }) {
   const [open, setOpen] = useState(false);
   return (
-    <div className="border-b border-muted">
+    <div className="border-b border-border-subtle">
       <button
         onClick={() => setOpen(!open)}
-        className="w-full flex items-center justify-between py-4 text-left hover:text-primary transition-colors"
+        className="w-full flex items-center justify-between py-4 text-left hover:text-brand transition-colors"
       >
         <span className="font-medium text-ink">{q}</span>
-        <ChevronDown className={`h-5 w-5 text-body-mid transition-transform ${open ? 'rotate-180' : ''}`} />
+        <ChevronDown className={`h-5 w-5 text-ink-muted transition-transform ${open ? 'rotate-180' : ''}`} />
       </button>
       <div className={`overflow-hidden transition-all ${open ? 'max-h-40' : 'max-h-0'}`}>
-        <p className="pb-4 text-body">{a}</p>
+        <p className="pb-4 text-ink-muted">{a}</p>
       </div>
     </div>
   );
@@ -172,21 +173,21 @@ export default function LandingPage() {
   return (
     <div className="min-h-screen bg-canvas">
       {/* Navigation */}
-      <nav className="sticky top-0 z-50 bg-canvas/80 backdrop-blur-md border-b border-muted/50">
+      <nav className="sticky top-0 z-50 bg-canvas/80 backdrop-blur-md border-b border-border-subtle">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
-          <Link href="/" className="flex items-center gap-2">
-            <div className="w-8 h-8 bg-primary rounded-md flex items-center justify-center">
+          <Link href="/" className="flex items-center gap-2.5">
+            <div className="w-9 h-9 bg-brand rounded-full flex items-center justify-center shadow-lg shadow-brand/20">
               <span className="text-white font-bold text-sm">L</span>
             </div>
-            <span className="font-display font-medium text-ink">Laundry</span>
+            <span className="font-bold text-ink text-sm">Laundry</span>
           </Link>
           <div className="flex items-center gap-3">
-            <Link href="/login" className="text-sm font-medium text-body hover:text-ink px-3 py-2">
+            <Link href="/login" className="text-sm font-medium text-ink-muted hover:text-ink px-3 py-2 transition-colors">
               Login
             </Link>
             <Link
               href="/register"
-              className="text-sm font-semibold text-white bg-primary hover:bg-primary-hover px-4 py-2 rounded-md transition-all active:scale-[0.98]"
+              className="text-sm font-semibold text-white bg-brand hover:bg-brand-hover px-4 py-2 rounded-xl transition-all active:scale-[0.98] shadow-premium-sm"
             >
               Daftar Gratis
             </Link>
@@ -197,29 +198,53 @@ export default function LandingPage() {
       {/* Hero */}
       <section className="relative overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-br from-canvas via-canvas to-canvas-soft" />
-        <div className="absolute top-20 left-10 w-72 h-72 bg-primary/5 rounded-full mix-blend-multiply filter blur-3xl animate-pulse" />
-        <div className="absolute top-40 right-10 w-72 h-72 bg-primary/5 rounded-full mix-blend-multiply filter blur-3xl animate-pulse" style={{ animationDelay: '2s' }} />
+        <div className="absolute top-20 left-10 w-72 h-72 bg-brand/5 rounded-full mix-blend-multiply filter blur-3xl animate-pulse" />
+        <div className="absolute top-40 right-10 w-72 h-72 bg-brand/5 rounded-full mix-blend-multiply filter blur-3xl animate-pulse" style={{ animationDelay: '2s' }} />
         
         <div className="relative max-w-6xl mx-auto px-4 sm:px-6 py-20 lg:py-28">
           <div className="text-center max-w-3xl mx-auto">
-            <div className="inline-flex items-center gap-2 bg-canvas-soft text-primary text-sm font-medium px-4 py-2 rounded-pill mb-6">
-              <Zap className="h-4 w-4" />
-              <span>Gratis Selamanya untuk Starter</span>
-            </div>
-            <h1 className="text-4xl sm:text-5xl lg:text-[56px] font-display font-medium text-ink leading-[1.1]">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5 }}
+            >
+              <div className="inline-flex items-center gap-2 bg-brand-subtle text-brand text-sm font-medium px-4 py-2 rounded-full mb-6">
+                <Zap className="h-4 w-4" />
+                <span>Gratis Selamanya untuk Starter</span>
+              </div>
+            </motion.div>
+            
+            <motion.h1
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.1 }}
+              className="text-4xl sm:text-5xl lg:text-[56px] font-bold text-ink leading-[1.1]"
+            >
               Kelola Laundry{' '}
-              <span className="text-primary">
+              <span className="text-brand">
                 Lebih Mudah
               </span>
               <br />& Cepat
-            </h1>
-            <p className="mt-6 text-lg text-body max-w-2xl mx-auto">
+            </motion.h1>
+            
+            <motion.p
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.2 }}
+              className="mt-6 text-lg text-ink-muted max-w-2xl mx-auto"
+            >
               Platform SaaS all-in-one untuk pengelolaan laundry. Pantau pesanan, kelola pembayaran, dan berikan pengalaman terbaik untuk pelanggan Anda.
-            </p>
-            <div className="mt-8 flex flex-col sm:flex-row gap-4 justify-center">
+            </motion.p>
+            
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.3 }}
+              className="mt-8 flex flex-col sm:flex-row gap-4 justify-center"
+            >
               <Link
                 href="/register"
-                className="inline-flex items-center justify-center px-6 py-3 text-base font-semibold text-white bg-primary hover:bg-primary-hover rounded-md transition-all active:scale-[0.98] shadow-lg shadow-primary/25"
+                className="inline-flex items-center justify-center px-6 py-3 text-base font-semibold text-white bg-brand hover:bg-brand-hover rounded-xl transition-all active:scale-[0.98] shadow-premium-md"
               >
                 Mulai Gratis
                 <ArrowRight className="ml-2 h-4 w-4" />
@@ -228,19 +253,27 @@ export default function LandingPage() {
                 href="https://wa.me/6285643858412?text=Halo,%20saya%20mau%20demo%20Laundry%20SaaS"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center justify-center px-6 py-3 text-base font-medium text-ink bg-canvas border border-ink hover:bg-canvas-soft rounded-md transition-all active:scale-[0.98]"
+                className="inline-flex items-center justify-center px-6 py-3 text-base font-medium text-ink bg-canvas border border-border-subtle hover:bg-canvas-soft rounded-xl transition-all active:scale-[0.98]"
               >
                 <MessageSquare className="mr-2 h-4 w-4" />
                 Chat Demo
               </a>
-            </div>
-            <p className="mt-4 text-sm text-body-mid">Tanpa kartu kredit. Setup 30 detik.</p>
+            </motion.div>
+            
+            <motion.p
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.4 }}
+              className="mt-4 text-sm text-ink-muted"
+            >
+              Tanpa kartu kredit. Setup 30 detik.
+            </motion.p>
           </div>
         </div>
       </section>
 
       {/* Stats */}
-      <section className="border-y border-muted/50 bg-canvas-soft">
+      <section className="border-y border-border-subtle bg-canvas-soft">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 py-12">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
             <StatCounter value={2500} suffix="+" label="Laundry Aktif" />
@@ -255,9 +288,9 @@ export default function LandingPage() {
       <section className="py-20 bg-canvas">
         <div className="max-w-6xl mx-auto px-4 sm:px-6">
           <div className="text-center max-w-2xl mx-auto mb-16">
-            <p className="text-sm font-medium text-primary uppercase tracking-wider mb-2">Fitur</p>
-            <h2 className="text-3xl font-display font-medium text-ink">Fitur Lengkap untuk Laundry Anda</h2>
-            <p className="mt-4 text-body">
+            <p className="text-sm font-medium text-brand uppercase tracking-wider mb-2">Fitur</p>
+            <h2 className="text-3xl font-bold text-ink">Fitur Lengkap untuk Laundry Anda</h2>
+            <p className="mt-4 text-ink-muted">
               Semua yang Anda butuhkan untuk mengelola laundry dalam satu platform.
             </p>
           </div>
@@ -267,14 +300,14 @@ export default function LandingPage() {
               return (
                 <div
                   key={feature.title}
-                  className="group bg-canvas-soft p-8 rounded-md hover:shadow-lg transition-all duration-300 cursor-pointer"
+                  className="group bg-canvas-elevated border border-border-subtle p-8 rounded-2xl hover:shadow-premium-md transition-all duration-300 cursor-pointer"
                 >
-                  <div className="w-12 h-12 bg-primary/10 rounded-md flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
-                    <Icon className="h-6 w-6 text-primary" />
+                  <div className="w-12 h-12 bg-brand-subtle rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+                    <Icon className="h-6 w-6 text-brand" />
                   </div>
                   <h3 className="text-lg font-semibold text-ink mb-2">{feature.title}</h3>
-                  <p className="text-body">{feature.desc}</p>
-                  <ArrowRight className="mt-4 h-5 w-5 text-muted opacity-0 group-hover:opacity-100 group-hover:translate-x-1 transition-all" />
+                  <p className="text-ink-muted">{feature.desc}</p>
+                  <ArrowRight className="mt-4 h-5 w-5 text-ink-muted opacity-0 group-hover:opacity-100 group-hover:translate-x-1 transition-all" />
                 </div>
               );
             })}
@@ -286,8 +319,8 @@ export default function LandingPage() {
       <section className="py-20 bg-canvas-soft">
         <div className="max-w-6xl mx-auto px-4 sm:px-6">
           <div className="text-center max-w-2xl mx-auto mb-16">
-            <p className="text-sm font-medium text-primary uppercase tracking-wider mb-2">Cara Kerja</p>
-            <h2 className="text-3xl font-display font-medium text-ink">3 Langkah Sederhana</h2>
+            <p className="text-sm font-medium text-brand uppercase tracking-wider mb-2">Cara Kerja</p>
+            <h2 className="text-3xl font-bold text-ink">3 Langkah Sederhana</h2>
           </div>
           <div className="grid md:grid-cols-3 gap-8">
             {steps.map((step, i) => {
@@ -295,14 +328,14 @@ export default function LandingPage() {
               return (
                 <div key={step.num} className="relative text-center">
                   {i < steps.length - 1 && (
-                    <div className="hidden md:block absolute top-10 left-[60%] w-[80%] h-[2px] bg-gradient-to-r from-primary/20 to-transparent" />
+                    <div className="hidden md:block absolute top-10 left-[60%] w-[80%] h-[2px] bg-gradient-to-r from-brand/20 to-transparent" />
                   )}
-                  <div className="inline-flex items-center justify-center w-20 h-20 bg-canvas rounded-md border border-muted mb-6 relative z-10">
-                    <Icon className="h-8 w-8 text-primary" />
+                  <div className="inline-flex items-center justify-center w-20 h-20 bg-canvas-elevated rounded-2xl border border-border-subtle mb-6 relative z-10 shadow-premium-sm">
+                    <Icon className="h-8 w-8 text-brand" />
                   </div>
-                  <p className="text-sm font-bold text-primary mb-2">{step.num}</p>
+                  <p className="text-sm font-bold text-brand mb-2">{step.num}</p>
                   <h3 className="text-lg font-semibold text-ink mb-2">{step.title}</h3>
-                  <p className="text-body">{step.desc}</p>
+                  <p className="text-ink-muted">{step.desc}</p>
                 </div>
               );
             })}
@@ -314,24 +347,24 @@ export default function LandingPage() {
       <section className="py-20 bg-canvas">
         <div className="max-w-6xl mx-auto px-4 sm:px-6">
           <div className="text-center max-w-2xl mx-auto mb-16">
-            <p className="text-sm font-medium text-primary uppercase tracking-wider mb-2">Testimoni</p>
-            <h2 className="text-3xl font-display font-medium text-ink">Dipercaya Ribuan Laundry</h2>
+            <p className="text-sm font-medium text-brand uppercase tracking-wider mb-2">Testimoni</p>
+            <h2 className="text-3xl font-bold text-ink">Dipercaya Ribuan Laundry</h2>
           </div>
           <div className="max-w-3xl mx-auto">
-            <div className="bg-canvas-soft p-8 rounded-md relative">
-              <div className="absolute -top-3 left-8 bg-primary text-white px-3 py-1 rounded-pill text-sm font-medium flex items-center gap-1">
+            <div className="bg-canvas-elevated border border-border-subtle p-8 rounded-2xl relative shadow-premium-sm">
+              <div className="absolute -top-3 left-8 bg-brand text-white px-3 py-1 rounded-full text-sm font-medium flex items-center gap-1 shadow-premium-sm">
                 <Star className="h-4 w-4 fill-current" />
                 Testimoni
               </div>
               <div className="min-h-[120px]">
                 <p className="text-lg text-ink mb-6">&ldquo;{testimonials[activeTestimonial].content}&rdquo;</p>
                 <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 bg-primary/10 rounded-full flex items-center justify-center">
-                    <span className="text-primary font-medium">{testimonials[activeTestimonial].name.charAt(0)}</span>
+                  <div className="w-10 h-10 bg-brand-subtle rounded-full flex items-center justify-center">
+                    <span className="text-brand font-medium">{testimonials[activeTestimonial].name.charAt(0)}</span>
                   </div>
                   <div>
                     <p className="font-medium text-ink">{testimonials[activeTestimonial].name}</p>
-                    <p className="text-sm text-body-mid">{testimonials[activeTestimonial].role}</p>
+                    <p className="text-sm text-ink-muted">{testimonials[activeTestimonial].role}</p>
                   </div>
                 </div>
               </div>
@@ -340,7 +373,7 @@ export default function LandingPage() {
                   <button
                     key={i}
                     onClick={() => setActiveTestimonial(i)}
-                    className={`w-2 h-2 rounded-full transition-all ${i === activeTestimonial ? 'bg-primary w-6' : 'bg-muted'}`}
+                    className={`w-2 h-2 rounded-full transition-all ${i === activeTestimonial ? 'bg-brand w-6' : 'bg-border-subtle'}`}
                   />
                 ))}
               </div>
@@ -353,10 +386,10 @@ export default function LandingPage() {
       <section className="py-20 bg-canvas-soft">
         <div className="max-w-3xl mx-auto px-4 sm:px-6">
           <div className="text-center mb-12">
-            <p className="text-sm font-medium text-primary uppercase tracking-wider mb-2">FAQ</p>
-            <h2 className="text-3xl font-display font-medium text-ink">Pertanyaan Umum</h2>
+            <p className="text-sm font-medium text-brand uppercase tracking-wider mb-2">FAQ</p>
+            <h2 className="text-3xl font-bold text-ink">Pertanyaan Umum</h2>
           </div>
-          <div className="bg-canvas rounded-md border border-muted p-6">
+          <div className="bg-canvas-elevated rounded-2xl border border-border-subtle p-6 shadow-premium-sm">
             {faqs.map((faq, i) => (
               <FAQ key={i} q={faq.q} a={faq.a} />
             ))}
@@ -367,11 +400,11 @@ export default function LandingPage() {
       {/* CTA */}
       <section className="relative overflow-hidden bg-ink py-20">
         <div className="absolute inset-0">
-          <div className="absolute top-0 left-1/4 w-96 h-96 bg-primary/10 rounded-full mix-blend-overlay filter blur-3xl" />
-          <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-primary/10 rounded-full mix-blend-overlay filter blur-3xl" />
+          <div className="absolute top-0 left-1/4 w-96 h-96 bg-brand/10 rounded-full mix-blend-overlay filter blur-3xl" />
+          <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-brand/10 rounded-full mix-blend-overlay filter blur-3xl" />
         </div>
         <div className="relative max-w-4xl mx-auto px-4 sm:px-6 text-center">
-          <h2 className="text-3xl sm:text-4xl font-display font-medium text-white">Siap Mengelola Laundry?</h2>
+          <h2 className="text-3xl sm:text-4xl font-bold text-white">Siap Mengelola Laundry?</h2>
           <p className="mt-4 text-white/70 text-lg">
             Hubungi kami untuk informasi lebih lanjut atau mulai gunakan layanan ini.
           </p>
@@ -380,14 +413,14 @@ export default function LandingPage() {
               href="https://wa.me/6285643858412?text=Halo,%20saya%20tertarik%20dengan%20Laundry%20SaaS"
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center justify-center px-8 py-4 text-base font-semibold text-white bg-primary rounded-md hover:bg-primary-hover transition-all active:scale-[0.98] shadow-lg"
+              className="inline-flex items-center justify-center px-8 py-4 text-base font-semibold text-white bg-brand rounded-xl hover:bg-brand-hover transition-all active:scale-[0.98] shadow-premium-md"
             >
               <MessageSquare className="mr-2 h-5 w-5" />
               Hubungi Kami
             </a>
             <Link
               href="/register"
-              className="inline-flex items-center justify-center px-8 py-4 text-base font-medium text-white border border-white/30 rounded-md hover:bg-white/10 transition-all active:scale-[0.98]"
+              className="inline-flex items-center justify-center px-8 py-4 text-base font-medium text-white border border-white/30 rounded-xl hover:bg-white/10 transition-all active:scale-[0.98]"
             >
               Daftar Gratis
               <ArrowRight className="ml-2 h-4 w-4" />
@@ -400,11 +433,11 @@ export default function LandingPage() {
       <footer className="bg-ink border-t border-white/10 py-12">
         <div className="max-w-6xl mx-auto px-4 sm:px-6">
           <div className="flex flex-col md:flex-row items-center justify-between gap-6">
-            <div className="flex items-center gap-2">
-              <div className="w-8 h-8 bg-primary rounded-md flex items-center justify-center">
+            <div className="flex items-center gap-2.5">
+              <div className="w-9 h-9 bg-brand rounded-full flex items-center justify-center shadow-lg shadow-brand/20">
                 <span className="text-white font-bold text-sm">L</span>
               </div>
-              <span className="font-display font-medium text-white">Laundry</span>
+              <span className="font-bold text-white text-sm">Laundry</span>
             </div>
             <div className="flex items-center gap-6 text-sm text-white/60">
               <a href="#" className="hover:text-white transition-colors">Kebijakan Privasi</a>
