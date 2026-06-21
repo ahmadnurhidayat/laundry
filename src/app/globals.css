@@ -14,6 +14,7 @@
   -webkit-tap-highlight-color: transparent;
 }
 
+/* Print styles */
 @media print {
   .no-print {
     display: none !important;
@@ -21,5 +22,29 @@
   body {
     margin: 0;
     padding: 0;
+    @apply print:text-black print:bg-white;
   }
+  .print\:hidden {
+    display: none !important;
+  }
+  .print\:border-black {
+    border-color: #000 !important;
+  }
+  * {
+    font-family: 'JetBrains Mono', monospace !important;
+  }
+}
+
+/* Skeleton loading animation */
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.6;
+  }
+}
+
+.animate-pulse {
+  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
 }

@@ -29,11 +29,11 @@ export const Select = forwardRef<HTMLSelectElement, SelectProps>(
             ref={ref}
             id={selectId}
             className={cn(
-              'w-full h-11 px-4 pr-10 text-base text-ink bg-canvas border border-ink rounded-sm',
-              'focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-1',
+              'w-full h-10 pl-3 pr-8 text-sm text-ink bg-canvas-elevated border border-border-subtle rounded-lg',
+              'focus:outline-none focus:ring-2 focus:ring-brand/20 focus:border-brand',
               'disabled:opacity-50 disabled:cursor-not-allowed',
-              'appearance-none transition-colors duration-150',
-              error && 'border-red-500 focus:ring-red-500',
+              'appearance-none transition-all duration-150',
+              error && 'border-status-alert focus:ring-status-alert/20 focus:border-status-alert',
               className
             )}
             {...props}
@@ -51,9 +51,9 @@ export const Select = forwardRef<HTMLSelectElement, SelectProps>(
                 ))
               : children}
           </select>
-          <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-body-mid pointer-events-none" />
+          <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-ink-muted pointer-events-none" />
         </div>
-        {error && <p className="text-sm text-red-500">{error}</p>}
+        {error && <p className="text-xs text-status-alert">{error}</p>}
       </div>
     );
   }

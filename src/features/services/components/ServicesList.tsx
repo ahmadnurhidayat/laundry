@@ -65,13 +65,13 @@ export function ServicesList() {
       <div className="flex items-center justify-between mb-6">
         <div>
           <h1 className="text-xl font-bold text-ink">Layanan & Harga</h1>
-          <p className="text-sm text-body-mid mt-0.5">
+          <p className="text-sm text-ink-muted mt-0.5">
             {services.length} layanan · {activeCount} aktif
           </p>
         </div>
         <button
           onClick={() => setShowAdd(true)}
-          className="h-10 px-4 text-sm font-semibold text-white bg-primary hover:bg-primary-hover rounded-xl transition-colors flex items-center gap-2"
+          className="h-10 px-4 text-sm font-semibold text-white bg-brand hover:bg-brand-hover rounded-xl transition-colors flex items-center gap-2"
         >
           <Plus className="h-4 w-4" />
           <span className="hidden sm:inline">Tambah Layanan</span>
@@ -81,13 +81,13 @@ export function ServicesList() {
       {/* Search */}
       {services.length > 3 && (
         <div className="relative mb-4">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted" />
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-ink-muted" />
           <input
             type="text"
             placeholder="Cari layanan..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="h-10 pl-9 pr-4 text-sm bg-canvas-soft border border-muted rounded-xl w-full focus:outline-none focus:ring-2 focus:ring-primary/20"
+            className="h-10 pl-9 pr-4 text-sm bg-canvas-soft border border-border-subtle rounded-xl w-full focus:outline-none focus:ring-2 focus:ring-brand-subtle"
           />
         </div>
       )}
@@ -104,16 +104,16 @@ export function ServicesList() {
       {/* Empty State */}
       {!loading && services.length === 0 && (
         <div className="flex flex-col items-center justify-center py-16 text-center">
-          <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mb-4">
-            <Package className="h-8 w-8 text-primary" />
+          <div className="w-16 h-16 bg-brand-subtle rounded-full flex items-center justify-center mb-4">
+            <Package className="h-8 w-8 text-brand" />
           </div>
           <h3 className="font-semibold text-ink mb-1">Belum ada layanan</h3>
-          <p className="text-sm text-body-mid mb-4">
+          <p className="text-sm text-ink-muted mb-4">
             Tambahkan layanan pertama untuk mulai mengatur harga
           </p>
           <button
             onClick={() => setShowAdd(true)}
-            className="h-10 px-4 text-sm font-semibold text-white bg-primary hover:bg-primary-hover rounded-xl transition-colors"
+            className="h-10 px-4 text-sm font-semibold text-white bg-brand hover:bg-brand-hover rounded-xl transition-colors"
           >
             Tambah Layanan
           </button>
@@ -137,7 +137,7 @@ export function ServicesList() {
       {/* No Results */}
       {!loading && services.length > 0 && filtered.length === 0 && (
         <div className="text-center py-12">
-          <p className="text-sm text-body-mid">Tidak ada layanan yang cocok</p>
+          <p className="text-sm text-ink-muted">Tidak ada layanan yang cocok</p>
         </div>
       )}
 

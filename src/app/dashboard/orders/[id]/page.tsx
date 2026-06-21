@@ -6,7 +6,6 @@ import { getCloudflareContext } from '@opennextjs/cloudflare';
 import { orders, customers, orderItems, services, tenants, orderPhotos } from '@/db/schema';
 import { createDb } from '@/lib/db';
 import { ArrowLeft, Calendar, Clock, User, FileText } from 'lucide-react';
-import { Badge } from '@/components/ui/badge';
 import { formatCurrency, formatDate } from '@/lib/utils';
 import { StatusToggle } from '@/features/orders/components/StatusToggle';
 import { ReceiptPreview } from '@/features/orders/components/ReceiptPreview';
@@ -14,15 +13,15 @@ import { ShareReceipt } from '@/features/orders/components/ShareReceipt';
 import { PhotoUpload } from '@/features/orders/components/PhotoUpload';
 
 const statusConfig = {
-  PENDING: { label: 'Menunggu', variant: 'warning' as const, color: 'text-amber-700 bg-amber-50' },
-  PROCESSING: { label: 'Diproses', variant: 'info' as const, color: 'text-blue-700 bg-blue-50' },
-  FINISHED: { label: 'Selesai', variant: 'success' as const, color: 'text-emerald-700 bg-emerald-50' },
-  PICKED_UP: { label: 'Diambil', variant: 'neutral' as const, color: 'text-purple-700 bg-purple-50' },
+  PENDING: { label: 'Pending', badgeClass: 'bg-zinc-100 text-zinc-800 border border-zinc-200' },
+  PROCESSING: { label: 'Processing', badgeClass: 'bg-blue-50 text-blue-700 border border-blue-200' },
+  FINISHED: { label: 'Selesai', badgeClass: 'bg-green-50 text-green-700 border border-green-200' },
+  PICKED_UP: { label: 'Diambil', badgeClass: 'bg-zinc-100 text-zinc-600 border border-zinc-200' },
 };
 
 const paymentConfig = {
-  UNPAID: { label: 'Belum Bayar', variant: 'danger' as const },
-  PAID: { label: 'Lunas', variant: 'success' as const },
+  UNPAID: { label: 'Belum Bayar', badgeClass: 'bg-red-50 text-red-700 border border-red-200' },
+  PAID: { label: 'Lunas', badgeClass: 'bg-green-50 text-green-700 border border-green-200' },
 };
 
 export default async function OrderDetailPage({ params }: { params: Promise<{ id: string }> }) {
@@ -95,22 +94,26 @@ export default async function OrderDetailPage({ params }: { params: Promise<{ id
       {/* Back Link */}
       <Link
         href="/dashboard/orders"
-        className="inline-flex items-center text-sm text-body-mid hover:text-ink transition-colors group"
+        className="inline-flex items-center text-sm text-ink-muted hover:text-ink transition-colors group"
       >
         <ArrowLeft className="h-4 w-4 mr-1 group-hover:-translate-x-0.5 transition-transform" />
-        Kembali ke Pesanan
+        Kembali
       </Link>
 
       {/* Hero Header */}
-      <div className="bg-canvas rounded-xl border border-muted p-6">
+      <div className="bg-canvas-elevated rounded-xl border border-border-subtle shadow-premium-sm p-6">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-4">
           <div>
             <div className="flex items-center gap-3 mb-2">
-              <h1 className="text-xl font-bold text-ink">{order.invoiceNumber}</h1>
-              <Badge variant={status.variant}>{status.label}</Badge>
-              <Badge variant={payment.variant} dot>{payment.label}</Badge>
+              <h1 className="text-xl font-semibold text-ink font-mono">{order.invoiceNumber}</h1>
+              <span className={`inline-flex items-center font-mono text-xs px-2.5 py-0.5 rounded-full ${status.badgeClass}`}>
+                {status.label}
+              </span>
+              <span className={`inline-flex items-center font-mono text-xs px-2.5 py-0.5 rounded-full ${payment.badgeClass}`}>
+                {payment.label}
+              </span>
             </div>
-            <div className="flex items-center gap-4 text-sm text-body">
+            <div className="flex items-center gap-4 text-sm text-ink-muted">
               <span className="flex items-center gap-1.5">
                 <User className="h-4 w-4" />
                 {customer?.name || 'Pelanggan'}
@@ -138,32 +141,32 @@ export default async function OrderDetailPage({ params }: { params: Promise<{ id
         </div>
 
         {/* Order Items Summary */}
-        <div className="bg-canvas-soft rounded-lg p-4 mt-4">
+        <div className="bg-canvas rounded-lg p-4 mt-4 border border-border-subtle">
           <div className="flex items-center gap-2 mb-3">
-            <FileText className="h-4 w-4 text-body-mid" />
+            <FileText className="h-4 w-4 text-ink-muted" />
             <h3 className="text-sm font-medium text-ink">Detail Pesanan</h3>
           </div>
           <div className="space-y-2">
             {items.map((item: any, i: number) => (
               <div key={i} className="flex justify-between text-sm">
-                <span className="text-body">
-                  {item.serviceName} x{item.qty}
+                <span className="text-ink-muted">
+                  {item.serviceName} ×{item.qty}
                 </span>
-                <span className="font-medium text-ink">{formatCurrency(item.subtotal)}</span>
+                <span className="font-mono font-medium text-ink">{formatCurrency(item.subtotal)}</span>
               </div>
             ))}
-            <div className="flex justify-between font-bold pt-3 mt-3 border-t border-muted">
+            <div className="flex justify-between font-semibold pt-3 mt-3 border-t border-border-subtle">
               <span className="text-ink">Total</span>
-              <span className="text-primary text-lg">{formatCurrency(order.totalAmount)}</span>
+              <span className="font-mono text-brand text-lg">{formatCurrency(order.totalAmount)}</span>
             </div>
           </div>
         </div>
 
         {/* Notes */}
         {order.notes && (
-          <div className="mt-4 p-3 bg-amber-50 rounded-lg border border-amber-100">
-            <p className="text-xs font-medium text-amber-700 mb-1">Catatan</p>
-            <p className="text-sm text-amber-800">{order.notes}</p>
+          <div className="mt-4 p-3 bg-zinc-50 rounded-lg border border-zinc-200">
+            <p className="text-xs font-medium text-zinc-600 mb-1">Catatan</p>
+            <p className="text-sm text-zinc-800">{order.notes}</p>
           </div>
         )}
       </div>
@@ -171,27 +174,24 @@ export default async function OrderDetailPage({ params }: { params: Promise<{ id
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Left Column - Status Controls */}
         <div className="space-y-6">
-          {/* Order Status */}
-          <div className="bg-canvas rounded-xl border border-muted p-6">
-            <h2 className="font-semibold text-ink mb-4">Status Pesanan</h2>
+          <div className="bg-canvas-elevated rounded-xl border border-border-subtle shadow-premium-sm p-5">
+            <h2 className="text-sm font-semibold text-ink mb-4">Status Pesanan</h2>
             <StatusToggle orderId={order.id} currentStatus={order.orderStatus} type="order" />
           </div>
 
-          {/* Payment Status */}
-          <div className="bg-canvas rounded-xl border border-muted p-6">
-            <h2 className="font-semibold text-ink mb-4">Status Pembayaran</h2>
+          <div className="bg-canvas-elevated rounded-xl border border-border-subtle shadow-premium-sm p-5">
+            <h2 className="text-sm font-semibold text-ink mb-4">Status Pembayaran</h2>
             <StatusToggle orderId={order.id} currentStatus={order.paymentStatus} type="payment" />
           </div>
 
-          {/* Photos */}
-          <div className="bg-canvas rounded-xl border border-muted p-6">
+          <div className="bg-canvas-elevated rounded-xl border border-border-subtle shadow-premium-sm p-5">
             <PhotoUpload orderId={order.id} initialPhotos={photos} />
           </div>
         </div>
 
         {/* Right Column - Receipt Preview */}
         <div>
-          <h2 className="text-lg font-semibold text-ink mb-4">Preview Struk</h2>
+          <h2 className="text-sm font-semibold text-ink mb-4">Preview Struk</h2>
           <ReceiptPreview
             order={order}
             customer={customer}

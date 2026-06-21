@@ -21,18 +21,18 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
           ref={ref}
           id={inputId}
           className={cn(
-            'w-full h-11 px-4 text-base text-ink bg-canvas border border-ink rounded-sm',
-            'placeholder:text-body-mid',
-            'focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-1',
+            'w-full h-10 px-3 text-sm text-ink bg-canvas-elevated border border-border-subtle rounded-lg',
+            'placeholder:text-ink-muted',
+            'focus:outline-none focus:ring-2 focus:ring-brand/20 focus:border-brand',
             'disabled:opacity-50 disabled:cursor-not-allowed',
-            'transition-colors duration-150',
-            error && 'border-red-500 focus:ring-red-500',
+            'transition-all duration-150',
+            error && 'border-status-alert focus:ring-status-alert/20 focus:border-status-alert',
             className
           )}
           {...props}
         />
-        {error && <p className="text-sm text-red-500">{error}</p>}
-        {hint && !error && <p className="text-sm text-body-mid">{hint}</p>}
+        {error && <p className="text-xs text-status-alert">{error}</p>}
+        {hint && !error && <p className="text-xs text-ink-muted">{hint}</p>}
       </div>
     );
   }

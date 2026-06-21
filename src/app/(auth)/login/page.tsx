@@ -5,7 +5,6 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Card, CardContent } from '@/components/ui/card';
 
 export default function LoginPage() {
   const router = useRouter();
@@ -42,22 +41,21 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="w-full max-w-md">
-      <Card variant="bordered">
-        <CardContent className="p-8">
-          <div className="text-center mb-8">
-            <Link href="/" className="inline-flex items-center gap-2 mb-6">
-              <div className="w-10 h-10 bg-primary rounded-md flex items-center justify-center">
-                <span className="text-white font-bold">L</span>
-              </div>
-            </Link>
-            <h1 className="text-2xl font-display font-medium text-ink">Login</h1>
-            <p className="text-body-mid mt-1">Masuk ke dashboard laundry Anda</p>
+    <div className="min-h-screen bg-canvas flex items-center justify-center p-4">
+      <div className="w-full max-w-sm">
+        <div className="flex items-center justify-center mb-8">
+          <div className="h-10 w-10 bg-brand rounded-lg flex items-center justify-center">
+            <span className="text-white font-bold text-sm">L</span>
           </div>
+        </div>
+
+        <div className="bg-canvas-elevated rounded-xl border border-border-subtle shadow-premium-sm p-6">
+          <h1 className="text-lg font-semibold text-ink text-center mb-1">Masuk ke Dashboard</h1>
+          <p className="text-sm text-ink-muted text-center mb-6">Kelola pesanan laundry Anda</p>
 
           <form onSubmit={handleSubmit} className="space-y-4">
             {error && (
-              <div className="bg-red-50 text-red-600 text-sm p-3 rounded-sm">{error}</div>
+              <div className="bg-red-50 text-status-alert text-xs p-3 rounded-lg border border-red-200">{error}</div>
             )}
 
             <Input
@@ -79,18 +77,11 @@ export default function LoginPage() {
             />
 
             <Button type="submit" className="w-full" loading={loading}>
-              Login
+              Masuk
             </Button>
           </form>
-
-          <p className="text-center text-sm text-body-mid mt-6">
-            Belum punya akun?{' '}
-            <Link href="/register" className="text-primary hover:text-primary-hover font-medium">
-              Daftar gratis
-            </Link>
-          </p>
-        </CardContent>
-      </Card>
+        </div>
+      </div>
     </div>
   );
 }

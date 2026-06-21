@@ -23,10 +23,10 @@ interface OrdersPageProps {
 
 const statusFilters = [
   { value: 'SEMUA', label: 'Semua' },
-  { value: 'PENDING', label: 'Menunggu', dotColor: 'bg-amber-500' },
-  { value: 'PROCESSING', label: 'Diproses', dotColor: 'bg-blue-500' },
-  { value: 'FINISHED', label: 'Selesai', dotColor: 'bg-emerald-500' },
-  { value: 'PICKED_UP', label: 'Diambil', dotColor: 'bg-purple-500' },
+  { value: 'PENDING', label: 'Pending' },
+  { value: 'PROCESSING', label: 'Processing' },
+  { value: 'FINISHED', label: 'Selesai' },
+  { value: 'PICKED_UP', label: 'Diambil' },
 ] as const;
 
 export function OrdersList({ orders }: OrdersPageProps) {
@@ -54,58 +54,55 @@ export function OrdersList({ orders }: OrdersPageProps) {
 
   return (
     <div className="space-y-4">
-      {/* Search Bar */}
+      {/* Search */}
       <div className="relative">
-        <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-body-mid" />
+        <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-ink-muted" />
         <input
           type="text"
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           placeholder="Cari invoice atau nama pelanggan..."
-          className="w-full h-12 pl-11 pr-10 rounded-xl bg-canvas border border-muted text-sm text-ink placeholder:text-body-mid focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all"
+          className="w-full h-10 pl-9 pr-10 text-sm bg-canvas-elevated text-ink border border-border-subtle rounded-lg placeholder:text-ink-muted focus:outline-none focus:ring-2 focus:ring-brand/20 focus:border-brand transition-all"
         />
         {search && (
           <button
             onClick={() => setSearch('')}
-            className="absolute right-3 top-1/2 -translate-y-1/2 p-1 rounded-full hover:bg-canvas-soft transition-colors"
+            className="absolute right-3 top-1/2 -translate-y-1/2 p-1 rounded-lg hover:bg-canvas transition-colors"
           >
-            <X className="h-4 w-4 text-body-mid" />
+            <X className="h-4 w-4 text-ink-muted" />
           </button>
         )}
       </div>
 
-      {/* Status Filters */}
-      <div className="flex gap-2 overflow-x-auto pb-1 -mx-1 px-1 scrollbar-hide">
+      {/* Filter Pills */}
+      <div className="flex gap-2 overflow-x-auto pb-1 -mx-1 px-1">
         {statusFilters.map((status) => {
           const isActive = filter === status.value;
           return (
             <button
               key={status.value}
               onClick={() => setFilter(status.value)}
-              className={`flex items-center gap-1.5 px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-all ${
+              className={`px-3 py-1.5 rounded-full text-xs font-medium whitespace-nowrap transition-all ${
                 isActive
-                  ? 'bg-primary text-white shadow-sm'
-                  : 'bg-canvas border border-muted text-body hover:border-primary/30 hover:text-ink'
+                  ? 'bg-brand text-white shadow-premium-sm'
+                  : 'bg-canvas-elevated border border-border-subtle text-ink-muted hover:bg-canvas hover:text-ink'
               }`}
             >
-              {'dotColor' in status && status.dotColor && (
-                <span className={`w-2 h-2 rounded-full ${isActive ? 'bg-white' : status.dotColor}`} />
-              )}
               {status.label}
             </button>
           );
         })}
       </div>
 
-      {/* Results Count */}
+      {/* Results */}
       <div className="flex items-center justify-between">
-        <p className="text-sm text-body-mid">
+        <p className="text-xs text-ink-muted">
           {filtered.length} pesanan{activeFilter && activeFilter.value !== 'SEMUA' && ` · ${activeFilter.label}`}
         </p>
         {filter !== 'SEMUA' && (
           <button
             onClick={() => setFilter('SEMUA')}
-            className="text-sm text-primary hover:text-primary-hover font-medium"
+            className="text-xs text-brand hover:text-brand-hover font-medium"
           >
             Reset filter
           </button>
@@ -121,12 +118,12 @@ export function OrdersList({ orders }: OrdersPageProps) {
 
       {/* Empty State */}
       {filtered.length === 0 && (
-        <div className="text-center py-16">
-          <div className="w-16 h-16 bg-canvas-soft rounded-full flex items-center justify-center mx-auto mb-4">
-            <Search className="h-7 w-7 text-muted" />
+        <div className="flex flex-col items-center justify-center py-16 text-center">
+          <div className="h-14 w-14 bg-canvas rounded-full flex items-center justify-center mb-4 border border-border-subtle">
+            <Search className="h-7 w-7 text-ink-muted" />
           </div>
-          <p className="text-ink font-medium mb-1">Tidak ada pesanan ditemukan</p>
-          <p className="text-sm text-body-mid">
+          <p className="text-sm font-semibold text-ink mb-1">Tidak ada pesanan ditemukan</p>
+          <p className="text-sm text-ink-muted">
             {search ? 'Coba kata kunci lain' : 'Belum ada pesanan dengan status ini'}
           </p>
         </div>

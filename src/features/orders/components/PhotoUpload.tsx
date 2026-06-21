@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useRef } from 'react';
-import { Camera, Upload, X, Trash2 } from 'lucide-react';
+import { Camera, Upload, Trash2 } from 'lucide-react';
 
 interface Photo {
   id: string;
@@ -79,11 +79,11 @@ export function PhotoUpload({ orderId, initialPhotos = [] }: PhotoUploadProps) {
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
-        <h3 className="font-semibold text-ink flex items-center gap-2">
-          <Camera className="h-5 w-5 text-primary" />
+        <h3 className="text-sm font-semibold text-ink flex items-center gap-2">
+          <Camera className="h-4 w-4 text-ink-muted" />
           Foto Pesanan
         </h3>
-        <span className="text-sm text-body-mid">{photos.length} foto</span>
+        <span className="text-xs text-ink-muted">{photos.length} foto</span>
       </div>
 
       {/* Upload Area */}
@@ -92,10 +92,10 @@ export function PhotoUpload({ orderId, initialPhotos = [] }: PhotoUploadProps) {
         onDragOver={handleDragOver}
         onDragLeave={handleDragLeave}
         onClick={() => fileInputRef.current?.click()}
-        className={`border-2 border-dashed rounded-lg p-6 text-center cursor-pointer transition-colors ${
+        className={`border border-dashed rounded-lg p-6 text-center cursor-pointer transition-colors ${
           dragActive
-            ? 'border-primary bg-primary/5'
-            : 'border-gray-200 hover:border-gray-300 hover:bg-gray-50'
+            ? 'border-brand bg-brand-subtle'
+            : 'border-border-subtle hover:border-border-strong hover:bg-canvas'
         }`}
       >
         <input
@@ -109,18 +109,18 @@ export function PhotoUpload({ orderId, initialPhotos = [] }: PhotoUploadProps) {
           }}
           className="hidden"
         />
-        <Upload className="h-8 w-8 text-gray-400 mx-auto mb-2" />
-        <p className="text-sm text-body-mid">
+        <Upload className="h-8 w-8 text-ink-muted mx-auto mb-2" />
+        <p className="text-sm text-ink-muted">
           {uploading ? 'Mengunggah...' : 'Klik atau seret foto ke sini'}
         </p>
-        <p className="text-xs text-body-mid mt-1">JPG, PNG, WebP (maks 5MB)</p>
+        <p className="text-xs text-ink-muted mt-1">JPG, PNG, WebP (maks 5MB)</p>
       </div>
 
       {/* Photo Grid */}
       {photos.length > 0 && (
         <div className="grid grid-cols-3 gap-2">
           {photos.map((photo) => (
-            <div key={photo.id} className="relative group aspect-square rounded-lg overflow-hidden bg-gray-100">
+            <div key={photo.id} className="relative group aspect-square rounded-lg overflow-hidden bg-canvas border border-border-subtle">
               <img
                 src={photo.url}
                 alt={photo.caption || 'Foto pesanan'}
@@ -129,13 +129,13 @@ export function PhotoUpload({ orderId, initialPhotos = [] }: PhotoUploadProps) {
               <div className="absolute inset-0 bg-black/0 group-hover:bg-black/40 transition-colors flex items-center justify-center opacity-0 group-hover:opacity-100">
                 <button
                   onClick={() => handleDelete(photo.id)}
-                  className="p-2 bg-red-500 rounded-full text-white hover:bg-red-600 transition-colors"
+                  className="p-2 bg-status-alert rounded-lg text-white hover:bg-red-700 transition-colors"
                 >
                   <Trash2 className="h-4 w-4" />
                 </button>
               </div>
               {photo.caption && (
-                <div className="absolute bottom-0 left-0 right-0 bg-black/60 text-white text-xs p-1 truncate">
+                <div className="absolute bottom-0 left-0 right-0 bg-ink/60 text-white text-xs p-1 truncate">
                   {photo.caption}
                 </div>
               )}

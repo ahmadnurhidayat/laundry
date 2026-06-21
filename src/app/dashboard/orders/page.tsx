@@ -5,7 +5,6 @@ import { eq } from 'drizzle-orm';
 import { getCloudflareContext } from '@opennextjs/cloudflare';
 import { orders, customers } from '@/db/schema';
 import { createDb } from '@/lib/db';
-import { Button } from '@/components/ui/button';
 import { OrdersList } from '@/features/orders/components/OrdersList';
 
 export default async function OrdersPage() {
@@ -33,17 +32,16 @@ export default async function OrdersPage() {
 
   return (
     <div className="space-y-6">
-      {/* Header */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-ink">Pesanan</h1>
-          <p className="text-body mt-1">{allOrders.length} total pesanan</p>
+          <h1 className="text-2xl font-semibold text-ink">Pesanan</h1>
+          <p className="text-sm text-ink-muted mt-1">{allOrders.length} total pesanan</p>
         </div>
         <Link href="/dashboard/orders/new" className="hidden sm:inline-flex">
-          <Button>
-            <Plus className="h-4 w-4 mr-2" />
+          <button className="h-10 px-4 bg-brand text-white rounded-lg font-medium text-sm hover:bg-brand-hover active:scale-[0.98] transition-all duration-150 flex items-center gap-2 shadow-premium-sm">
+            <Plus className="h-4 w-4" />
             Pesanan Baru
-          </Button>
+          </button>
         </Link>
       </div>
 

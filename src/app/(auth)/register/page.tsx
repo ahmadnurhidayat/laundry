@@ -5,7 +5,6 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Card, CardContent } from '@/components/ui/card';
 
 type Step = 1 | 2;
 
@@ -70,29 +69,28 @@ export default function RegisterPage() {
   };
 
   return (
-    <div className="w-full max-w-md">
-      <Card variant="bordered">
-        <CardContent className="p-8">
-          <div className="text-center mb-8">
-            <Link href="/" className="inline-flex items-center gap-2 mb-6">
-              <div className="w-10 h-10 bg-primary rounded-md flex items-center justify-center">
-                <span className="text-white font-bold">L</span>
-              </div>
-            </Link>
-            <h1 className="text-2xl font-display font-medium text-ink">Daftar Akun Baru</h1>
-            <p className="text-body-mid mt-1">
-              {step === 1 ? 'Informasi usaha laundry' : 'Buat akun login Anda'}
-            </p>
+    <div className="min-h-screen bg-canvas flex items-center justify-center p-4">
+      <div className="w-full max-w-sm">
+        <div className="flex items-center justify-center mb-8">
+          <div className="h-10 w-10 bg-brand rounded-lg flex items-center justify-center">
+            <span className="text-white font-bold text-sm">L</span>
           </div>
+        </div>
+
+        <div className="bg-canvas-elevated rounded-xl border border-border-subtle shadow-premium-sm p-6">
+          <h1 className="text-lg font-semibold text-ink text-center mb-1">Daftar Akun Baru</h1>
+          <p className="text-sm text-ink-muted text-center mb-6">
+            {step === 1 ? 'Informasi usaha laundry' : 'Buat akun login Anda'}
+          </p>
 
           {/* Progress */}
-          <div className="flex items-center gap-2 mb-8">
-            <div className={`h-1.5 flex-1 rounded-full transition-colors ${step >= 1 ? 'bg-primary' : 'bg-muted'}`} />
-            <div className={`h-1.5 flex-1 rounded-full transition-colors ${step >= 2 ? 'bg-primary' : 'bg-muted'}`} />
+          <div className="flex items-center gap-2 mb-6">
+            <div className={`h-1.5 flex-1 rounded-full transition-colors ${step >= 1 ? 'bg-brand' : 'bg-border-subtle'}`} />
+            <div className={`h-1.5 flex-1 rounded-full transition-colors ${step >= 2 ? 'bg-brand' : 'bg-border-subtle'}`} />
           </div>
 
           {error && (
-            <div className="bg-red-50 text-red-600 text-sm p-3 rounded-sm mb-4">{error}</div>
+            <div className="bg-red-50 text-status-alert text-xs p-3 rounded-lg border border-red-200 mb-4">{error}</div>
           )}
 
           {step === 1 ? (
@@ -141,7 +139,7 @@ export default function RegisterPage() {
                 minLength={8}
               />
               <div className="flex gap-3">
-                <Button type="button" variant="tertiary" className="flex-1" onClick={() => setStep(1)}>
+                <Button type="button" variant="secondary" className="flex-1" onClick={() => setStep(1)}>
                   Kembali
                 </Button>
                 <Button type="submit" className="flex-1" loading={loading}>
@@ -151,14 +149,14 @@ export default function RegisterPage() {
             </form>
           )}
 
-          <p className="text-center text-sm text-body-mid mt-6">
+          <p className="text-center text-sm text-ink-muted mt-6">
             Sudah punya akun?{' '}
-            <Link href="/login" className="text-primary hover:text-primary-hover font-medium">
+            <Link href="/login" className="text-brand hover:text-brand-hover font-medium">
               Login
             </Link>
           </p>
-        </CardContent>
-      </Card>
+        </div>
+      </div>
     </div>
   );
 }

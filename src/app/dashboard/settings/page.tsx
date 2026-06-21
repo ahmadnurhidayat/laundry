@@ -31,7 +31,7 @@ export default async function SettingsPage() {
       <div className="space-y-6">
         <h1 className="text-2xl font-bold text-ink">Pengaturan</h1>
         <div className="bg-canvas-soft rounded-md p-12 text-center">
-          <p className="text-body-mid">Gagal memuat data</p>
+          <p className="text-ink-muted">Gagal memuat data</p>
         </div>
       </div>
     );

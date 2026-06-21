@@ -11,8 +11,8 @@ import { formatCurrency, formatDateShort, isRecentlyActive } from '@/lib/utils';
 import { CustomerForm } from '@/features/customers/components/CustomerForm';
 
 const statusConfig = {
-  PENDING: { label: 'Menunggu', variant: 'warning' as const },
-  PROCESSING: { label: 'Diproses', variant: 'info' as const },
+  PENDING: { label: 'Pending', variant: 'pending' as const },
+  PROCESSING: { label: 'Processing', variant: 'processing' as const },
   FINISHED: { label: 'Selesai', variant: 'success' as const },
   PICKED_UP: { label: 'Diambil', variant: 'neutral' as const },
 };
@@ -78,29 +78,29 @@ export default async function CustomerDetailPage({ params }: { params: Promise<{
       {/* Back Link */}
       <Link
         href="/dashboard/customers"
-        className="inline-flex items-center text-sm text-body-mid hover:text-ink transition-colors group"
+        className="inline-flex items-center text-sm text-ink-muted hover:text-ink transition-colors group"
       >
         <ArrowLeft className="h-4 w-4 mr-1 group-hover:-translate-x-0.5 transition-transform" />
         Kembali ke Pelanggan
       </Link>
 
       {/* Customer Header */}
-      <div className="bg-canvas rounded-xl border border-muted p-6">
+      <div className="bg-canvas-elevated rounded-lg border border-border-subtle p-6">
         <div className="flex items-start gap-4">
-          <div className="w-14 h-14 bg-primary/10 rounded-full flex items-center justify-center shrink-0">
-            <span className="text-primary font-bold text-xl">
+          <div className="w-14 h-14 bg-brand-subtle rounded-full flex items-center justify-center shrink-0">
+            <span className="text-bg-brand font-bold text-xl">
               {customer.name.charAt(0).toUpperCase()}
             </span>
           </div>
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-3 mb-2">
               <h1 className="text-xl font-bold text-ink">{customer.name}</h1>
-              <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium ${
+              <span className={`inline-flex items-center gap-1.5 font-mono text-xs px-2.5 py-0.5 rounded-full border ${
                 isActive
-                  ? 'bg-emerald-50 text-emerald-700'
+                  ? 'bg-emerald-50 text-emerald-700 border-emerald-200'
                   : stats.totalOrders === 0
-                  ? 'bg-gray-100 text-gray-500'
-                  : 'bg-amber-50 text-amber-700'
+                  ? 'bg-gray-100 text-gray-500 border-gray-200'
+                  : 'bg-amber-50 text-amber-700 border-amber-200'
               }`}>
                 <span className={`w-1.5 h-1.5 rounded-full ${
                   isActive ? 'bg-emerald-500' : stats.totalOrders === 0 ? 'bg-gray-400' : 'bg-amber-500'
@@ -109,7 +109,7 @@ export default async function CustomerDetailPage({ params }: { params: Promise<{
               </span>
             </div>
 
-            <div className="flex flex-wrap items-center gap-4 text-sm text-body">
+            <div className="flex flex-wrap items-center gap-4 text-sm text-ink-muted">
               {customer.createdAt && (
                 <span className="flex items-center gap-1.5">
                   Terdaftar {formatDateShort(customer.createdAt)}
@@ -122,44 +122,44 @@ export default async function CustomerDetailPage({ params }: { params: Promise<{
 
       {/* Stats Cards */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
-        <div className="bg-canvas rounded-xl border border-muted p-4">
+        <div className="bg-canvas-elevated rounded-lg border border-border-subtle p-4">
           <div className="flex items-center gap-2 mb-2">
             <div className="p-1.5 bg-blue-50 rounded-lg">
               <ShoppingBag className="h-4 w-4 text-blue-600" />
             </div>
-            <span className="text-xs font-medium text-body-mid">Total Pesanan</span>
+            <span className="text-xs font-medium text-ink-muted">Total Pesanan</span>
           </div>
-          <p className="text-2xl font-bold text-ink">{stats.totalOrders}</p>
+          <p className="text-2xl font-bold text-ink font-mono">{stats.totalOrders}</p>
         </div>
 
-        <div className="bg-canvas rounded-xl border border-muted p-4">
+        <div className="bg-canvas-elevated rounded-lg border border-border-subtle p-4">
           <div className="flex items-center gap-2 mb-2">
             <div className="p-1.5 bg-emerald-50 rounded-lg">
               <CreditCard className="h-4 w-4 text-emerald-600" />
             </div>
-            <span className="text-xs font-medium text-body-mid">Total Belanja</span>
+            <span className="text-xs font-medium text-ink-muted">Total Belanja</span>
           </div>
-          <p className="text-2xl font-bold text-ink">{formatCurrency(stats.totalSpent)}</p>
+          <p className="text-2xl font-bold text-ink font-mono">{formatCurrency(stats.totalSpent)}</p>
         </div>
 
-        <div className="bg-canvas rounded-xl border border-muted p-4">
+        <div className="bg-canvas-elevated rounded-lg border border-border-subtle p-4">
           <div className="flex items-center gap-2 mb-2">
             <div className="p-1.5 bg-purple-50 rounded-lg">
               <CreditCard className="h-4 w-4 text-purple-600" />
             </div>
-            <span className="text-xs font-medium text-body-mid">Rata-rata</span>
+            <span className="text-xs font-medium text-ink-muted">Rata-rata</span>
           </div>
-          <p className="text-2xl font-bold text-ink">{formatCurrency(avgOrderValue)}</p>
+          <p className="text-2xl font-bold text-ink font-mono">{formatCurrency(avgOrderValue)}</p>
         </div>
 
-        <div className="bg-canvas rounded-xl border border-muted p-4">
+        <div className="bg-canvas-elevated rounded-lg border border-border-subtle p-4">
           <div className="flex items-center gap-2 mb-2">
             <div className="p-1.5 bg-amber-50 rounded-lg">
               <Clock className="h-4 w-4 text-amber-600" />
             </div>
-            <span className="text-xs font-medium text-body-mid">Pesanan Terakhir</span>
+            <span className="text-xs font-medium text-ink-muted">Pesanan Terakhir</span>
           </div>
-          <p className="text-lg font-bold text-ink">
+          <p className="text-lg font-bold text-ink font-mono">
             {stats.lastOrderDate ? formatDateShort(stats.lastOrderDate) : '-'}
           </p>
         </div>
@@ -175,14 +175,14 @@ export default async function CustomerDetailPage({ params }: { params: Promise<{
             <h2 className="text-lg font-semibold text-ink">Riwayat Pesanan</h2>
             <Link
               href="/dashboard/orders"
-              className="text-sm text-primary hover:text-primary-hover font-medium"
+              className="text-sm text-bg-brand hover:text-bg-brand-hover font-medium"
             >
               Lihat Semua
             </Link>
           </div>
 
           {recentOrders.length > 0 ? (
-            <div className="bg-canvas rounded-xl border border-muted overflow-hidden">
+            <div className="bg-canvas-elevated rounded-lg border border-border-subtle overflow-hidden">
               {recentOrders.map((order) => {
                 const status = statusConfig[order.orderStatus as keyof typeof statusConfig];
                 const payment = paymentConfig[order.paymentStatus as keyof typeof paymentConfig];
@@ -190,25 +190,25 @@ export default async function CustomerDetailPage({ params }: { params: Promise<{
                   <Link
                     key={order.id}
                     href={`/dashboard/orders/${order.id}`}
-                    className="flex items-center justify-between px-4 py-3 hover:bg-canvas-soft/50 transition-colors border-b border-muted/50 last:border-b-0"
+                    className="flex items-center justify-between px-4 py-3 hover:bg-canvas-soft/50 transition-colors border-b border-border-subtle/50 last:border-b-0"
                   >
                     <div className="min-w-0">
-                      <p className="font-medium text-ink text-sm">{order.invoiceNumber}</p>
-                      <p className="text-xs text-body-mid">{formatDateShort(order.dateIn)}</p>
+                      <p className="font-medium text-ink text-sm font-mono">{order.invoiceNumber}</p>
+                      <p className="text-xs text-ink-muted font-mono">{formatDateShort(order.dateIn)}</p>
                     </div>
                     <div className="flex items-center gap-2 shrink-0">
                       <Badge variant={status.variant}>{status.label}</Badge>
-                      <span className="text-sm font-semibold text-ink">{formatCurrency(order.totalAmount)}</span>
+                      <span className="text-sm font-semibold text-ink font-mono">{formatCurrency(order.totalAmount)}</span>
                     </div>
                   </Link>
                 );
               })}
             </div>
           ) : (
-            <div className="bg-canvas rounded-xl border border-muted p-8 text-center">
-              <ShoppingBag className="h-10 w-10 text-muted mx-auto mb-3" />
+            <div className="bg-canvas-elevated rounded-lg border border-border-subtle p-8 text-center">
+              <ShoppingBag className="h-10 w-10 text-ink-muted mx-auto mb-3" />
               <p className="text-ink font-medium mb-1">Belum ada pesanan</p>
-              <p className="text-sm text-body-mid">Pesanan pelanggan ini akan muncul di sini</p>
+              <p className="text-sm text-ink-muted">Pesanan pelanggan ini akan muncul di sini</p>
             </div>
           )}
         </div>

@@ -5,7 +5,6 @@ import { eq } from 'drizzle-orm';
 import { getCloudflareContext } from '@opennextjs/cloudflare';
 import { orders, customers } from '@/db/schema';
 import { createDb } from '@/lib/db';
-import { Button } from '@/components/ui/button';
 import { StatsOverview } from '@/features/orders/components/StatsOverview';
 import { OrderCard } from '@/features/orders/components/OrderCard';
 
@@ -45,14 +44,14 @@ export default async function DashboardPage() {
       {/* Header */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-ink">Dashboard</h1>
-          <p className="text-body mt-1">Selamat datang kembali, {userName}</p>
+          <h1 className="text-2xl font-semibold text-ink">Beranda</h1>
+          <p className="text-sm text-ink-muted mt-1">Ringkasan aktivitas laundry hari ini</p>
         </div>
         <Link href="/dashboard/orders/new" className="hidden sm:inline-flex">
-          <Button>
-            <Plus className="h-4 w-4 mr-2" />
+          <button className="h-10 px-4 bg-brand text-white rounded-lg font-medium text-sm hover:bg-brand-hover active:scale-[0.98] transition-all duration-150 flex items-center gap-2 shadow-premium-sm">
+            <Plus className="h-4 w-4" />
             Pesanan Baru
-          </Button>
+          </button>
         </Link>
       </div>
 
@@ -66,7 +65,7 @@ export default async function DashboardPage() {
             <h2 className="text-lg font-semibold text-ink">Pesanan Terbaru</h2>
             <Link
               href="/dashboard/orders"
-              className="flex items-center gap-1 text-sm text-primary hover:text-primary-hover font-medium group"
+              className="flex items-center gap-1 text-sm text-brand hover:text-brand-hover font-medium group"
             >
               Lihat Semua
               <ArrowRight className="h-4 w-4 group-hover:translate-x-0.5 transition-transform" />
@@ -82,17 +81,17 @@ export default async function DashboardPage() {
 
       {/* Empty State */}
       {allOrders.length === 0 && (
-        <div className="bg-canvas rounded-xl border border-muted p-8 text-center">
-          <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
-            <ShoppingBag className="h-7 w-7 text-primary" />
+        <div className="bg-canvas-elevated rounded-xl border border-border-subtle p-8 text-center">
+          <div className="h-14 w-14 bg-canvas rounded-full flex items-center justify-center mx-auto mb-4 border border-border-subtle">
+            <ShoppingBag className="h-7 w-7 text-ink-muted" />
           </div>
-          <h3 className="text-ink font-semibold mb-1">Belum ada pesanan</h3>
-          <p className="text-sm text-body-mid mb-4">Mulai dengan membuat pesanan pertama Anda</p>
+          <h3 className="text-ink font-semibold text-sm mb-1">Belum ada pesanan</h3>
+          <p className="text-sm text-ink-muted mb-4">Mulai dengan membuat pesanan pertama Anda</p>
           <Link href="/dashboard/orders/new">
-            <Button size="sm">
-              <Plus className="h-4 w-4 mr-1.5" />
+            <button className="h-9 px-4 bg-brand text-white rounded-lg text-sm font-medium hover:bg-brand-hover active:scale-[0.98] transition-all duration-150 inline-flex items-center gap-1.5">
+              <Plus className="h-4 w-4" />
               Buat Pesanan
-            </Button>
+            </button>
           </Link>
         </div>
       )}

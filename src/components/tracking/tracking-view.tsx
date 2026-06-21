@@ -168,7 +168,7 @@ export function TrackingView({ order, customer, items, tenant, statusHistory = [
   }, {} as Record<string, typeof statusHistory>);
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-canvas">
       {lightboxIndex !== null && (
         <PhotoLightbox
           photos={photos.map((p) => ({ url: p.url, caption: p.caption }))}
@@ -178,24 +178,24 @@ export function TrackingView({ order, customer, items, tenant, statusHistory = [
       )}
 
       {/* Header - Outlet Identity */}
-      <div className="bg-white border-b border-gray-200">
+      <div className="bg-canvas-elevated border-b border-border-subtle">
         <div className="max-w-lg mx-auto px-4 py-5">
           <div className="flex items-center gap-4">
-            <div className="w-14 h-14 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
-              <span className="text-primary font-bold text-xl">
+            <div className="w-14 h-14 rounded-full bg-brand-subtle flex items-center justify-center flex-shrink-0">
+              <span className="text-brand font-bold text-xl">
                 {shopName.charAt(0).toUpperCase()}
               </span>
             </div>
             <div className="flex-1 min-w-0">
-              <h1 className="font-bold text-gray-900 text-lg truncate">{shopName}</h1>
+              <h1 className="font-bold text-ink text-lg truncate">{shopName}</h1>
               {shopAddress && (
-                <p className="text-sm text-gray-500 truncate flex items-center gap-1 mt-0.5">
+                <p className="text-sm text-ink-muted truncate flex items-center gap-1 mt-0.5">
                   <MapPin className="w-3 h-3 flex-shrink-0" />
                   {shopAddress}
                 </p>
               )}
               {shopPhone && (
-                <p className="text-sm text-gray-500 mt-0.5">{shopPhone}</p>
+                <p className="text-sm text-ink-muted mt-0.5">{shopPhone}</p>
               )}
             </div>
           </div>
@@ -205,10 +205,10 @@ export function TrackingView({ order, customer, items, tenant, statusHistory = [
             <div className="flex gap-2 mt-4">
               <a
                 href={`tel:${shopPhone}`}
-                className="flex-1 flex items-center justify-center gap-2 px-3 py-2.5 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors"
+                className="flex-1 flex items-center justify-center gap-2 px-3 py-2.5 bg-canvas-soft hover:bg-canvas rounded-lg transition-colors"
               >
-                <Phone className="w-4 h-4 text-gray-600" />
-                <span className="text-sm font-medium text-gray-700">Telepon</span>
+                <Phone className="w-4 h-4 text-ink-muted" />
+                <span className="text-sm font-medium text-ink">Telepon</span>
               </a>
               <a
                 href={getWhatsAppLink(shopPhone, whatsappMessage)}
@@ -221,10 +221,10 @@ export function TrackingView({ order, customer, items, tenant, statusHistory = [
               </a>
               <a
                 href={getSmsLink(shopPhone, whatsappMessage)}
-                className="flex-1 flex items-center justify-center gap-2 px-3 py-2.5 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors"
+                className="flex-1 flex items-center justify-center gap-2 px-3 py-2.5 bg-canvas-soft hover:bg-canvas rounded-lg transition-colors"
               >
-                <MessageSquare className="w-4 h-4 text-gray-600" />
-                <span className="text-sm font-medium text-gray-700">SMS</span>
+                <MessageSquare className="w-4 h-4 text-ink-muted" />
+                <span className="text-sm font-medium text-ink">SMS</span>
               </a>
             </div>
           )}
@@ -233,10 +233,10 @@ export function TrackingView({ order, customer, items, tenant, statusHistory = [
 
       <div className="max-w-lg mx-auto p-4 space-y-4">
         {/* Invoice Header */}
-        <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
-          <div className="p-4 text-center border-b border-gray-100">
-            <h2 className="font-bold text-gray-900 text-lg">{customer.name}</h2>
-            <div className="mt-3 inline-flex items-center justify-center p-3 bg-white rounded-lg border border-gray-200">
+        <div className="bg-canvas-elevated rounded-lg shadow-premium-sm border border-border-subtle overflow-hidden">
+          <div className="p-4 text-center border-b border-border-subtle">
+            <h2 className="font-bold text-ink text-lg">{customer.name}</h2>
+            <div className="mt-3 inline-flex items-center justify-center p-3 bg-canvas-elevated rounded-lg border border-border-subtle">
               <QRCodeSVG
                 value={`${typeof window !== 'undefined' ? window.location.origin : ''}/track/${order.trackingToken}`}
                 size={80}
@@ -244,66 +244,66 @@ export function TrackingView({ order, customer, items, tenant, statusHistory = [
                 includeMargin={false}
               />
             </div>
-            <p className="text-sm text-gray-500 mt-2 font-mono">{order.invoiceNumber}</p>
-            <p className="text-xs text-gray-400 mt-1">Transaksi Reguler</p>
+            <p className="text-sm text-ink-muted mt-2 font-mono">{order.invoiceNumber}</p>
+            <p className="text-xs text-ink-muted mt-1">Transaksi Reguler</p>
           </div>
 
           <div className="p-4 space-y-3">
             <div>
-              <p className="text-xs text-gray-500 uppercase tracking-wider">Alamat</p>
-              <p className="text-sm text-gray-900">{customer.name}</p>
+              <p className="text-xs text-ink-muted uppercase tracking-wider">Alamat</p>
+              <p className="text-sm text-ink">{customer.name}</p>
             </div>
             <div>
-              <p className="text-sm text-gray-600">{customer.phone}</p>
+              <p className="text-sm text-ink-muted">{customer.phone}</p>
             </div>
             <div className="flex items-center gap-2 text-sm">
-              <Calendar className="w-4 h-4 text-gray-400" />
+              <Calendar className="w-4 h-4 text-ink-muted" />
               <div>
-                <span className="text-gray-500">Terima:</span>
-                <span className="ml-2 text-gray-900 font-medium">{formatDateTime(order.dateIn)}</span>
+                <span className="text-ink-muted">Terima:</span>
+                <span className="ml-2 text-ink font-medium">{formatDateTime(order.dateIn)}</span>
               </div>
             </div>
             <div className="flex items-center gap-2 text-sm">
-              <Clock className="w-4 h-4 text-gray-400" />
+              <Clock className="w-4 h-4 text-ink-muted" />
               <div>
-                <span className="text-gray-500">Selesai:</span>
-                <span className="ml-2 text-gray-900 font-medium">{formatDateTime(order.dateEstimated)}</span>
+                <span className="text-ink-muted">Selesai:</span>
+                <span className="ml-2 text-ink font-medium">{formatDateTime(order.dateEstimated)}</span>
               </div>
             </div>
           </div>
         </div>
 
         {/* Status Pengerjaan */}
-        <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+        <div className="bg-canvas-elevated rounded-lg shadow-premium-sm border border-border-subtle overflow-hidden">
           <button
             onClick={() => setShowStatusDetail(!showStatusDetail)}
-            className="w-full p-4 flex items-center justify-between hover:bg-gray-50 transition-colors"
+            className="w-full p-4 flex items-center justify-between hover:bg-canvas-soft transition-colors"
           >
             <div className="flex items-center gap-3">
-              <h3 className="font-semibold text-gray-900">Status Pengerjaan</h3>
+              <h3 className="font-semibold text-ink">Status Pengerjaan</h3>
               <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 text-xs font-medium rounded-full ${statusConfig.color} text-white`}>
                 <span className="w-1.5 h-1.5 bg-white rounded-full"></span>
                 {statusConfig.label}
               </span>
             </div>
             <div className="flex items-center gap-2">
-              <span className="text-sm font-bold text-gray-900">{statusConfig.progress}%</span>
+              <span className="text-sm font-bold text-ink">{statusConfig.progress}%</span>
               {showStatusDetail ? (
-                <ChevronUp className="w-4 h-4 text-gray-400" />
+                <ChevronUp className="w-4 h-4 text-ink-muted" />
               ) : (
-                <ChevronDown className="w-4 h-4 text-gray-400" />
+                <ChevronDown className="w-4 h-4 text-ink-muted" />
               )}
             </div>
           </button>
 
           {showStatusDetail && (
-            <div className="px-4 pb-4 border-t border-gray-100">
-              <p className="text-sm text-gray-500 mt-3 mb-4">
+            <div className="px-4 pb-4 border-t border-border-subtle">
+              <p className="text-sm text-ink-muted mt-3 mb-4">
                 {currentStepIndex + 1} dari {STATUS_STEPS.length} tahap telah selesai
               </p>
 
               {/* Progress Bar */}
-              <div className="w-full bg-gray-100 rounded-full h-2 mb-4">
+              <div className="w-full bg-canvas-soft rounded-full h-2 mb-4">
                 <div
                   className={`h-2 rounded-full transition-all duration-500 ${statusConfig.color}`}
                   style={{ width: `${statusConfig.progress}%` }}
@@ -316,8 +316,8 @@ export function TrackingView({ order, customer, items, tenant, statusHistory = [
                   const isActive = i <= currentStepIndex;
                   return (
                     <div key={step.key} className="flex flex-col items-center">
-                      <div className={`w-3 h-3 rounded-full mb-1 ${isActive ? statusConfig.dotColor : 'bg-gray-200'}`}></div>
-                      <span className={`text-xs ${isActive ? 'text-gray-900 font-medium' : 'text-gray-400'}`}>
+                      <div className={`w-3 h-3 rounded-full mb-1 ${isActive ? statusConfig.dotColor : 'bg-canvas-soft'}`}></div>
+                      <span className={`text-xs ${isActive ? 'text-ink font-medium' : 'text-ink-muted'}`}>
                         {step.label}
                       </span>
                     </div>
@@ -327,10 +327,10 @@ export function TrackingView({ order, customer, items, tenant, statusHistory = [
 
               {/* Timeline */}
               {Object.keys(groupedHistory).length > 0 && (
-                <div className="space-y-4 mt-4 pt-4 border-t border-gray-100">
+                <div className="space-y-4 mt-4 pt-4 border-t border-border-subtle">
                   {Object.entries(groupedHistory).map(([date, events]) => (
                     <div key={date}>
-                      <p className="text-sm font-semibold text-gray-900 mb-2">{date}</p>
+                      <p className="text-sm font-semibold text-ink mb-2">{date}</p>
                       <div className="space-y-2">
                         {events.map((event, i) => (
                           <div key={i} className="flex items-start gap-3">
@@ -342,17 +342,17 @@ export function TrackingView({ order, customer, items, tenant, statusHistory = [
                                 'bg-emerald-600'
                               }`}></div>
                               {i < events.length - 1 && (
-                                <div className="w-0.5 h-6 bg-gray-200 mt-1"></div>
+                                <div className="w-0.5 h-6 bg-canvas-soft mt-1"></div>
                               )}
                             </div>
                             <div className="flex-1 pb-2">
-                              <p className="text-xs text-gray-500">{formatTime(event.createdAt)}</p>
-                              <p className="text-sm text-gray-900">
+                              <p className="text-xs text-ink-muted">{formatTime(event.createdAt)}</p>
+                              <p className="text-sm text-ink">
                                 {event.updatedBy ? `${event.updatedBy} ` : ''}
                                 Mengubah status ke <span className="font-medium">{STATUS_CONFIG[event.status as keyof typeof STATUS_CONFIG]?.label || event.status}</span>
                               </p>
                               {event.note && (
-                                <p className="text-xs text-gray-500 mt-0.5">{event.note}</p>
+                                <p className="text-xs text-ink-muted mt-0.5">{event.note}</p>
                               )}
                             </div>
                           </div>
@@ -364,7 +364,7 @@ export function TrackingView({ order, customer, items, tenant, statusHistory = [
               )}
 
               {Object.keys(groupedHistory).length === 0 && (
-                <p className="text-sm text-gray-400 text-center py-4">Belum ada riwayat perubahan status</p>
+                <p className="text-sm text-ink-muted text-center py-4">Belum ada riwayat perubahan status</p>
               )}
             </div>
           )}
@@ -372,13 +372,13 @@ export function TrackingView({ order, customer, items, tenant, statusHistory = [
 
         {/* Galeri Foto */}
         {photos.length > 0 && (
-          <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+          <div className="bg-canvas-elevated rounded-lg shadow-premium-sm border border-border-subtle overflow-hidden">
             <div className="p-4 flex items-center justify-between">
               <div className="flex items-center gap-2">
-                <Camera className="w-5 h-5 text-gray-600" />
-                <h3 className="font-semibold text-gray-900">Galeri</h3>
+                <Camera className="w-5 h-5 text-ink-muted" />
+                <h3 className="font-semibold text-ink">Galeri</h3>
               </div>
-              <span className="text-sm text-gray-500">{photos.length} Foto</span>
+              <span className="text-sm text-ink-muted">{photos.length} Foto</span>
             </div>
             <div className="px-4 pb-4">
               <div className="flex gap-2 overflow-x-auto pb-2 scrollbar-hide">
@@ -386,7 +386,7 @@ export function TrackingView({ order, customer, items, tenant, statusHistory = [
                   <button
                     key={photo.id}
                     onClick={() => setLightboxIndex(index)}
-                    className="flex-shrink-0 w-24 h-24 rounded-lg overflow-hidden bg-gray-100 hover:opacity-80 transition-opacity"
+                    className="flex-shrink-0 w-24 h-24 rounded-lg overflow-hidden bg-canvas-soft hover:opacity-80 transition-opacity"
                   >
                     <img
                       src={photo.url}
@@ -396,75 +396,75 @@ export function TrackingView({ order, customer, items, tenant, statusHistory = [
                   </button>
                 ))}
               </div>
-              <p className="text-xs text-gray-400 mt-2 text-center">Geser untuk melihat foto selengkapnya</p>
+              <p className="text-xs text-ink-muted mt-2 text-center">Geser untuk melihat foto selengkapnya</p>
             </div>
           </div>
         )}
 
         {/* Rincian Harga */}
-        <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+        <div className="bg-canvas-elevated rounded-lg shadow-premium-sm border border-border-subtle overflow-hidden">
           <button
             onClick={() => setShowPriceDetail(!showPriceDetail)}
-            className="w-full p-4 flex items-center justify-between hover:bg-gray-50 transition-colors"
+            className="w-full p-4 flex items-center justify-between hover:bg-canvas-soft transition-colors"
           >
-            <h3 className="font-semibold text-gray-900">Rincian Layanan</h3>
+            <h3 className="font-semibold text-ink">Rincian Layanan</h3>
             <div className="flex items-center gap-2">
-              <span className="text-sm font-bold text-gray-900">{formatCurrency(order.totalAmount)}</span>
+              <span className="text-sm font-bold text-ink font-mono">{formatCurrency(order.totalAmount)}</span>
               {showPriceDetail ? (
-                <ChevronUp className="w-4 h-4 text-gray-400" />
+                <ChevronUp className="w-4 h-4 text-ink-muted" />
               ) : (
-                <ChevronDown className="w-4 h-4 text-gray-400" />
+                <ChevronDown className="w-4 h-4 text-ink-muted" />
               )}
             </div>
           </button>
 
           {showPriceDetail && (
-            <div className="px-4 pb-4 border-t border-gray-100">
+            <div className="px-4 pb-4 border-t border-border-subtle">
               {/* Service Items */}
               <div className="space-y-3 mt-3">
                 {items.map((item) => (
                   <div key={item.id} className="flex justify-between items-start">
                     <div className="flex-1">
-                      <p className="text-sm font-medium text-gray-900">{item.serviceName}</p>
-                      <p className="text-xs text-gray-500">{item.qty} {item.serviceType === 'KILOAN' ? 'Kg' : 'Item'}</p>
+                      <p className="text-sm font-medium text-ink">{item.serviceName}</p>
+                      <p className="text-xs text-ink-muted">{item.qty} {item.serviceType === 'KILOAN' ? 'Kg' : 'Item'}</p>
                     </div>
-                    <span className="text-sm font-medium text-gray-900">{formatCurrency(item.subtotal)}</span>
+                    <span className="text-sm font-medium text-ink font-mono">{formatCurrency(item.subtotal)}</span>
                   </div>
                 ))}
               </div>
 
               {/* Subtotal */}
-              <div className="border-t border-gray-100 mt-3 pt-3 space-y-2">
+              <div className="border-t border-border-subtle mt-3 pt-3 space-y-2">
                 <div className="flex justify-between text-sm">
-                  <span className="text-gray-500">Subtotal</span>
-                  <span className="font-medium text-gray-900">{formatCurrency(order.totalAmount)}</span>
+                  <span className="text-ink-muted">Subtotal</span>
+                  <span className="font-medium text-ink font-mono">{formatCurrency(order.totalAmount)}</span>
                 </div>
                 <div className="flex justify-between text-sm">
-                  <span className="text-gray-500">Diskon</span>
-                  <span className="text-gray-900">Rp0</span>
+                  <span className="text-ink-muted">Diskon</span>
+                  <span className="text-ink font-mono">Rp0</span>
                 </div>
                 <div className="flex justify-between text-sm">
-                  <span className="text-gray-500">Pajak</span>
-                  <span className="text-gray-900">Rp0</span>
+                  <span className="text-ink-muted">Pajak</span>
+                  <span className="text-ink font-mono">Rp0</span>
                 </div>
               </div>
 
               {/* Total */}
-              <div className="border-t border-gray-200 mt-3 pt-3">
+              <div className="border-t border-border-subtle mt-3 pt-3">
                 <div className="flex justify-between">
-                  <span className="font-bold text-gray-900">Total Biaya</span>
-                  <span className="font-bold text-gray-900">{formatCurrency(order.totalAmount)}</span>
+                  <span className="font-bold text-ink">Total Biaya</span>
+                  <span className="font-bold text-ink font-mono">{formatCurrency(order.totalAmount)}</span>
                 </div>
               </div>
 
               {/* Payment Status */}
-              <div className="mt-4 p-3 bg-gray-50 rounded-lg">
+              <div className="mt-4 p-3 bg-canvas-soft rounded-lg">
                 <div className="flex justify-between items-center">
-                  <span className="text-sm text-gray-600">Pembayaran</span>
-                  <span className="text-sm font-medium text-gray-900">{formatCurrency(order.totalAmount)}</span>
+                  <span className="text-sm text-ink-muted">Pembayaran</span>
+                  <span className="text-sm font-medium text-ink font-mono">{formatCurrency(order.totalAmount)}</span>
                 </div>
                 <div className="flex justify-between items-center mt-2">
-                  <span className="text-sm text-gray-600">Status</span>
+                  <span className="text-sm text-ink-muted">Status</span>
                   <span className={`inline-flex items-center px-2.5 py-1 text-xs font-medium rounded-full ${
                     order.paymentStatus === 'PAID'
                       ? 'bg-green-100 text-green-700'
@@ -480,28 +480,28 @@ export function TrackingView({ order, customer, items, tenant, statusHistory = [
 
         {/* Catatan */}
         {order.notes && (
-          <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-4">
-            <h3 className="font-semibold text-gray-900 mb-2">Catatan</h3>
-            <p className="text-sm text-gray-600">{order.notes}</p>
+          <div className="bg-canvas-elevated rounded-lg shadow-premium-sm border border-border-subtle p-4">
+            <h3 className="font-semibold text-ink mb-2">Catatan</h3>
+            <p className="text-sm text-ink-muted">{order.notes}</p>
           </div>
         )}
 
         {/* Syarat & Ketentuan */}
         {termsAndConditions && (
-          <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-4">
-            <h3 className="font-semibold text-gray-900 mb-3">Syarat & Ketentuan</h3>
-            <div className="text-sm text-gray-600 whitespace-pre-line leading-relaxed">
+          <div className="bg-canvas-elevated rounded-lg shadow-premium-sm border border-border-subtle p-4">
+            <h3 className="font-semibold text-ink mb-3">Syarat & Ketentuan</h3>
+            <div className="text-sm text-ink-muted whitespace-pre-line leading-relaxed">
               {termsAndConditions}
             </div>
           </div>
         )}
 
         {/* Footer */}
-        <div className="text-center py-4 border-t border-gray-100 mt-4">
-          <p className="text-sm font-medium text-gray-600">
+        <div className="text-center py-4 border-t border-border-subtle mt-4">
+          <p className="text-sm font-medium text-ink-muted">
             {shopName} - {new Date().getFullYear()}
           </p>
-          <p className="text-xs text-gray-400 mt-1">
+          <p className="text-xs text-ink-muted mt-1">
             Powered by BeyondYou
           </p>
         </div>

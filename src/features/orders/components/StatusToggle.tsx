@@ -5,21 +5,19 @@ import { useRouter } from 'next/navigation';
 
 interface StatusConfig {
   label: string;
-  color: string;
-  lightColor: string;
-  textColor: string;
+  badgeClass: string;
 }
 
 const orderStatusConfig: Record<string, StatusConfig> = {
-  PENDING: { label: 'Menunggu', color: 'bg-amber-500', lightColor: 'bg-amber-50', textColor: 'text-amber-700' },
-  PROCESSING: { label: 'Diproses', color: 'bg-blue-500', lightColor: 'bg-blue-50', textColor: 'text-blue-700' },
-  FINISHED: { label: 'Selesai', color: 'bg-emerald-500', lightColor: 'bg-emerald-50', textColor: 'text-emerald-700' },
-  PICKED_UP: { label: 'Diambil', color: 'bg-purple-500', lightColor: 'bg-purple-50', textColor: 'text-purple-700' },
+  PENDING: { label: 'Pending', badgeClass: 'bg-zinc-100 text-zinc-800 border border-zinc-200' },
+  PROCESSING: { label: 'Processing', badgeClass: 'bg-blue-50 text-blue-700 border border-blue-200' },
+  FINISHED: { label: 'Selesai', badgeClass: 'bg-green-50 text-green-700 border border-green-200' },
+  PICKED_UP: { label: 'Diambil', badgeClass: 'bg-zinc-100 text-zinc-600 border border-zinc-200' },
 };
 
 const paymentStatusConfig: Record<string, StatusConfig> = {
-  UNPAID: { label: 'Belum Bayar', color: 'bg-red-500', lightColor: 'bg-red-50', textColor: 'text-red-700' },
-  PAID: { label: 'Lunas', color: 'bg-emerald-500', lightColor: 'bg-emerald-50', textColor: 'text-emerald-700' },
+  UNPAID: { label: 'Belum Bayar', badgeClass: 'bg-red-50 text-red-700 border border-red-200' },
+  PAID: { label: 'Lunas', badgeClass: 'bg-green-50 text-green-700 border border-green-200' },
 };
 
 interface StatusToggleProps {
@@ -63,15 +61,12 @@ export function StatusToggle({ orderId, currentStatus, type }: StatusToggleProps
             key={status}
             onClick={() => handleStatusChange(status)}
             disabled={loading || isActive}
-            className={`relative flex items-center justify-center gap-2 px-4 py-3 rounded-xl text-sm font-medium transition-all ${
+            className={`relative flex items-center justify-center gap-2 px-4 py-3 rounded-lg text-sm font-medium transition-all duration-150 ${
               isActive
-                ? `${cfg.lightColor} ${cfg.textColor} ring-2 ring-offset-1 ring-current/20 cursor-default`
-                : 'bg-canvas-soft text-body hover:bg-muted/50 hover:text-ink'
+                ? 'bg-brand text-white shadow-premium-sm cursor-default'
+                : 'bg-canvas text-ink-muted border border-border-subtle hover:bg-canvas hover:text-ink hover:border-border-strong'
             } ${loading ? 'opacity-50' : ''}`}
           >
-            {isActive && (
-              <span className={`w-2 h-2 rounded-full ${cfg.color}`} />
-            )}
             {cfg.label}
           </button>
         );

@@ -105,13 +105,13 @@ export function CustomerForm({ customer, totalOrders }: CustomerFormProps) {
   };
 
   return (
-    <div className="bg-canvas rounded-xl border border-muted p-6">
+    <div className="bg-canvas-elevated rounded-lg border border-border-subtle p-6">
       <div className="flex items-center justify-between mb-4">
         <h2 className="font-semibold text-ink">Data Pelanggan</h2>
         {!editing ? (
           <button
             onClick={() => setEditing(true)}
-            className="flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-primary hover:bg-primary/10 rounded-lg transition-colors"
+            className="flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-bg-brand hover:bg-brand-subtle rounded-lg transition-colors"
           >
             <Pencil className="h-4 w-4" />
             Edit
@@ -120,7 +120,7 @@ export function CustomerForm({ customer, totalOrders }: CustomerFormProps) {
           <div className="flex items-center gap-2">
             <button
               onClick={handleCancel}
-              className="flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-body hover:bg-canvas-soft rounded-lg transition-colors"
+              className="flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-ink-muted hover:bg-canvas-soft rounded-lg transition-colors"
             >
               <X className="h-4 w-4" />
               Batal
@@ -128,7 +128,7 @@ export function CustomerForm({ customer, totalOrders }: CustomerFormProps) {
             <button
               onClick={handleSave}
               disabled={loading || !hasChanges}
-              className="flex items-center gap-1.5 px-4 py-1.5 text-sm font-medium text-white bg-primary hover:bg-primary-hover disabled:opacity-50 disabled:cursor-not-allowed rounded-lg transition-colors"
+              className="flex items-center gap-1.5 px-4 py-1.5 text-sm font-medium text-white bg-bg-brand hover:bg-bg-brand-hover disabled:opacity-50 disabled:cursor-not-allowed rounded-lg transition-colors"
             >
               <Save className="h-4 w-4" />
               {loading ? 'Menyimpan...' : 'Simpan'}
@@ -146,13 +146,13 @@ export function CustomerForm({ customer, totalOrders }: CustomerFormProps) {
       <div className="space-y-4">
         {/* Name */}
         <div>
-          <label className="block text-sm font-medium text-body mb-1.5">Nama</label>
+          <label className="block text-sm font-medium text-ink-muted mb-1.5">Nama</label>
           {editing ? (
             <input
               type="text"
               value={name}
               onChange={(e) => setName(e.target.value)}
-              className="w-full h-10 px-3 rounded-lg border border-muted text-sm text-ink focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all"
+              className="w-full h-10 px-3 rounded-lg border border-border-subtle text-sm text-ink focus:outline-none focus:ring-2 focus:ring-bg-brand/20 focus:border-bg-brand transition-all"
             />
           ) : (
             <p className="text-ink">{customer.name}</p>
@@ -161,18 +161,18 @@ export function CustomerForm({ customer, totalOrders }: CustomerFormProps) {
 
         {/* Phone */}
         <div>
-          <label className="block text-sm font-medium text-body mb-1.5">Nomor Telepon</label>
+          <label className="block text-sm font-medium text-ink-muted mb-1.5">Nomor Telepon</label>
           {editing ? (
             <input
               type="tel"
               value={phone}
               onChange={(e) => setPhone(e.target.value)}
-              className="w-full h-10 px-3 rounded-lg border border-muted text-sm text-ink focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all"
+              className="w-full h-10 px-3 rounded-lg border border-border-subtle text-sm text-ink focus:outline-none focus:ring-2 focus:ring-bg-brand/20 focus:border-bg-brand transition-all"
             />
           ) : (
             <div className="flex items-center gap-2">
-              <Phone className="h-4 w-4 text-body-mid" />
-              <span className="text-ink">{customer.phoneNumber}</span>
+              <Phone className="h-4 w-4 text-ink-muted" />
+              <span className="text-ink font-mono">{customer.phoneNumber}</span>
               <a
                 href={`https://wa.me/${customer.phoneNumber.replace(/[^0-9]/g, '').replace(/^0/, '62')}`}
                 target="_blank"
@@ -187,18 +187,18 @@ export function CustomerForm({ customer, totalOrders }: CustomerFormProps) {
 
         {/* Address */}
         <div>
-          <label className="block text-sm font-medium text-body mb-1.5">Alamat</label>
+          <label className="block text-sm font-medium text-ink-muted mb-1.5">Alamat</label>
           {editing ? (
             <input
               type="text"
               value={address}
               onChange={(e) => setAddress(e.target.value)}
               placeholder="Alamat pelanggan"
-              className="w-full h-10 px-3 rounded-lg border border-muted text-sm text-ink placeholder:text-body-mid focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all"
+              className="w-full h-10 px-3 rounded-lg border border-border-subtle text-sm text-ink placeholder:text-ink-muted focus:outline-none focus:ring-2 focus:ring-bg-brand/20 focus:border-bg-brand transition-all"
             />
           ) : (
             <div className="flex items-center gap-2">
-              <MapPin className="h-4 w-4 text-body-mid" />
+              <MapPin className="h-4 w-4 text-ink-muted" />
               <span className="text-ink">{customer.address || '-'}</span>
             </div>
           )}
@@ -206,18 +206,18 @@ export function CustomerForm({ customer, totalOrders }: CustomerFormProps) {
 
         {/* Notes */}
         <div>
-          <label className="block text-sm font-medium text-body mb-1.5">Catatan</label>
+          <label className="block text-sm font-medium text-ink-muted mb-1.5">Catatan</label>
           {editing ? (
             <textarea
               value={notes}
               onChange={(e) => setNotes(e.target.value)}
               placeholder="Preferensi, alergi, dll."
               rows={3}
-              className="w-full px-3 py-2 rounded-lg border border-muted text-sm text-ink placeholder:text-body-mid focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all resize-none"
+              className="w-full px-3 py-2 rounded-lg border border-border-subtle text-sm text-ink placeholder:text-ink-muted focus:outline-none focus:ring-2 focus:ring-bg-brand/20 focus:border-bg-brand transition-all resize-none"
             />
           ) : (
             <div className="flex items-start gap-2">
-              <FileText className="h-4 w-4 text-body-mid mt-0.5" />
+              <FileText className="h-4 w-4 text-ink-muted mt-0.5" />
               <span className="text-ink">{customer.notes || '-'}</span>
             </div>
           )}
@@ -226,11 +226,11 @@ export function CustomerForm({ customer, totalOrders }: CustomerFormProps) {
 
       {/* Delete Section */}
       {!editing && totalOrders === 0 && (
-        <div className="mt-6 pt-6 border-t border-muted">
+        <div className="mt-6 pt-6 border-t border-border-subtle">
           {!showDeleteConfirm ? (
             <button
               onClick={() => setShowDeleteConfirm(true)}
-              className="flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+              className="flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-text-status-alert hover:bg-red-50 rounded-lg transition-colors"
             >
               <Trash2 className="h-4 w-4" />
               Hapus Pelanggan
@@ -243,7 +243,7 @@ export function CustomerForm({ customer, totalOrders }: CustomerFormProps) {
               <div className="flex items-center gap-2">
                 <button
                   onClick={() => setShowDeleteConfirm(false)}
-                  className="px-3 py-1.5 text-sm font-medium text-body hover:bg-canvas-soft rounded-lg transition-colors"
+                  className="px-3 py-1.5 text-sm font-medium text-ink-muted hover:bg-canvas-soft rounded-lg transition-colors"
                 >
                   Batal
                 </button>

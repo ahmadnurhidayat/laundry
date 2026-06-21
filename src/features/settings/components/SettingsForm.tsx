@@ -51,7 +51,7 @@ export function SettingsForm({ initialTenant }: { initialTenant: Tenant }) {
     <div className="space-y-6">
       <div>
         <h1 className="text-2xl font-bold text-ink">Pengaturan</h1>
-        <p className="text-body-mid text-sm mt-1">Informasi bisnis Anda</p>
+        <p className="text-ink-muted text-sm mt-1">Informasi bisnis Anda</p>
       </div>
 
       {message && (
@@ -66,26 +66,26 @@ export function SettingsForm({ initialTenant }: { initialTenant: Tenant }) {
         <Card>
           <CardHeader>
             <div className="flex items-center gap-2">
-              <Building2 className="h-5 w-5 text-primary" />
+              <Building2 className="h-5 w-5 text-brand" />
               <h2 className="font-semibold text-ink">Informasi Bisnis</h2>
             </div>
           </CardHeader>
           <CardContent className="space-y-4">
             <div>
-              <label className="text-xs font-medium text-body-mid uppercase tracking-wider">Nama Bisnis</label>
+              <label className="text-xs font-medium text-ink-muted uppercase tracking-wider">Nama Bisnis</label>
               <input
                 type="text"
                 defaultValue={tenant.businessName}
                 onBlur={(e) => handleSave('businessName', e.target.value)}
-                className="mt-1 w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
+                className="mt-1 w-full px-3 py-2 border border-border-subtle rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-brand/20 focus:border-brand"
               />
             </div>
             <div>
-              <label className="text-xs font-medium text-body-mid uppercase tracking-wider">Slug</label>
+              <label className="text-xs font-medium text-ink-muted uppercase tracking-wider">Slug</label>
               <p className="text-ink font-medium mt-1">{tenant.slug}</p>
             </div>
             <div>
-              <label className="text-xs font-medium text-body-mid uppercase tracking-wider">Status</label>
+              <label className="text-xs font-medium text-ink-muted uppercase tracking-wider">Status</label>
               <p className="mt-1">
                 <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
                   tenant.status === 'ACTIVE' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
@@ -100,27 +100,27 @@ export function SettingsForm({ initialTenant }: { initialTenant: Tenant }) {
         <Card>
           <CardHeader>
             <div className="flex items-center gap-2">
-              <Phone className="h-5 w-5 text-primary" />
+              <Phone className="h-5 w-5 text-brand" />
               <h2 className="font-semibold text-ink">Kontak</h2>
             </div>
           </CardHeader>
           <CardContent className="space-y-4">
             <div>
-              <label className="text-xs font-medium text-body-mid uppercase tracking-wider">Telepon</label>
+              <label className="text-xs font-medium text-ink-muted uppercase tracking-wider">Telepon</label>
               <input
                 type="tel"
                 defaultValue={tenant.phone || ''}
                 onBlur={(e) => handleSave('phone', e.target.value)}
-                className="mt-1 w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
+                className="mt-1 w-full px-3 py-2 border border-border-subtle rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-brand/20 focus:border-brand"
               />
             </div>
             <div>
-              <label className="text-xs font-medium text-body-mid uppercase tracking-wider">Alamat</label>
+              <label className="text-xs font-medium text-ink-muted uppercase tracking-wider">Alamat</label>
               <textarea
                 defaultValue={tenant.address || ''}
                 onBlur={(e) => handleSave('address', e.target.value)}
                 rows={2}
-                className="mt-1 w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary resize-none"
+                className="mt-1 w-full px-3 py-2 border border-border-subtle rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-brand/20 focus:border-brand resize-none"
               />
             </div>
           </CardContent>
@@ -130,10 +130,10 @@ export function SettingsForm({ initialTenant }: { initialTenant: Tenant }) {
       <Card>
         <CardHeader>
           <div className="flex items-center gap-2">
-            <FileText className="h-5 w-5 text-primary" />
+            <FileText className="h-5 w-5 text-brand" />
             <h2 className="font-semibold text-ink">Syarat & Ketentuan</h2>
           </div>
-          <p className="text-sm text-body-mid">Tampilkan di halaman tracking pelanggan</p>
+          <p className="text-sm text-ink-muted">Tampilkan di halaman tracking pelanggan</p>
         </CardHeader>
         <CardContent>
           <textarea
@@ -141,16 +141,16 @@ export function SettingsForm({ initialTenant }: { initialTenant: Tenant }) {
             onBlur={(e) => handleSave('termsAndConditions', e.target.value)}
             rows={6}
             placeholder="Masukkan syarat dan ketentuan laundry Anda..."
-            className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary resize-none"
+            className="w-full px-3 py-2 border border-border-subtle rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-brand/20 focus:border-brand resize-none"
           />
-          <p className="text-xs text-body-mid mt-2">
+          <p className="text-xs text-ink-muted mt-2">
             Contoh: &quot;1. Pengambilan barang harap disertai nota. 2. Barang yang tidak diambil selama 1 bulan, hilang/rusak tidak diganti.&quot;
           </p>
         </CardContent>
       </Card>
 
       {saving && (
-        <div className="fixed bottom-4 right-4 flex items-center gap-2 px-4 py-2 bg-ink text-white rounded-lg shadow-lg">
+        <div className="fixed bottom-4 right-4 flex items-center gap-2 px-4 py-2 bg-ink text-white rounded-lg shadow-premium-sm">
           <Loader2 className="w-4 h-4 animate-spin" />
           <span className="text-sm">Menyimpan...</span>
         </div>

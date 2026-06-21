@@ -29,7 +29,7 @@ export default async function CustomersPage() {
       {/* Header */}
       <div>
         <h1 className="text-2xl font-bold text-ink">Pelanggan</h1>
-        <p className="text-body mt-1">{customersList.length} pelanggan terdaftar</p>
+        <p className="text-ink-muted mt-1">{customersList.length} pelanggan terdaftar</p>
       </div>
 
       <CustomersList customers={customersList} />
